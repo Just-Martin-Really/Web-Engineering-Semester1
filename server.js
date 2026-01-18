@@ -5,6 +5,8 @@ app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
 });
 
-app.listen(3000, () => {
-    console.log("Server läuft auf http://localhost:3000");
+app.listen(3001, () => {
+    console.log("Server läuft auf http://localhost:3001");
 });
+
+app.use(express.static("public"));
