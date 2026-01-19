@@ -6,4 +6,12 @@ Definition MVP:
 
 Aufgabeneinteilung:
 
+---
 
+installation:
+
+g clone
+
+npm install
+
+npm start
