@@ -35,3 +35,7 @@ das hat Chatgpt gemacht :)
 2. Alle Felder haben eine requiered-Atribbut - Browser verhindert leere Eingaben
 3. Buttons haben type="submit"
 4. Sie haben diese Tabelle für alle Name und ID
+
+
+Ich habe bis jetzt erste Homepage site programiert...schicke ich heute abend code...
+Morgen schreibe ich noch bis ende alle wichtige Kommentare und Dokumentation.

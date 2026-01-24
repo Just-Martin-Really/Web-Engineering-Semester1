@@ -3,92 +3,140 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Kursforum</title>
-    <link rel="stylesheet" href="home.css">
+    <link href="homepage.css" rel="stylesheet">
 </head>
 <body>
-<div class="login-box">
-    <form action="/login" method="post">
-        <fieldset>
-            <legend>Login</legend>
-            <label for="textLoginBenutzerName">Benutzername</label>
-            <input
-                    type="text"
-                    name="loginBenutzername"
-                    id="textLoginBenutzerName"
-                    class="inputField"
-                    placeholder="Benutzername"
-                    required>
-            <label for="textLoginBenutzerPasswort">Passwort</label>
-            <input
-                    type="password"
-                    name="loginPasswort"
-                    id="textLoginBenutzerPasswort"
-                    class="inputField"
-                    placeholder="Passwort"
-                    required>
-            <button type="submit"
+    <nav>
+    <ul>
+        <li><a href="#HomeThumbnail">Home</a></li>
+        <li><a href="#aboutUs">About Us</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+    </ul>
+    </nav>
+    <div class="thumbnail" id="HomeThumbnail">
+        <img class="photoThumbnail" src="book.jpg">
+        <div class="thumbnailContent">
+            <h1>Welcome to Kursforum</h1>
+            <a href="#loginRegister" class="buttonToLogin">Login</a>
+        </div>
+    </div>
+    <section class="AboutUs-box" id="aboutUs">
+           <div class="About-image">
+            <img class="AboutusImage" src="aboutus.jpg">
+               </div>
+               <div class="AboutusContent">
+               <h3 class="AboutusTitle">About us</h3>
+                <p>
+                    dsnjnsfjnjfnv jnsdjljvsnjl ndjsfljnsdljnfljsn nfjsdnljnsdljfnlsjd sdjnfljsdfnjlnsdljn sjdfnlnsfjdnlsjdnf
+                    sdfhbsdjbfksdbfk sdjfbdkjsbfkjsdbj dsfkjsbfljds
+                    sdjfnbskdjfkdsb vjdfsldjbnfkjsdbvfjds .......-.-..,.,.,.m,ömkfcnvolsjdfbihsbv
+                </p>
+               </div>
+    </section>
+
+    <section class="loginRegister" id="loginRegister">
+    <div class="login-box">
+        <form action="/login" method="post">
+            <h1>Login</h1>
+            <div class="input-box">
+                <input
+                        class="inputField"
+                        id="textLoginBenutzerName"
+                        name="loginBenutzername"
+                        placeholder="Benutzername"
+                        required
+                        type="text">
+            </div>
+            <div class="input-box">
+                <input
+                        class="inputField"
+                        id="textLoginBenutzerPasswort"
+                        name="loginPasswort"
+                        placeholder="Passwort"
+                        required
+                        type="password">
+            </div>
+            <button class="buttonLogin"
                     id="buttonLogin"
-                    class="buttonLogin">
+                    type="submit">
                 Anmelden
             </button>
-        </fieldset>
-    </form>
-</div>
-<p></p>
-<p></p>
-<div class="registration-box">
-    <form action="/register" method="post">
-        <fieldset>
-            <legend>Registrieren</legend>
-            <label for="textRegBenutzerVorname">Vorname</label>
-            <input
-                    type="text"
-                    name="regVorname"
-                    id="textRegBenutzerVorname"
-                    class="inputField"
-                    placeholder="Vorname"
-                    required>
-            <label for="textRegBenutzerNachname">Nachname</label>
-            <input
-                    type="text"
-                    name="regNachname"
-                    id="textRegBenutzerNachname"
-                    class="inputField"
-                    placeholder="Nachname"
-                    required>
-            <label for="textRegBenutzerName">Benutzername</label>
-            <input
-                    type="text"
-                    name="regBenutzername"
-                    id="textRegBenutzerName"
-                    class="inputField"
-                    placeholder="Benutzername"
-                    required>
-            <label for="textRegBenutzerPasswort">Passwort</label>
-            <input
-                    type="password"
-                    name="regPasswort"
-                    id="textRegBenutzerPasswort"
-                    class="inputField"
-                    placeholder="Passwort"
-                    required>
-            <label for="textRegBenutzerKurs">Kurs</label>
-            <input
-                    type="text"
-                    name="regKurs"
-                    id="textRegBenutzerKurs"
-                    class="inputField"
-                    placeholder="Kurs"
-                    required>
-            <button type="submit"
-                    id="buttonRegReg"
-                    class="buttonRegReg">
-                Registrieren
-            </button>
-        </fieldset>
-    </form>
-</div>
+            <div class="register-link">
+                <p>Dont have an account?
+                    <a href="#textRegBenutzerVorname">Registrieren</a></p>
+            </div>
+        </form>
+    </div>
+    <div class="registration-box">
+        <form action="/register" method="post">
+            <h2>Registrieren</h2>
+                <input
+                        class="inputField"
+                        id="textRegBenutzerVorname"
+                        name="regVorname"
+                        placeholder="Vorname"
+                        required
+                        type="text">
+                <input
+                        class="inputField"
+                        id="textRegBenutzerNachname"
+                        name="regNachname"
+                        placeholder="Nachname"
+                        required
+                        type="text">
+                <input
+                        class="inputField"
+                        id="textRegBenutzerName"
+                        name="regBenutzername"
+                        placeholder="Benutzername"
+                        required
+                        type="text">
+                <input
+                        class="inputField"
+                        id="textRegBenutzerPasswort"
+                        name="regPasswort"
+                        placeholder="Passwort"
+                        required
+                        type="password">
+                <input
+                        class="inputField"
+                        id="textRegBenutzerKurs"
+                        name="regKurs"
+                        placeholder="Kurs"
+                        required
+                        type="text">
+                <button class="buttonRegReg"
+                        id="buttonRegReg"
+                        type="submit">
+                    Registrieren
+                </button>
+        </form>
+    </div>
+</section>
+
+    <footer class="footer-section" id="kontakt">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>Contact Us On:</h4>
+                <p>065 954 398</p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Pages</h4>
+                <ul>
+                    <li><a href="#HomeThumbnail">Home</a></li>
+                    <li><a href="#aboutUs">About Us</a></li>
+                    <li><a href="#loginRegister">Login and Registration</a></li>
+
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>Kursforum - designed by Killers</p>
+        </div>
+    </footer>
 </body>
 </html>
