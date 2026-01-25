@@ -4,12 +4,14 @@
     box-sizing: border-box;
 }
 
+/* Body Einstellungen */
+
 body{
     width: 100%;
     overflow-x: hidden;
     background-color: #eee;
 }
-
+/* Hero-Bild Sektion,habe ich fehler gemacht,wenn ich Klasse genannt habe */
 .thumbnail{
     position: relative;
     display: inline-block;
@@ -29,12 +31,19 @@ body{
     text-align: center;
     color: white;
 }
-
+/*Willkomens nachricht*/
 .thumbnailContent h1 {
     font-size: 80px;
     text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
     color: #7979e8;
     margin-bottom: 20px;
+}
+
+/*Schriftgröße für Handys*/
+@media (max-width: 800px) {
+    .thumbnailContent h1 {
+        font-size: 40px;
+    }
 }
 
 .buttonToLogin{
@@ -53,20 +62,23 @@ body{
 .buttonToLogin:hover {
     opacity: 0.8;
 }
+/*Ende CSS für Hero Bild*/
 
-nav{
+/*navigation bar*/
+nav {
     width: 100%;
     height: 80px;
     background-color: #ffffff;
     display: flex;
     align-items: center;
-    ul{
+}
+nav ul{
         display: flex;
-        margin-left 60px;
-        padding 0;
+        margin-left: 60px;
+        padding: 0;
         list-style: none;
     }
-    ul li{
+nav ul li{
         margin: 0;
         padding: 0;
         list-style: none;
@@ -74,7 +86,7 @@ nav{
         line-height: 80px;
 
     }
-    ul li a{
+ nav ul li a{
         display: block;
         margin: 0;
         padding: 0 20px;
@@ -84,10 +96,10 @@ nav{
         font-weight: bold;
         font-family: arial;
     }
-    ul li a:hover{
+nav ul li a:hover{
         opacity: 0.8;
     }
-    ul li a:active{
+nav ul li a:active{
         opacity: 0.5;
     }
 }
@@ -96,6 +108,10 @@ nav{
     width: 100%;
     height: 100%
 }
+/*Ende CSS navigation bar*/
+
+/*About section*/
+
 .AboutUs-box {
     display: flex;
     align-items: center;
@@ -134,7 +150,7 @@ nav{
     color: #7979e8;
     font-family: sans-serif;
 }
-
+/*Für Handys*/
 @media (max-width: 800px) {
     .AboutUs-box {
         flex-direction: column;
@@ -146,6 +162,10 @@ nav{
         margin: 0 auto;
     }
 }
+
+/*Ende About us Sektion*/
+
+/*LoginRegister sektion*/
 
 .loginRegister {
     display: flex;
@@ -224,6 +244,7 @@ nav{
         }
     }
 
+
     .registration-box {
         width: 50%;
         height: 500px;
@@ -280,6 +301,25 @@ nav{
         }
     }
 }
+
+@media (max-width: 800px) {
+    .loginRegister {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .login-box, .registration-box {
+        width: 90%;
+        margin: 0;
+    }
+}
+
+/*Ende log in sektion*/
+
+
+
+
     .footer-section {
         background-color: #ffffff;
         padding: 60px 10% 20px 10%;
@@ -332,12 +372,13 @@ nav{
         font-weight: bold;
         text-decoration: underline;
     }
-
+/*für Handys*/
     @media (max-width: 600px) {
         .footer-container {
             flex-direction: column;
             text-align: center;
             gap: 30px;
         }
+    }
 }
 
