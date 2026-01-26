@@ -122,3 +122,30 @@ Wir haben außerdem zwei Fotos im Public-Ordner hinzugefügt, die für das Desig
     - Media Queries für mobile Geräte implementiert
 
 ---
+
+# Dokumentation der Änderungen am Header und Scroll-Verhalten 26.01.2025.
+
+## 1. Navigation im Header platziert
+- Der Menübereich wurde in das `<header>`-Element verschoben.
+- Die Navigation ist nun semantisch korrekt in der Kopfzeile der Seite integriert.
+
+## 2. Fixierte Position des Headers
+- Im CSS wurde der Header auf `position: fixed` gesetzt.
+- Der Header bleibt beim Scrollen immer oben auf der Seite sichtbar.
+
+## 3. Smooth Scroll aktiviert
+- Das HTML-Verhalten beim Anklicken von Ankerlinks wurde so angepasst, dass das Scrollen **sanft und flüssig** erfolgt.
+- Dies geschieht durch die CSS-Eigenschaft `scroll-behavior: smooth`.
+
+## 4. Scroll-Margin für Sektionen
+- In allen Sektionen wurde ein oberer Abstand von 80px (`scroll-margin-top: 80px`) definiert.
+- Dadurch werden Sektionen beim Scrollen nicht unter dem fixierten Header angezeigt, sondern korrekt direkt darunter.
+
+## 5. Pop in Animation für Wilkommens-nachricht und für loginbutton
+
+**Pop-In Animation** (`@keyframes popIn`) hinzugefügt.
+- **Welcome-Nachricht (Überschrift)** animiert beim Laden der Seite:
+    - `.thumbnailContent h1` → `animation: popIn 1s ease-out forwards;`
+- **Login-Button** animiert beim Laden der Seite:
+    - `.buttonToLogin` → `animation: popIn 2s ease-out forwards;`
+- Animationen starten automatisch **beim Laden der Seite**.
