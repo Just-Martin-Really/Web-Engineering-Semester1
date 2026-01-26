@@ -149,3 +149,13 @@ Wir haben außerdem zwei Fotos im Public-Ordner hinzugefügt, die für das Desig
 - **Login-Button** animiert beim Laden der Seite:
     - `.buttonToLogin` → `animation: popIn 2s ease-out forwards;`
 - Animationen starten automatisch **beim Laden der Seite**.
+
+
+## Umsetzung der HTML-Struktur
+
+Ich habe festgestellt, dass wir immer `<article>`-Elemente anstelle von `<div>` verwenden sollen.  
+Daher habe ich alle entsprechenden `<div>`-Blöcke in `<article>`-Elemente ersetzt.
+
+Nun enthält jede `<section>` mindestens zwei `<article>`-Elemente, wie es in der Aufgabenstellung verlangt wird.
+
+Die Dokumentation werde ich später noch ausführlicher und besser formulieren.
