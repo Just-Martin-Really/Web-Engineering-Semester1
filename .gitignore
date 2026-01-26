@@ -86,3 +86,5 @@ http-client.private.env.json
 .idea/**/copilot.data.migration.*.xml
 
 /node_modules
+
+.idea/*
