@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Kursforum</title>
+</head>
+<body>
+
+<h1>Kursforum</h1>
+
+<!-- Test API -->
+<h2>API-Test</h2>
+<button id="check">API testen</button>
+<pre id="result"></pre>
+
+<hr/>
+
+<!-- Topic erstellen -->
+<h2>Neues Thema</h2>
+
+<input id="title" placeholder="Titel"/>
+<br/><br/>
+
+<textarea id="content" placeholder="Inhalt"></textarea>
+<br/><br/>
+
+<label>
+    <input type="checkbox" id="anonymous"/>
+    anonym posten
+</label>
+<br/><br/>
+
+<button id="submit">Thema erstellen</button>
+
+
+
+
+<a href="index.html" > zur Homepage </a>
+<hr/>
+
+<!-- Topic-Liste -->
+<h2>Themen</h2>
+<ul id="topicList"></ul>
+
+<!-- Script GANZ AM ENDE -->
+<script src="app.js"></script>
+</body>
+</html>
