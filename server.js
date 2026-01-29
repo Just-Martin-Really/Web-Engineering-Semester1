@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.static("public"));
 
 // Mongodb verbinden
-mongoose.connect("mongodb://localhost:27017")
+mongoose.connect("mongodb://localhost:27017/mongo-app")
     .then(() => console.log("MongoDB Connected"))
     .catch((err) => console.log(err));
 
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     course: String,
 });
 
-const user = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 
 // Test-API
 app.get("/api/health", (req, res) => {

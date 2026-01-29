@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = document.getElementById('textRegBenutzerPasswort').value;
             const course = document.getElementById('textRegBenutzerKurs').value;
 
-            const result = await register(firstname, lastname, username, password, course);
+            const result = await registration(firstname, lastname, username, password, course);
             console.log(result);
             alert(result.message);
         });
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Registrierung
     async function registration(firstname, lastname, username, password, course) {
-        const response = await fetch('http://localhost:3001/api/registration', {
+        const response = await fetch('/api/registration', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Login
     async function login(username, password) {
-        const response = await fetch('http://localhost:5000/api/login', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
