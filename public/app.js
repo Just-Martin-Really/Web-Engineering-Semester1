@@ -46,4 +46,60 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initial laden
     loadTopics();
+
+    // Registrierungs-Button
+    const registerBtn = document.getElementById('ButtonRegReg');
+    if (registerBtn) {
+        registerBtn.addEventListener('click', async () => {
+            const firstname = document.getElementById("textRegBenutzerVorname").value;
+            const lastname = document.getElementById("textRegBenutzerNachname").value;
+            const username = document.getElementById('textRegBenutzerName').value;
+            const password = document.getElementById('textRegBenutzerPasswort').value;
+            const course = document.getElementById('textRegBenutzerKurs').value;
+
+            const result = await register(firstname, lastname, username, password, course);
+            console.log(result);
+            alert(result.message);
+        });
+    }
+
+    // Login-Button
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+        loginBtn.addEventListener('click', async () => {
+            const username = document.getElementById('textRegBenutzerName').value;
+            const password = document.getElementById('textRegBenutzerPasswort').value;
+
+            const result = await login(username, password);
+            console.log(result);
+            alert(result.message);
+        });
+    }
+
+    // Registrierung
+    async function registration(firstname, lastname, username, password, course) {
+        const response = await fetch('http://localhost:3001/api/registration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ firstname, lastname, username, password, course }),
+        });
+
+        return await response.json();
+    }
+
+    // Login
+    async function login(username, password) {
+        const response = await fetch('http://localhost:5000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        return await response.json();
+    }
+
 });
