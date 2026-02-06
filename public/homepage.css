@@ -358,65 +358,64 @@ section {
 
 
 
-    .footer-section {
-        background-color: #ffffff;
-        padding: 60px 10% 20px 10%;
-        border-top: 1px solid #eee;
-        font-family: Arial;
-    }
+.footer-section {
+    background-color: #ffffff;
+    padding: 60px 10% 20px 10%;
+    border-top: 1px solid #eee;
+    font-family: Arial;
+}
 
-    .footer-container {
-        display: flex;
-        justify-content: center;
-        gap: 100px;
-        margin-bottom: 40px;
-    }
+.footer-container {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-bottom: 40px;
+}
 
-    .footer-column h4 {
-        color: #0b1d36;
-        margin-bottom: 15px;
-        font-size: 18px;
-    }
+.footer-column h4 {
+    color: #0b1d36;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
 
-    .footer-column a,
-    .footer-column ul li {
-        color: #7979e8;
-        text-decoration: none;
-        list-style: none;
-        margin-bottom: 10px;
-        display: block;
-        font-size: 16px;
-    }
+.footer-column a,
+.footer-column ul li {
+    color: #7979e8;
+    text-decoration: none;
+    list-style: none;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 16px;
+}
 
-    .footer-column ul {
-        padding: 0;
-        margin: 0;
-    }
+.footer-column ul {
+    padding: 0;
+    margin: 0;
+}
 
-    .footer-column a:hover {
-        text-decoration: underline;
-    }
+.footer-column a:hover {
+    text-decoration: underline;
+}
 
-    .footer-bottom {
-        text-align: center;
-        border-top: 1px solid #eee;
-        padding-top: 20px;
-        color: #888;
-        font-size: 14px;
-    }
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    color: #888;
+    font-size: 14px;
+}
 
-    .footer-bottom a {
-        color: #0b1d36;
-        font-weight: bold;
-        text-decoration: underline;
-    }
+.footer-bottom a {
+    color: #0b1d36;
+    font-weight: bold;
+    text-decoration: underline;
+}
 /*für Handys*/
-    @media (max-width: 600px) {
-        .footer-container {
-            flex-direction: column;
-            text-align: center;
-            gap: 30px;
-        }
+@media (max-width: 600px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
     }
 }
 
