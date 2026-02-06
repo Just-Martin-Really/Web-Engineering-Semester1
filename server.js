@@ -9,13 +9,14 @@ app.use(cors());
 app.use(express.static("public"));
 
 // Mongodb verbinden
-mongoose.connect("mongodb://localhost:27017/mongo-app")
+mongoose.connect("mongodb://127.0.0.1:27017/mongo-app")
     .then(() => console.log("MongoDB Connected"))
     .catch((err) => console.log(err));
 
-// In-Memory-Daten
+/* In-Memory-Daten
 let topics = [];
 let nextTopicId = 1;
+ */
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -28,7 +29,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-// Test-API
+/* Test-API
 app.get("/api/health", (req, res) => {
     res.json({status: "ok", message: "API läuft"});
 });
@@ -60,8 +61,11 @@ app.post("/api/topics", (req, res) => {
     res.status(201).json(topic);
 });
 
+ */
+
 app.post('/api/registration', async (req, res) => {
     try {
+        console.log('📝 Registration request body:', req.body);
         const { firstname, lastname, username, password, course } = req.body;
 
         const user = new User({
@@ -72,7 +76,9 @@ app.post('/api/registration', async (req, res) => {
             course
         });
 
+        console.log('💾 Attempting to save user:', user);
         await user.save();
+        console.log('✅ User saved successfully:', user._id);
 
         res.status(201).json({
             message: 'Registrierung erfolgreich',
@@ -86,7 +92,11 @@ app.post('/api/registration', async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ message: 'Fehler bei der Registrierung' });
+        console.error('❌ Registration error:', error); // MODIFY THIS
+        res.status(500).json({
+            message: 'Fehler bei der Registrierung',
+            error: error.message // ADD THIS to see the actual error
+        });
     }
 });
 
