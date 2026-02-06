@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    console.log('🚀 App.js loaded');
+
 
     // Registrierung
     async function registration(firstname, lastname, username, password, course) {
@@ -27,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // -------- API TEST --------
-    const checkButton = document.getElementById("check");
+   /* const checkButton = document.getElementById("check");
     const result = document.getElementById("result");
 
     checkButton.addEventListener("click", async () => {
@@ -73,32 +75,50 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial laden
     loadTopics();
 
+    */
+
     // Registrierungs-Button
-    const registerBtn = document.getElementById('ButtonRegReg');
+    const registerBtn = document.getElementById('buttonRegReg');
+    console.log('🔍 Register button:', registerBtn);
     if (registerBtn) {
-        registerBtn.addEventListener('click', async () => {
+        console.log('✅ Register button found, adding listener');
+        registerBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
             const firstname = document.getElementById("textRegBenutzerVorname").value;
             const lastname = document.getElementById("textRegBenutzerNachname").value;
             const username = document.getElementById('textRegBenutzerName').value;
             const password = document.getElementById('textRegBenutzerPasswort').value;
             const course = document.getElementById('textRegBenutzerKurs').value;
 
+            console.log('📝 Form data:', { firstname, lastname, username, password, course });
+
             const result = await registration(firstname, lastname, username, password, course);
-            console.log(result);
+            console.log('📨 Server response:', result);
             alert(result.message);
         });
     }
+    else{
+        console.log('❌ Register button NOT found!');
+    }
 
     // Login-Button
-    const loginBtn = document.getElementById('loginBtn');
+    const loginBtn = document.getElementById('buttonLogin');
+    console.log('🔍 Login button:', loginBtn);
     if (loginBtn) {
-        loginBtn.addEventListener('click', async () => {
-            const username = document.getElementById('textRegBenutzerName').value;
-            const password = document.getElementById('textRegBenutzerPasswort').value;
+        loginBtn.addEventListener('click', async (e) => {
+            console.log('🔥 LOGIN CLICKED!');
+            e.preventDefault();
+            const username = document.getElementById('textLoginBenutzerName').value;
+            const password = document.getElementById('textLoginBenutzerPasswort').value;
+
+            console.log('📝 Login data:', { username, password });
 
             const result = await login(username, password);
-            console.log(result);
+            console.log('📨 Server response:', result);
             alert(result.message);
         });
+    }
+    else {
+        console.log('❌ Login button NOT found!'); // ADD THIS
     }
 });
