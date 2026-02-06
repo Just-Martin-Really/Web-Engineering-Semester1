@@ -1,5 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
 
+    // Registrierung
+    async function registration(firstname, lastname, username, password, course) {
+        const response = await fetch('/api/registration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ firstname, lastname, username, password, course }),
+        });
+
+        return await response.json();
+    }
+
+    // Login
+    async function login(username, password) {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        return await response.json();
+    }
+
     // -------- API TEST --------
     const checkButton = document.getElementById("check");
     const result = document.getElementById("result");
@@ -75,31 +101,4 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(result.message);
         });
     }
-
-    // Registrierung
-    async function registration(firstname, lastname, username, password, course) {
-        const response = await fetch('/api/registration', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ firstname, lastname, username, password, course }),
-        });
-
-        return await response.json();
-    }
-
-    // Login
-    async function login(username, password) {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-
-        return await response.json();
-    }
-
 });
