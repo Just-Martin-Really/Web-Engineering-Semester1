@@ -12,7 +12,10 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify({ firstname, lastname, username, password, course }),
         });
 
-        return await response.json();
+        return {
+            status: response.status,
+            data: await response.json()
+        };
     }
 
     // Login
@@ -84,17 +87,31 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('✅ Register button found, adding listener');
         registerBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            const firstname = document.getElementById("textRegBenutzerVorname").value;
-            const lastname = document.getElementById("textRegBenutzerNachname").value;
-            const username = document.getElementById('textRegBenutzerName').value;
-            const password = document.getElementById('textRegBenutzerPasswort').value;
-            const course = document.getElementById('textRegBenutzerKurs').value;
+            const firstnameField = document.getElementById("textRegBenutzerVorname");
+            const lastnameField = document.getElementById("textRegBenutzerNachname");
+            const usernameField = document.getElementById('textRegBenutzerName');
+            const passwordField = document.getElementById('textRegBenutzerPasswort');
+            const courseField = document.getElementById('textRegBenutzerKurs');
+
+            const firstname = firstnameField.value;
+            const lastname = lastnameField.value;
+            const username = usernameField.value;
+            const password = passwordField.value;
+            const course = courseField.value;
 
             console.log('📝 Form data:', { firstname, lastname, username, password, course });
 
             const result = await registration(firstname, lastname, username, password, course);
             console.log('📨 Server response:', result);
-            alert(result.message);
+            alert(result.data.message);
+
+            if (result.status === 201) {
+                firstnameField.value = '';
+                lastnameField.value = '';
+                usernameField.value = '';
+                passwordField.value = '';
+                courseField.value = '';
+            }
         });
     }
     else{
