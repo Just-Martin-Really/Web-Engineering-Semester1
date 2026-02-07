@@ -42,39 +42,47 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 
-/* Test-API
-app.get("/api/health", (req, res) => {
-    res.json({status: "ok", message: "API läuft"});
+// Topic Schema
+const topicSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 });
 
+const Topic = mongoose.model("Topic", topicSchema);
+
 // Topics abrufen
-app.get("/api/topics", (req, res) => {
-    res.json(topics);
+app.get("/api/topics", async (req, res) => {
+    try {
+        const topics = await Topic.find().sort({ createdAt: -1 });
+        res.json(topics);
+    } catch (error) {
+        res.status(500).json({ message: "Fehler beim Abrufen der Themen" });
+    }
 });
 
 // Topic erstellen
-app.post("/api/topics", (req, res) => {
-    const {title, content, anonymous} = req.body;
+app.post("/api/topics", async (req, res) => {
+    try {
+        const { title, content } = req.body;
 
-    if (!title || !content) {
-        return res.status(400).json({
-            error: "Titel und Inhalt sind Pflichtfelder"
+        if (!title || !content) {
+            return res.status(400).json({
+                error: "Titel und Inhalt sind Pflichtfelder"
+            });
+        }
+
+        const topic = new Topic({
+            title,
+            content
         });
+
+        await topic.save();
+        res.status(201).json(topic);
+    } catch (error) {
+        res.status(500).json({ message: "Fehler beim Erstellen des Themas" });
     }
-
-    const topic = {
-        id: nextTopicId++,
-        title,
-        content,
-        anonymous: !!anonymous,
-        createdAt: new Date()
-    };
-
-    topics.push(topic);
-    res.status(201).json(topic);
 });
-
- */
 
 app.post('/api/registration', async (req, res) => {
     try {
