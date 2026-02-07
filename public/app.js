@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 usernameField.value = '';
                 passwordField.value = '';
                 courseField.value = '';
+                window.location.href = "Forumpage.html";
             }
         });
     }
