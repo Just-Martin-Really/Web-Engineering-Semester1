@@ -28,7 +28,10 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify({ username, password })
         });
 
-        return await response.json();
+        return {
+            status: response.status,
+            data: await response.json()
+        };
     }
 
     // -------- API TEST --------
@@ -133,7 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const result = await login(username, password);
             console.log('📨 Server response:', result);
-            alert(result.message);
+            alert(result.data.message);
+
+            if (result.status === 200) {
+                window.location.href = "Forumpage.html";
+            }
         });
     }
     else {
