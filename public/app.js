@@ -2,37 +2,30 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log('🚀 App.js loaded');
 
 
-    // Registrierung
-    async function registration(firstname, lastname, username, password, course) {
-        const response = await fetch('/api/registration', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ firstname, lastname, username, password, course }),
-        });
+/**
+ * Handles user registration by calling the API and managing the response.
+ * 
+ * @param {string} firstname 
+ * @param {string} lastname 
+ * @param {string} username 
+ * @param {string} password 
+ * @param {string} course 
+ * @returns {Promise<{status: number, data: Object}>}
+ */
+async function registration(firstname, lastname, username, password, course) {
+    return await apiRequest('/api/registration', 'POST', { firstname, lastname, username, password, course });
+}
 
-        return {
-            status: response.status,
-            data: await response.json()
-        };
-    }
-
-    // Login
-    async function login(username, password) {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-
-        return {
-            status: response.status,
-            data: await response.json()
-        };
-    }
+/**
+ * Handles user login by calling the API and managing the response.
+ * 
+ * @param {string} username 
+ * @param {string} password 
+ * @returns {Promise<{status: number, data: Object}>}
+ */
+async function login(username, password) {
+    return await apiRequest('/api/login', 'POST', { username, password });
+}
 
     // Registrierungs-Button
     const registerBtn = document.getElementById('buttonRegReg');
@@ -60,6 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(result.data.message);
 
             if (result.status === 201) {
+                saveAuthData(result.data.token, result.data.user);
                 firstnameField.value = '';
                 lastnameField.value = '';
                 usernameField.value = '';
@@ -90,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             alert(result.data.message);
 
             if (result.status === 200) {
+                saveAuthData(result.data.token, result.data.user);
                 window.location.href = "Forumpage.html";
             }
         });
