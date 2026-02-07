@@ -1,4 +1,4 @@
-<!--CSS-->
+/* CSS */
 
 *{
     margin: 0;
@@ -281,7 +281,7 @@ p{
     opacity: 0.5;
 }
 
-.forumBaiträge h8{
+.forumBeiträge h4{
     text-align: center;
     color: #7979e8;
     font-size: 55px;
@@ -350,5 +350,4 @@ p{
         text-align: center;
         gap: 30px;
     }
-}
 }
