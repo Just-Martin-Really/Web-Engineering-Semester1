@@ -1,14 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    if (!token) {
+        window.location.href = "index.html";
+        return;
+    }
+
+    // Display user context
+    const userNameElement = document.querySelector(".user-name");
+    const userEmailElement = document.querySelector(".user-email");
+    if (userNameElement && user) {
+        userNameElement.textContent = `${user.firstname} ${user.lastname}`;
+    }
+    if (userEmailElement && user) {
+        userEmailElement.textContent = user.username;
+    }
+
     const titleInput = document.querySelector(".textForumTitel");
     const contentInput = document.querySelector(".textForumInhalt");
     const submitBtn = document.querySelector(".buttonForumNeu");
     const forumContainer = document.querySelector(".forumBeiträge");
 
-    // Function to load and display topics
+    /**
+     * Loads all topics from the API and displays them in the forum container.
+     */
     async function loadTopics() {
         try {
-            const response = await fetch("/api/topics");
-            const topics = await response.json();
+            const { data: topics } = await apiRequest("/api/topics");
 
             // Keep only the header "Forum Beiträge:"
             const header = forumContainer.querySelector("h4");
@@ -24,27 +43,15 @@ document.addEventListener("DOMContentLoaded", () => {
             topics.forEach(topic => {
                 const topicArticle = document.createElement("article");
                 topicArticle.className = "forum-post";
-                topicArticle.style.borderBottom = "1px solid #ddd";
-                topicArticle.style.padding = "20px 0";
-                topicArticle.style.marginBottom = "10px";
 
                 const topicTitle = document.createElement("h3");
                 topicTitle.textContent = topic.title;
-                topicTitle.style.color = "#333";
-                topicTitle.style.marginBottom = "5px";
 
                 const topicDate = document.createElement("small");
-                const date = new Date(topic.createdAt);
-                topicDate.textContent = date.toLocaleDateString("de-DE") + " " + date.toLocaleTimeString("de-DE", {hour: '2-digit', minute:'2-digit'});
-                topicDate.style.color = "#888";
-                topicDate.style.display = "block";
-                topicDate.style.marginBottom = "10px";
+                topicDate.textContent = formatDate(topic.createdAt);
 
                 const topicContent = document.createElement("p");
                 topicContent.textContent = topic.content;
-                topicContent.style.whiteSpace = "pre-wrap";
-                topicContent.style.color = "#555";
-                topicContent.style.lineHeight = "1.5";
 
                 topicArticle.appendChild(topicTitle);
                 topicArticle.appendChild(topicDate);
@@ -57,7 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Function to create a new topic
+    /**
+     * Creates a new topic by sending the input data to the API.
+     */
     async function createTopic() {
         const title = titleInput.value.trim();
         const content = contentInput.value.trim();
@@ -68,21 +77,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const response = await fetch("/api/topics", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ title, content })
-            });
+            const result = await apiRequest("/api/topics", "POST", { title, content }, token);
 
-            if (response.ok) {
+            if (result.status === 201) {
                 titleInput.value = "";
                 contentInput.value = "";
                 await loadTopics();
             } else {
-                const errorData = await response.json();
-                alert("Fehler: " + (errorData.error || "Unbekannter Fehler"));
+                if (result.status === 401) {
+                    alert("Sitzung abgelaufen. Bitte erneut anmelden.");
+                    clearAuthData();
+                    window.location.href = "index.html";
+                } else {
+                    alert("Fehler: " + (result.data.message || "Unbekannter Fehler"));
+                }
             }
         } catch (error) {
             console.error("Error creating topic:", error);
@@ -107,6 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.querySelector(".buttonLogout");
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
+            clearAuthData();
             window.location.href = "index.html";
         });
     }
