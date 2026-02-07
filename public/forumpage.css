@@ -1,0 +1,354 @@
+<!--CSS-->
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+/* Body Einstellungen */
+
+body{
+    width: 100%;
+    margin: 0;
+    padding-top: 80px;
+    overflow-x: hidden;
+    background-color: #eee;
+}
+
+.header2 {
+    background-color: white;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 80px;
+    z-index: 1000;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+.left-section {
+    display: flex;       /* This puts items in a row */
+    align-items: center;
+    gap: 15px;
+}
+.left-section h5 {
+    margin: 0;
+    white-space: nowrap; /* Keeps the text on one line */
+}
+.logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #7979e8;
+    cursor: pointer;
+}
+
+.header2 h5 {
+    color: #7979e8;
+    font-size: 40px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+}
+
+.right-section {
+    display: flex;
+    align-items: center;
+}
+
+#userDropdown {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+
+.user-info-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.foto-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #7979e8;
+}
+
+.user-text p {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.2;
+}
+
+.user-name {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.user-email {
+    font-size: 12px;
+    color: #777;
+}
+
+
+.buttonLogout{
+    background-color: #7979e8;
+    color: white;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    height: 60px;
+    width: 140px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 25px;
+    transition: opacity 0.3s;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.buttonLogout:hover {
+    opacity: 0.8;
+}
+
+.buttonLogout:active {
+    opacity: 0.5;
+}
+p{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.nav-bar {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    width: 250px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 999;
+}
+
+.nav-bar h3 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #7979e8;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    color: #7979e8;
+    cursor: pointer;
+    font-size: 16px;
+    width: fit-content;
+}
+
+.radio-group input[type="radio"] {
+    accent-color: #7979e8;
+}
+
+.radioButton input[type="radio"]:checked + label {
+    font-weight: bold;
+}
+
+.buttonOben {
+    width: 100%;
+    background-color: #7979e8;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    transition: background 0.3s;
+}
+
+.buttonOben:hover {
+    opacity: 0.8;
+}
+
+.buttonOben:active {
+    opacity: 0.5;
+}
+
+@media (max-width: 1100px) {
+    .nav-bar {
+        display: none;
+    }
+}
+
+
+.Forum {
+    max-width: 1400px;
+    margin: 20px 0 40px 80px;
+    padding: 30px 40px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+.Topics {
+    text-align: center;
+    color: #7979e8;
+    font-size: 55px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    margin-left: 50px;
+}
+
+.ForumInput {
+    width: 90%;
+    padding: 12px;
+    background-color: #ffffff;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #000000;
+    margin: 0 0 20px 40px;
+    display: block;
+}
+
+.textForumTitel,
+.textForumInhalt {
+    margin-top: 25px;
+    width: 100%;
+    padding: 15px 18px;
+    font-size: 16px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+}
+
+.textForumInhalt {
+    min-height: 160px;
+}
+
+.textForumTitel:focus,
+.textForumInhalt:focus {
+    outline: none;
+    border-color: #7b7cf6;
+}
+
+.buttonForumNeu {
+
+    height: 60px;
+    width: 200px;
+    background-color: #7979e8;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    display: block;
+    margin: 20px auto;
+    }
+
+
+.buttonForumNeu:hover {
+    opacity: 0.8;
+}
+
+.buttonForumNeu:active {
+    opacity: 0.5;
+}
+
+.forumBaiträge h8{
+    text-align: center;
+    color: #7979e8;
+    font-size: 55px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    margin-left: 50px;
+
+}
+
+.footerForum {
+    background-color: #ffffff;
+    padding: 40px 10% 20px 10%;
+    border-top: 1px solid #eee;
+    font-family: Arial;
+}
+
+.footerForum-container {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    margin-bottom: 40px;
+}
+
+.footerForum-column h4 {
+    color: #0b1d36;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footerForum-column a,
+.footerForum-column ul li {
+    color: #7979e8;
+    text-decoration: none;
+    list-style: none;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 16px;
+}
+
+.footerForum-column ul {
+    padding: 0;
+    margin: 0;
+}
+
+.footerForum-column a:hover {
+    text-decoration: underline;
+}
+
+.footerForum-bottom {
+    text-align: center;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    color: #888;
+    font-size: 14px;
+}
+
+.footerForum-bottom a {
+    color: #0b1d36;
+    font-weight: bold;
+    text-decoration: underline;
+}
+/*für Handys*/
+@media (max-width: 600px) {
+    .footerForum-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+}
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Kursforum</title>
+    <script src="forumpage.js"></script>
+    <link rel="stylesheet" href="forumpage.css">
+</head>
+
+<body>
+
+<header class="header2">
+    <section class="left-section">
+        <img src="logoreal.png" class="logo">
+        <h5> FRED FORUM</h5>
+    </section>
+    <section class="right-section">
+    <div id="userDropdown" class="dropdown-content">
+        <div class="user-info-top">
+            <img class="foto-avatar" src="avatar.jpg">
+            <div class="user-text">
+                <p class="user-name"></p>
+                <p class="user-email"></p>
+            </div>
+        </div>
+    <button type="submit" class="buttonLogout"> Log-Out</button>
+    </section>
+</header>
+
+<section class="nav-bar">
+    <article class="kurses">
+        <h3>Wähle einen Kurs:</h3>
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="kurs" value="TIA">
+                TIA
+            </label>
+            <label>
+                <input type="radio" name="kurs" value="TIS">
+                TIS
+            </label>
+            <label>
+                <input type="radio" name="kurs" value="TIK">
+                TIK
+            </label>
+            <label>
+                <input type="radio" name="kurs" value="ALL">
+                ALL
+            </label>
+        </div>
+    </article>
+    <button type="submit" class="buttonOben">Zurück nach oben</button>
+</section>
+
+
+<section class="Forum">
+    <h7 class="Topics"> Neu Topic: </h7>
+    <article class="ForumInput">
+        <input
+                type="text"
+                name="textForumTitel"
+                class="textForumTitel"
+                placeholder="Hier Titel eingeben...">
+        <textarea
+                type="text"
+                name="textForumInhalt"
+                class="textForumInhalt"
+                placeholder="Hier Text eingeben....">
+        </textarea>
+    </article>
+    <button class="buttonForumNeu">
+        Beitrag hochladen
+    </button>
+
+    <article class="forumBaiträge">
+        <h8>Forum Baiträge:</h8>
+    </article>
+
+</section>
+<!--footer kontakt section-->
+<footer class="footerForum" id="kontaktForum">
+    <section class="footerForum-container">
+        <article class="footerForum-column">
+            <h4>Contact Us On:</h4>
+            <p>065 954 398</p>
+        </article>
+    </section>
+
+        <section class="footerForum-bottom">
+            <article>
+                <p>Kursforum - designed by Killers</p>
+            </article>
+        </section>
+</footer>
+</body>
+
