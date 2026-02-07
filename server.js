@@ -3,15 +3,28 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 
+// More explicit CORS configuration
+app.use(cors({
+    origin: true, // Reflects the request origin
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // Middleware
 app.use(express.json());
-app.use(cors());
 app.use(express.static("public"));
 
+// Health check endpoint - FIRST, before other routes
+app.get('/health', (req, res) => {
+    res.send('OK');
+});
+
 // Mongodb verbinden
-mongoose.connect("mongodb://127.0.0.1:27017/mongo-app")
-    .then(() => console.log("MongoDB Connected"))
-    .catch((err) => console.log(err));
+const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mongo-app";
+mongoose.connect(mongoURI)
+    .then(() => console.log("MongoDB Connected to", mongoURI))
+    .catch((err) => console.log("MongoDB Connection Error:", err));
 
 /* In-Memory-Daten
 let topics = [];
@@ -65,7 +78,6 @@ app.post("/api/topics", (req, res) => {
 
 app.post('/api/registration', async (req, res) => {
     try {
-        console.log('📝 Registration request body:', req.body);
         const { firstname, lastname, username, password, course } = req.body;
 
         const user = new User({
@@ -76,9 +88,7 @@ app.post('/api/registration', async (req, res) => {
             course
         });
 
-        console.log('💾 Attempting to save user:', user);
         await user.save();
-        console.log('✅ User saved successfully:', user._id);
 
         res.status(201).json({
             message: 'Registrierung erfolgreich',
@@ -92,10 +102,10 @@ app.post('/api/registration', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('❌ Registration error:', error); // MODIFY THIS
+        console.error('Registration error:', error);
         res.status(500).json({
             message: 'Fehler bei der Registrierung',
-            error: error.message // ADD THIS to see the actual error
+            error: error.message
         });
     }
 });
@@ -125,6 +135,17 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Server starten
-app.listen(3001, () => {
-    console.log("Server läuft auf http://localhost:3001");
+const PORT = 3001;
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server läuft auf http://0.0.0.0:${PORT}`);
+    console.log(`🕒 Started at: ${new Date().toISOString()}`);
+});
+
+// Add error handling
+server.on('error', (error) => {
+    console.error('❌ Server error:', error);
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('💥 Uncaught exception:', error);
 });
