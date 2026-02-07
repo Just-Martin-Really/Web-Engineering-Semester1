@@ -26,10 +26,6 @@ mongoose.connect(mongoURI)
     .then(() => console.log("MongoDB Connected to", mongoURI))
     .catch((err) => console.log("MongoDB Connection Error:", err));
 
-/* In-Memory-Daten
-let topics = [];
-let nextTopicId = 1;
- */
 
 // User Schema
 const userSchema = new mongoose.Schema({
