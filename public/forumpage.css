@@ -343,6 +343,30 @@ p{
     font-weight: bold;
     text-decoration: underline;
 }
+
+.forum-post {
+    border-bottom: 1px solid #ddd;
+    padding: 20px 0;
+    margin-bottom: 10px;
+}
+
+.forum-post h3 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.forum-post small {
+    color: #888;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.forum-post p {
+    white-space: pre-wrap;
+    color: #555;
+    line-height: 1.5;
+}
+
 /*für Handys*/
 @media (max-width: 600px) {
     .footerForum-container {
