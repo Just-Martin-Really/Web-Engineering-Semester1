@@ -6,81 +6,121 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Kursforum</title>
+    <script src="forumpage.js" defer></script>
     <script src="utils.js"></script>
-    <script src="forumpage.js"></script>
     <link rel="stylesheet" href="forumpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
 <body>
 
 <header class="header2">
-    <section class="left-section">
-        <img src="logoreal.png" class="logo" alt="Forum Logo">
-        <h5> FRED FORUM</h5>
+    <section class="left-section-header">
+        <img src="logoreal.png" class="logo">
+        <h2> FRED FORUM</h2>
     </section>
-    <section class="right-section">
-    <div id="userDropdown" class="dropdown-content">
-        <div class="user-info-top">
-            <img class="foto-avatar" src="avatar.jpg" alt="Benutzer Avatar">
-            <div class="user-text">
-                <p class="user-name"></p>
-                <p class="user-email"></p>
+
+    <section class="right-section-header">
+        <div class="avatar-wrapper">
+            <img class="foto-avatar" src="avatar.jpg">
+
+            <div id="userDropdown" class="dropdown-content">
+                <div class="user-info-top">
+                    <div class="user-text">
+                        <p><strong>Benutzername:</strong></p>
+                        <p class="user-name">Fred_User</p>
+                        <p style="margin-top: 10px;"><strong>Email:</strong></p>
+                        <p class="user-email">fred.forumg@student.at</p>
+                    </div>
+                </div>
             </div>
+            <button type="button" class="buttonLogout"> Log-Out</button>
         </div>
-        <button type="submit" class="buttonLogout"> Log-Out</button>
-    </div>
     </section>
 </header>
 
-<section class="nav-bar">
-    <article class="kurses">
-        <h3>Wähle einen Kurs:</h3>
-        <div class="radio-group">
-            <label>
-                <input type="radio" name="kurs" value="TIA">
-                TIA
-            </label>
-            <label>
-                <input type="radio" name="kurs" value="TIS">
-                TIS
-            </label>
-            <label>
-                <input type="radio" name="kurs" value="TIK">
-                TIK
-            </label>
-            <label>
-                <input type="radio" name="kurs" value="ALL">
-                ALL
-            </label>
-        </div>
-    </article>
-    <button type="submit" class="buttonOben">Zurück nach oben</button>
-</section>
+
+<main class="container_forumpage">
+    <div class="left-section">
+        <section class="Forum">
+            <h3 class="Topics"> Neu Topic: </h3>
+            <article class="ForumInput">
+                <input
+                        type="text"
+                        name="textForumTitel"
+                        class="textForumTitel"
+                        placeholder="Hier Titel eingeben...">
+                <textarea
+                        type="text"
+                        name="textForumInhalt"
+                        class="textForumInhalt"
+                        placeholder="Hier Text eingeben....">
+                </textarea>
+            </article>
+            <article class="input-actions-row">
+                <div class="category-chips">
+                    <label class="chip">
+                        <input type="radio" name="newPostKurs" value="TIA" checked>
+                        <span>TIA</span>
+                    </label>
+                    <label class="chip">
+                        <input type="radio" name="newPostKurs" value="TIS">
+                        <span>TIS</span>
+                    </label>
+                    <label class="chip">
+                        <input type="radio" name="newPostKurs" value="TIK">
+                        <span>TIK</span>
+                    </label>
+                </div>
+                <button type="submit" class="buttonForumNeu">Beitrag hochladen</button>
+            </article>
+        </section>
+
+        <section class="posts-container">
+            <h3 class="posts-title">Forum Beiträge:</h3>
+            <div id="postsList">
+            </div>
+        </section>
+    </div>
 
 
-<section class="Forum">
-    <h4 class="Topics"> Neu Topic: </h4>
-    <article class="ForumInput">
-        <input
-                type="text"
-                name="textForumTitel"
-                class="textForumTitel"
-                placeholder="Hier Titel eingeben...">
-        <textarea
-                name="textForumInhalt"
-                class="textForumInhalt"
-                placeholder="Hier Text eingeben....">
-        </textarea>
-    </article>
-    <button class="buttonForumNeu">
-        Beitrag hochladen
-    </button>
+    <aside class="right-sidebar">
+        <section class="nav-bar">
+            <article class="search-container">
+                <input type="text" id="forumSearch" placeholder="Suche Beiträge...">
+                <i class="fas fa-search search-icon"></i>
+            </article>
+            <article class="kurses">
+                <h3>Wähle einen Kurs:</h3>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="kurs" value="TIA" >
+                        TIA
+                    </label>
+                    <label>
+                        <input type="radio" name="kurs" value="TIS" >
+                        TIS
+                    </label>
+                    <label>
+                        <input type="radio" name="kurs" value="TIK">
+                        TIK
+                    </label>
+                    <label>
+                        <input type="radio" name="kurs" value="ALL" checked>
+                        ALL
+                    </label>
+                </div>
+            </article>
 
-    <article class="forumBeiträge">
-        <h4>Forum Beiträge:</h4>
-    </article>
+            <article class="aside-photo-container">
+                <img class="aside-foto" src="forumpage.png" alt="Forum Illustration">
+            </article>
+            <button type="button" class="buttonOben">Zurück nach oben</button>
+        </section>
+    </aside>
+</main>
 
-</section>
+
 <!--footer kontakt section-->
 <footer class="footerForum" id="kontaktForum">
     <section class="footerForum-container">
