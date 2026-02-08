@@ -10,7 +10,12 @@ const Topic = require('../models/Topic');
  */
 const getTopics = async (req, res, next) => {
     try {
-        const topics = await Topic.find().sort({ createdAt: -1 });
+        const { kurs } = req.query;
+        let query = {};
+        if (kurs && ['TIA', 'TIS', 'TIK'].includes(kurs)) {
+            query.kurs = kurs;
+        }
+        const topics = await Topic.find(query).sort({ createdAt: -1 });
         res.json(topics);
     } catch (error) {
         next(error);
@@ -27,16 +32,17 @@ const getTopics = async (req, res, next) => {
  */
 const createTopic = async (req, res, next) => {
     try {
-        const { title, content } = req.body;
+        const { title, content, kurs } = req.body;
 
-        if (!title || !content) {
+        if (!title || !content || !kurs) {
             res.status(400);
-            throw new Error('Titel und Inhalt sind Pflichtfelder');
+            throw new Error('Titel, Inhalt und Kurs sind Pflichtfelder');
         }
 
         const topic = await Topic.create({
             title,
-            content
+            content,
+            kurs
         });
 
         res.status(201).json(topic);
