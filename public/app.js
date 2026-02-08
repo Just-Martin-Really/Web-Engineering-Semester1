@@ -59,7 +59,7 @@ async function login(username, password) {
                 usernameField.value = '';
                 passwordField.value = '';
                 courseField.value = '';
-                window.location.href = "Forumpage.html";
+                window.location.href = "forumpage.html";
             }
         });
     }
@@ -85,7 +85,7 @@ async function login(username, password) {
 
             if (result.status === 200) {
                 saveAuthData(result.data.token, result.data.user);
-                window.location.href = "Forumpage.html";
+                window.location.href = "forumpage.html";
             }
         });
     }
