@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     async function loadTopics() {
         try {
-            const { data: topics } = await apiRequest("/api/topics");
+            const {data: topics} = await apiRequest("/api/topics");
 
             // Keep only the header "Forum Beiträge:"
             const header = forumContainer.querySelector("h4");
@@ -57,6 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error loading topics:", error);
         }
     }
+
     /**
      * Creates a new topic by sending the input data to the API.
      */
@@ -68,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         try {
-            const result = await apiRequest("/api/topics", "POST", { title, content }, token);
+            const result = await apiRequest("/api/topics", "POST", {title, content}, token);
             if (result.status === 201) {
                 titleInput.value = "";
                 contentInput.value = "";
@@ -92,25 +93,25 @@ document.addEventListener("DOMContentLoaded", () => {
     if (submitBtn) {
         submitBtn.addEventListener("click", createTopic);
 
-    // Logic for "Back to top" button
-    const backToTopBtn = document.querySelector(".buttonOben");
-    if (backToTopBtn) {
-        backToTopBtn.addEventListener("click", () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        // Logic for "Back to top" button
+        const backToTopBtn = document.querySelector(".buttonOben");
+        if (backToTopBtn) {
+            backToTopBtn.addEventListener("click", () => {
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+
+        // Logic for Logout button
+        const logoutBtn = document.querySelector(".buttonLogout");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                clearAuthData();
+                window.location.href = "index.html";
+            });
+        }
+
+        // Initial load
+        loadTopics();
+
     }
-
-    // Logic for Logout button
-    const logoutBtn = document.querySelector(".buttonLogout");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", () => {
-            clearAuthData();
-            window.location.href = "index.html";
-        });
-    }
-
-    // Initial load
-    loadTopics();
-
-    };
-}
+})
