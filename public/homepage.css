@@ -30,7 +30,43 @@ section {
     height: 80px;
     z-index: 1000;
     box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-sizing: border-box;
 }
+
+.left-header {
+    display: flex;       /* This puts items in a row */
+    align-items: center;
+    gap: 15px;
+}
+.left-header {
+    margin: 0;
+    white-space: nowrap; /* Keeps the text on one line */
+}
+
+.logo {
+    align-self: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #7979e8;
+    cursor: pointer;
+    align-items: center;
+}
+
+.title {
+    color: #7979e8;
+    font-size: 50px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+    text-align: center;
+}
+
 .header nav {
     height: 100%;
     display: flex;
@@ -38,13 +74,7 @@ section {
     justify-content: flex-start;
     padding-left: 20px;
 }
-.logo {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid #7979e8;
-}
+
 .header nav ul{
     display: flex;
     margin: 0;
