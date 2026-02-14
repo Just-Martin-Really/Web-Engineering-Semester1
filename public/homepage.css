@@ -42,8 +42,6 @@ section {
     display: flex;       /* This puts items in a row */
     align-items: center;
     gap: 15px;
-}
-.left-header {
     margin: 0;
     white-space: nowrap; /* Keeps the text on one line */
 }
@@ -63,7 +61,7 @@ section {
     color: #7A5CFF;
     font-size: 50px;
     font-weight: bold;
-    font-family: font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
     margin: 0;
     text-align: center;
 }
@@ -157,7 +155,7 @@ section {
     text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
     color: #7A5CFF;
     margin-bottom: 20px;
-    font-family: font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Space Grotesk', sans-serif;
 }
 
 /*Schriftgröße für Handys*/

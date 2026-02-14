@@ -5,8 +5,6 @@
 }
 html, body {
     height: 100%;
-    margin: 0;
-    padding: 0;
     font-family: 'Space Grotesk', sans-serif;}
 
 
@@ -56,11 +54,10 @@ body {
     display: flex;       /* This puts items in a row */
     align-items: center;
     gap: 15px;
-}
-.left-header {
     margin: 0;
     white-space: nowrap; /* Keeps the text on one line */
 }
+
 
 .logo {
     align-self: center;
@@ -279,7 +276,6 @@ body {
 .footer {
     text-align: center;
     border-top: 1px solid #eee;
-    padding-top: 20px;
     color: #888;
     font-size: 14px;
     background-color: #ffffff;
