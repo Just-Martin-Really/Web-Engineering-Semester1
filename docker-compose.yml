@@ -9,6 +9,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+    networks:
+      - app-network
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s
@@ -22,13 +24,32 @@ services:
       dockerfile: dockerfile
     restart: always
     ports:
-      - "3001:3001"  # ADD THIS LINE
+      - "3001:3001"
     environment:
+      # Database
       - MONGODB_URI=mongodb://mongodb:27017/mongo-app
-      - NODE_ENV=production
+      # Environment Mode - development for local Docker (no HTTPS enforcement)
+      - NODE_ENV=development
+      # JWT Token Secrets (from .env.docker)
+      - ACCESS_TOKEN_SECRET=docker-dev-access-secret-change-in-production-12345
+      - REFRESH_TOKEN_SECRET=docker-dev-refresh-secret-change-in-production-12345
+      - SESSION_SECRET=docker-dev-session-secret-change-in-production-12345
+      # Token Expiry
+      - ACCESS_TOKEN_EXPIRY=15m
+      - REFRESH_TOKEN_EXPIRY=7d
+      # Logging
+      - LOG_LEVEL=info
+      # CORS
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:3001,http://localhost:80
+      # Security
+      - ENFORCE_HTTPS=false
+      # Port
+      - PORT=3001
     depends_on:
       mongodb:
         condition: service_healthy
+    networks:
+      - app-network
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"]
       interval: 10s
@@ -47,6 +68,18 @@ services:
       app:
         condition: service_healthy
     restart: always
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   mongo-data:

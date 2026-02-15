@@ -1,22 +1,50 @@
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../middleware/authMiddleware');
+const {
+    generateAccessToken,
+    generateRefreshToken,
+    generateSessionMetadata,
+    ACCESS_TOKEN_EXPIRY,
+    REFRESH_TOKEN_EXPIRY
+} = require('./sessionUtils');
 
 /**
- * Generates a JWT token for a user.
- * 
- * @param {Object} user - The user object.
- * @param {string} user._id - The user's ID.
- * @param {string} user.username - The user's username.
- * @returns {string} The signed JWT token.
+ * Creates a complete token pair with session metadata
+ * Returns both access token (short-lived) and refresh token (long-lived)
+ * Also generates session metadata for tracking
+ *
+ * @param {Object} user - User document from database
+ * @param {Object} req - Express request (for session metadata)
+ * @returns {Object} Token pair and session info
+ */
+const generateTokenPair = (user, req) => {
+    const sessionMetadata = generateSessionMetadata(req);
+    const accessToken = generateAccessToken(user, sessionMetadata.sessionId);
+    const refreshToken = generateRefreshToken(user, sessionMetadata.sessionId);
+
+    return {
+        accessToken,
+        refreshToken,
+        sessionId: sessionMetadata.sessionId,
+        expiresIn: ACCESS_TOKEN_EXPIRY,
+        refreshExpiresIn: REFRESH_TOKEN_EXPIRY,
+        sessionMetadata
+    };
+};
+
+/**
+ * Legacy token generation for backward compatibility
+ * Can be gradually deprecated in favor of generateTokenPair
+ *
+ * @param {Object} user - User document
+ * @returns {string} JWT access token
  */
 const generateToken = (user) => {
-    return jwt.sign(
-        { id: user._id, username: user.username },
-        JWT_SECRET,
-        { expiresIn: '30d' }
-    );
+    // Use empty session ID for legacy compatibility
+    return generateAccessToken(user, 'legacy');
 };
 
 module.exports = {
-    generateToken
+    generateTokenPair,
+    generateToken,
+    ACCESS_TOKEN_EXPIRY,
+    REFRESH_TOKEN_EXPIRY
 };

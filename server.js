@@ -1,52 +1,197 @@
+require('dotenv').config(); // Load environment variables
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+
+// Security middleware
+const {
+    securityHeaders,
+    hppProtection,
+    addRequestId,
+    requestTimeout,
+    enforceHttps,
+    customSecurityHeaders
+} = require('./middleware/securityMiddleware');
+
+// Session middleware
+const { createSessionMiddleware } = require('./middleware/sessionMiddleware');
+
+// Error handler
 const { errorHandler } = require("./middleware/errorMiddleware");
+
+// Logging
+const { logger } = require('./utils/errorLogger');
+
+// Security configuration
+const { corsConfig } = require('./utils/securityConfig');
 
 const app = express();
 
-// More explicit CORS configuration
-app.use(cors({
-    origin: true, // Reflects the request origin
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+/**
+ * MIDDLEWARE STACK - Order is critical for security
+ * 1. Request ID for tracking
+ * 2. HTTPS enforcement
+ * 3. Security headers
+ * 4. CORS
+ * 5. Request parsing
+ * 6. Request timeout
+ * 7. Input sanitization
+ * 8. HTTP parameter pollution prevention
+ * 9. Session management
+ */
 
-// Middleware
-app.use(express.json());
+// Add request ID for tracking
+app.use(addRequestId);
+
+// Enforce HTTPS in production
+app.use(enforceHttps);
+
+// Security headers via Helmet
+app.use(securityHeaders);
+
+// Custom security headers
+app.use(customSecurityHeaders);
+
+// CORS configuration - environment-aware
+const corsOpts = process.env.NODE_ENV === 'production'
+    ? corsConfig.production
+    : corsConfig.development;
+
+app.use(cors(corsOpts));
+
+// Parse JSON requests
+app.use(express.json({ limit: '10kb' })); // Limit payload size to prevent DOS
+
+// Parse URL-encoded requests
 app.use(express.static("public"));
 
-// Health check endpoint
+// Request timeout to prevent slowloris attacks
+app.use(requestTimeout);
+
+// Note: mongo-sanitize removed - express-validator provides sufficient input validation
+// Input validation happens at route level with express-validator
+
+// Prevent HTTP Parameter Pollution
+app.use(hppProtection);
+
+/**
+ * MongoDB Connection
+ * Connects before session middleware (session store uses MongoDB)
+ */
+const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mongo-app";
+
+mongoose.connect(mongoURI)
+    .then(() => {
+        logger.info("MongoDB Connected to " + mongoURI);
+
+        // Initialize session middleware after DB connection
+        app.use(createSessionMiddleware(mongoURI));
+    })
+    .catch((err) => {
+        logger.error("MongoDB Connection Error: " + err.message);
+        process.exit(1);
+    });
+
+/**
+ * Health Check Endpoint
+ * Used by load balancers and monitoring systems
+ */
 app.get('/health', (req, res) => {
-    res.send('OK');
+    res.status(200).json({
+        status: 'OK',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+    });
 });
 
-// Mongodb verbinden
-const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mongo-app";
-mongoose.connect(mongoURI)
-    .then(() => console.log("MongoDB Connected to", mongoURI))
-    .catch((err) => console.log("MongoDB Connection Error:", err));
-
-// Routes
+/**
+ * API Routes
+ * All routes go through the middleware stack above
+ */
 app.use('/api', require('./routes/authRoutes'));
 app.use('/api/topics', require('./routes/topicRoutes'));
 
-// Error Handler Middleware
+/**
+ * 404 Handler
+ * For unmatched routes
+ */
+app.use((req, res) => {
+    logger.warn('Route not found', {
+        requestId: req.id,
+        path: req.path,
+        method: req.method
+    });
+
+    res.status(404).json({
+        success: false,
+        message: 'Route nicht gefunden',
+        path: req.path,
+        requestId: req.id
+    });
+});
+
+/**
+ * Error Handler Middleware
+ * Must be last in middleware chain
+ * Catches all errors thrown by routes and middleware
+ */
 app.use(errorHandler);
 
-// Server starten
-const PORT = 3001;
+/**
+ * Server Startup
+ * Listens on specified port
+ */
+const PORT = process.env.PORT || 3001;
 const server = app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server läuft auf http://0.0.0.0:${PORT}`);
-    console.log(`🕒 Started at: ${new Date().toISOString()}`);
+    logger.info(`✅ Server läuft auf http://0.0.0.0:${PORT}`);
+    logger.info(`🕒 Started at: ${new Date().toISOString()}`);
+    logger.info(`📋 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
-// Add error handling
+/**
+ * Server Error Handler
+ * Catches any errors that occur during server operation
+ */
 server.on('error', (error) => {
-    console.error('❌ Server error:', error);
+    logger.error('❌ Server error: ' + error.message, {
+        stack: error.stack
+    });
 });
 
-process.on('uncaughtException', (error) => {
-    console.error('💥 Uncaught exception:', error);
+/**
+ * Graceful Shutdown
+ * Closes connections when process terminates
+ */
+process.on('SIGTERM', () => {
+    logger.info('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+        logger.info('HTTP server closed');
+        mongoose.connection.close();
+        process.exit(0);
+    });
 });
+
+/**
+ * Uncaught Exception Handler
+ * Catches any unhandled errors
+ */
+process.on('uncaughtException', (error) => {
+    logger.error('💥 Uncaught exception: ' + error.message, {
+        stack: error.stack
+    });
+    // In production, you might want to exit the process here
+    // process.exit(1);
+});
+
+/**
+ * Unhandled Promise Rejection Handler
+ * Catches unhandled promise rejections
+ */
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('⚠️ Unhandled Rejection: ' + reason, {
+        promise: promise.toString()
+    });
+});
+
+module.exports = app;

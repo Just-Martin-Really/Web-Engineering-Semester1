@@ -49,11 +49,15 @@ async function login(username, password) {
             console.log('📝 Form data:', { firstname, lastname, username, password, course });
 
             const result = await registration(firstname, lastname, username, password, course);
+            const { status, body, payload } = unwrapApiResponse(result);
             console.log('📨 Server response:', result);
-            alert(result.data.message);
+            alert(body?.message ?? 'Unbekannte Serverantwort');
 
-            if (result.status === 201) {
-                saveAuthData(result.data.token, result.data.user);
+            if (status === 201 && payload) {
+                // Save both access and refresh tokens from standardized API format
+                saveAuthData(payload.accessToken, payload.user);
+                // Also save refresh token for later use
+                localStorage.setItem('refreshToken', payload.refreshToken);
                 firstnameField.value = '';
                 lastnameField.value = '';
                 usernameField.value = '';
@@ -80,11 +84,15 @@ async function login(username, password) {
             console.log('📝 Login data:', { username, password });
 
             const result = await login(username, password);
+            const { status, body, payload } = unwrapApiResponse(result);
             console.log('📨 Server response:', result);
-            alert(result.data.message);
+            alert(body?.message ?? 'Unbekannte Serverantwort');
 
-            if (result.status === 200) {
-                saveAuthData(result.data.token, result.data.user);
+            if (status === 200 && payload) {
+                // Save both access and refresh tokens from standardized API format
+                saveAuthData(payload.accessToken, payload.user);
+                // Also save refresh token for later use
+                localStorage.setItem('refreshToken', payload.refreshToken);
                 window.location.href = "forumpage.html";
             }
         });

@@ -6,6 +6,8 @@ describe('API Health Check', () => {
   it('should return 200 OK for /health', async () => {
     const res = await request(baseUrl).get('/health');
     expect(res.status).to.equal(200);
-    expect(res.text).to.equal('OK');
+    expect(res.body).to.be.an('object');
+    expect(res.body).to.have.property('status', 'OK');
+    expect(res.body).to.have.property('timestamp');
   });
 });

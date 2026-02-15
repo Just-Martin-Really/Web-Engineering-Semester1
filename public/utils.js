@@ -67,3 +67,24 @@ async function apiRequest(url, method = 'GET', body = null, token = null) {
         throw error;
     }
 }
+
+/**
+ * Unwraps standardized API responses coming from the backend `successResponse` helper.
+ *
+ * `apiRequest` returns: { status, data } where `data` is the raw JSON body.
+ * Backend success responses are shaped as: { success, message, data: <payload>, ... }
+ *
+ * This helper keeps the frontend DRY by centralizing the response-shape knowledge.
+ *
+ * @param {{status: number, data: any}} apiResult
+ * @returns {{status: number, body: any, payload: any}}
+ */
+function unwrapApiResponse(apiResult) {
+    const body = apiResult?.data;
+    const payload = body && typeof body === 'object' ? body.data : null;
+    return {
+        status: apiResult?.status,
+        body,
+        payload
+    };
+}
