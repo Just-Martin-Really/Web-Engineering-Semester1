@@ -90,6 +90,6 @@ async function login(username, password) {
         });
     }
     else {
-        console.log('❌ Login button NOT found!'); // ADD THIS
+        console.log('❌ Login button NOT found!');
     }
 });
