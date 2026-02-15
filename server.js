@@ -1,47 +1,52 @@
 const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const { errorHandler } = require("./middleware/errorMiddleware");
+
 const app = express();
+
+// More explicit CORS configuration
+app.use(cors({
+    origin: true, // Reflects the request origin
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware
 app.use(express.json());
 app.use(express.static("public"));
 
-// In-Memory-Daten
-let topics = [];
-let nextTopicId = 1;
-
-// Test-API
-app.get("/api/health", (req, res) => {
-    res.json({status: "ok", message: "API läuft"});
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.send('OK');
 });
 
-// Topics abrufen
-app.get("/api/topics", (req, res) => {
-    res.json(topics);
-});
+// Mongodb verbinden
+const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mongo-app";
+mongoose.connect(mongoURI)
+    .then(() => console.log("MongoDB Connected to", mongoURI))
+    .catch((err) => console.log("MongoDB Connection Error:", err));
 
-// Topic erstellen
-app.post("/api/topics", (req, res) => {
-    const {title, content, anonymous} = req.body;
+// Routes
+app.use('/api', require('./routes/authRoutes'));
+app.use('/api/topics', require('./routes/topicRoutes'));
 
-    if (!title || !content) {
-        return res.status(400).json({
-            error: "Titel und Inhalt sind Pflichtfelder"
-        });
-    }
-
-    const topic = {
-        id: nextTopicId++,
-        title,
-        content,
-        anonymous: !!anonymous,
-        createdAt: new Date()
-    };
-
-    topics.push(topic);
-    res.status(201).json(topic);
-});
+// Error Handler Middleware
+app.use(errorHandler);
 
 // Server starten
-app.listen(3001, () => {
-    console.log("Server läuft auf http://localhost:3001");
+const PORT = 3001;
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server läuft auf http://0.0.0.0:${PORT}`);
+    console.log(`🕒 Started at: ${new Date().toISOString()}`);
+});
+
+// Add error handling
+server.on('error', (error) => {
+    console.error('❌ Server error:', error);
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('💥 Uncaught exception:', error);
 });

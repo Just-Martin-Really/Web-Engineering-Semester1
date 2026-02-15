@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Register</title>
+    <link href="registration.css" rel="stylesheet">
+</head>
+<body>
+<div class="page-wrapper">
+<!--nav sektion -->
+    <header class="header">
+        <section class="left-header">
+            <img src="logoreal.png" class="logo">
+            <h2 class="title">Fredforum</h2>
+        </section>
+        <section class="right-header">
+            <nav>
+                <ul>
+                    <li><a href="index.html#HomeThumbnail">Home</a></li>
+                    <li><a href="index.html#aboutUs">About Us</a></li>
+                    <li><a href="index.html#kontakt">Kontakt</a></li>
+                </ul>
+            </nav>
+        </section>
+    </header>
+    <main class="main-content">
+
+        <section class="left-info">
+            <h2>Fredforum verbindet dich mit anderen und erleichtert den Wissensaustausch.</h2>
+            <p>Gemeinsam lernen. Gemeinsam wachsen.</p>
+        </section>
+        <section class="registration-box">
+            <h2>Registrieren</h2>
+            <input
+                class="inputField"
+                id="textRegBenutzerVorname"
+                name="regVorname"
+                placeholder="Vorname"
+                required
+                type="text">
+            <input
+                class="inputField"
+                id="textRegBenutzerNachname"
+                name="regNachname"
+                placeholder="Nachname"
+                required
+                type="text">
+            <input
+                class="inputField"
+                id="textRegBenutzerName"
+                name="regBenutzername"
+                placeholder="Benutzername"
+                required
+                type="text">
+            <input
+                class="inputField"
+                id="textRegBenutzerPasswort"
+                name="regPasswort"
+                placeholder="Passwort"
+                required
+                type="password">
+            <input
+                class="inputField"
+                id="textRegBenutzerKurs"
+                name="regKurs"
+                placeholder="Kurs"
+                required
+                type="text">
+            <button class="buttonRegReg"
+                id="buttonRegReg"
+                type="submit">
+                Registrieren
+        </button>
+    </section>
+    </main>
+    <footer class="footer">
+    <section class="footer-bottom">
+        <article>
+            <p>Kursforum - designed by Amica Martin Stefan Tamara</p>
+        </article>
+    </section>
+    </footer>
+
+</div>
+<script src="utils.js"></script>
+<script src="app.js"></script>
+</body>

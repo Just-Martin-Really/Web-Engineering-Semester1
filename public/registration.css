@@ -1,0 +1,353 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+    font-family: 'Space Grotesk', sans-serif;}
+
+
+section {
+    scroll-margin-top: 80px;
+}
+body {
+    width: 100%;
+    margin: 0;
+    padding-top: 100px;
+    overflow-x: hidden;
+    background-color: #eee;
+}
+.page-wrapper {min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/*navigation bar in header*/
+.header {
+    background-color: white;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 80px;
+    z-index: 1000;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-sizing: border-box;
+    animation: headerDrop 0.7s ease forwards;
+    opacity: 0;
+}
+
+@keyframes headerDrop {
+    from { opacity: 0; transform: translateY(-20px);
+    }
+    to
+    { opacity: 1; transform: translateY(0);
+    }
+}
+
+.left-header {
+    display: flex;       /* This puts items in a row */
+    align-items: center;
+    gap: 15px;
+    margin: 0;
+    white-space: nowrap; /* Keeps the text on one line */
+}
+
+
+.logo {
+    align-self: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #7A5CFF;
+    cursor: pointer;
+    align-items: center;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logo:hover {
+    transform: rotate(360deg) scale(1.1);
+}
+.title {
+    color: #7A5CFF;
+    font-size: 50px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+    text-align: center;
+}
+
+.header nav {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.header nav ul{
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: 20px;
+}
+.header nav ul li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+    line-height: 80px;
+
+}
+.header nav ul li a{
+    position: relative;
+    padding: 0 20px;
+    transition: color 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+    font-size: 16px;
+    color: #7A5CFF;
+    font-weight: bold;
+    font-family: arial;
+}
+.header nav ul li a:hover{
+    position: relative;
+    transition: color 0.3s;
+}
+
+.header nav ul li a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 25px;
+    left: 20px;
+    background-color: #7A5CFF;
+    transition: width 0.3s;
+}
+
+.header nav ul li a:hover::after {
+    width: calc(100% - 40px);
+}
+
+/* MAIN CONTENT */
+.main-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 10%;
+
+}
+
+/* LEFT SIDE */
+.left-info {
+    max-width: 600px;
+}
+
+.left-info h2 {
+    font-size: 32px;
+    color: #7A5CFF;
+    font-weight: 600;
+    line-height: 1.3;
+    justify-content: center;
+    text-align: center;
+}
+
+.left-info p {
+    font-size: 22px;
+    color: #9C84FF;
+    margin-top: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.left-info {
+    animation: fadeSlideIn 0.8s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+
+
+
+/* Registration card */
+.registration-box {
+    background: #ffffff;
+    width: 100%;
+    max-width: 600px;
+    padding: 30px 35px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    margin: 0 auto;
+}
+
+.registration-box {
+    animation: popIn 0.6s ease forwards;
+    opacity: 0;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Title */
+.registration-box h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #7A5CFF;
+    font-size: 35px;
+    font-weight: bold;
+    font-family: sans-serif;
+}
+
+/* Input fields */
+.inputField {
+    width: 100%;
+    padding: 12px 14px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.inputField::placeholder {
+    color: #aaa;
+}
+
+.inputField:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+/* Register button */
+.buttonRegReg {
+    margin-top: 12px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    background: #7A5CFF;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+.buttonRegReg:hover {
+    opacity: 0.95;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-1px);
+}
+
+.buttonRegReg:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.footer {
+    text-align: center;
+    border-top: 1px solid #eee;
+    color: #888;
+    font-size: 14px;
+    background-color: #ffffff;
+    padding: 60px 10% 20px 10%;
+    border-top: 1px solid #eee;
+    font-family: Arial;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+
+    body {
+        padding-top: 80px;
+    }
+
+    /* Header */
+    .header {
+        height: 70px;
+        padding: 0 15px;
+    }
+
+    .logo {
+        width: 45px;
+        height: 45px;
+    }
+
+    .title {
+        font-size: 28px;
+    }
+
+    .header nav ul {
+        gap: 10px;
+    }
+
+    .header nav ul li a {
+        padding: 0 10px;
+        font-size: 14px;
+    }
+
+    /* Main content stack */
+    .main-content {
+        flex-direction: column;
+        padding: 20px;
+        gap: 30px;
+    }
+
+    .left-info h2 {
+        font-size: 24px;
+    }
+
+    .left-info p {
+        font-size: 18px;
+    }
+
+    /* Registration */
+    .registration-box {
+        padding: 25px 20px;
+    }
+
+    .registration-box h2 {
+        font-size: 26px;
+    }
+
+    .buttonRegReg {
+        padding: 15px;
+    }
+
+    /* Footer */
+    .footer {
+        padding: 30px 20px 15px 20px;
+        font-size: 13px;
+    }
+}
+
+

@@ -1,0 +1,526 @@
+/* CSS */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Space Grotesk', sans-serif;
+    color: #7A5CFF;
+
+}
+
+html {
+    scroll-behavior: smooth;
+}
+/* Body Einstellungen */
+
+body{
+    width: 100%;
+    margin: 0;
+    padding-top: 80px;
+    overflow-x: hidden;
+    background-color: #eee;
+}
+
+.header2 {
+    background-color: white;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 80px;
+    z-index: 1000;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-sizing: border-box;
+}
+.left-section-header    {
+    display: flex;       /* This puts items in a row */
+    align-items: center;
+    gap: 15px;
+}
+.left-section-header h5 {
+    margin: 0;
+    white-space: nowrap; /* Keeps the text on one line */
+}
+.logo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #7A5CFF;
+    cursor: pointer;
+}
+
+.header2 h2 {
+    color: #7A5CFF;
+    font-size: 40px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 0;
+}
+
+.avatar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+
+.foto-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #7A5CFF;
+    cursor: pointer;
+}
+
+.buttonLogout{
+    background-color: #7A5CFF;
+    color: white;
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 6px;
+    height: 60px;
+    width: 140px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 25px;
+    transition: opacity 0.3s;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.buttonLogout:hover {
+    opacity: 0.8;
+}
+
+.buttonLogout:active {
+    opacity: 0.5;
+}
+#userDropdown {
+    display: none;
+    position: absolute;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    padding: 15px;
+    background: white;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    z-index: 1000;
+}
+.user-text p {
+    margin: 2px 0;
+    font-size: 16px;
+    font-family: 'Times New Roman', Times, serif;
+    color: #333;
+}
+
+.user-name {
+    color: #7A5CFF;
+    font-weight: normal;
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.user-email{
+    color: #7A5CFF;
+    font-weight: normal;
+    font-size: 18px;
+    font-family: 'Times New Roman', Times, serif;}
+
+.right-sidebar {
+    position: fixed;
+    right: 30px;
+    top: 100px;
+    width: 270px;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.search-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 2px solid #f0f0f0;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.search-container input:focus {
+    border-color: #7A5CFF;
+    box-shadow: 0 0 8px rgba(121, 121, 232, 0.2);
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    pointer-events: none;
+}
+
+.nav-bar {
+    background-color: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav-bar h3 {
+    margin-top: 0 0 15px 0;
+    font-size: 22px;
+    color: #7A5CFF;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Arial, sans-serif;
+    color: #7A5CFF;
+    cursor: pointer;
+    font-size: 16px;
+    width: fit-content;
+}
+
+.radio-group input[type="radio"] {
+    accent-color: #7A5CFF;
+}
+
+.radioButton input[type="radio"]:checked + label {
+    font-weight: bold;
+}
+
+.buttonOben {
+    width: 100%;
+    background-color: #7A5CFF;
+    color: white;
+    border: none;
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    transition: background 0.3s;
+}
+
+.buttonOben:hover {
+    opacity: 0.8;
+}
+
+.buttonOben:active {
+    opacity: 0.5;
+}
+
+@media (max-width: 1100px) {
+    .nav-bar {
+        display: none;
+    }
+}
+
+.aside-photo-container {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.aside-foto {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.aside-foto:hover {
+    transform: scale(1.05);
+}
+
+.container_forumpage{
+    display: block;
+    width: 100%;
+    padding-top: 20px;
+}
+
+
+.left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: calc(100% - 400px);
+    margin-left: 50px;
+}
+
+.Forum, .posts-container {
+    width: 100%;
+    padding: 30px;
+    margin-bottom: 30px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+}
+
+.Topics, .posts-title {
+    text-align: left;
+    color: #7A5CFF;
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    margin-left: 0px;
+}
+.ForumInput {
+    width: 100%;
+    background-color: transparent;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-sizing: border-box;
+}
+
+.textForumTitel,
+.textForumInhalt {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    box-sizing: border-box;
+    margin-top: 0;
+}
+
+.textForumInhalt {
+    min-height: 160px;
+    resize: vertical;
+}
+
+.textForumTitel:focus,
+.textForumInhalt:focus {
+    outline: none;
+    border-color: #7b7cf6;
+    box-shadow: 0 0 8px rgba(121, 121, 232, 0.2);
+}
+
+.input-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.category-chips {
+    display: flex;
+    gap: 10px;
+}
+
+.chip input[type="radio"] {
+    display: none;
+}
+
+.chip span {
+    display: inline-block;
+    padding: 10px 22px;
+    border: 2px solid #e0e0f0;
+    border-radius: 12px;
+    color: #a0a0c0;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background-color: #fcfcff;
+}
+
+.chip span:hover {
+    border-color: #7A5CFF;
+    color: #7A5CFF;
+}
+
+.chip input[type="radio"]:checked + span {
+    background-color: #7A5CFF;
+    border-color: #7A5CFF;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(121, 121, 232, 0.4);
+    transform: translateY(-2px);
+}
+
+.buttonForumNeu {
+    height: 50px;
+    width: 200px;
+    background-color: #7A5CFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: opacity 0.3s;
+}
+
+.buttonForumNeu:hover {
+    opacity: 0.9;
+}
+
+.buttonForumNeu:active {
+    opacity: 0.5;
+}
+
+
+
+.post-card {
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.post-card:last-child {
+    border-bottom: none;
+}
+
+
+.post-card h3 {
+    font-size: 18px;
+    color: #333366;
+    margin: 0 0 5px 0;
+    font-weight: normal;
+}
+
+
+.post-meta {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 10px;
+}
+
+
+.post-card p {
+    font-size: 14px;
+    color: #555;
+    margin: 5px 0;
+}
+.footerForum {
+    background-color: #ffffff;
+    padding: 40px 10% 20px 10%;
+    border-top: 1px solid #eee;
+    font-family: Arial;
+}
+
+.footerForum-container {
+    display: flex;
+    justify-content: center;
+    gap: 70px;
+    margin-bottom: 40px;
+}
+
+.footerForum-column h4 {
+    color: #0b1d36;
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.footerForum-column a,
+.footerForum-column ul li {
+    color: #7A5CFF;
+    text-decoration: none;
+    list-style: none;
+    margin-bottom: 10px;
+    display: block;
+    font-size: 16px;
+}
+
+.footerForum-column ul {
+    padding: 0;
+    margin: 0;
+}
+
+.footerForum-column a:hover {
+    text-decoration: underline;
+}
+
+.footerForum-bottom {
+    text-align: center;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+    color: #888;
+    font-size: 14px;
+}
+
+.footerForum-bottom a {
+    color: #0b1d36;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.forum-post {
+    border-bottom: 1px solid #ddd;
+    padding: 20px 0;
+    margin-bottom: 10px;
+}
+
+.forum-post h3 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.forum-post small {
+    color: #888;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.forum-post p {
+    white-space: pre-wrap;
+    color: #555;
+    line-height: 1.5;
+}
+
+/*für Handys*/
+@media (max-width: 600px) {
+    .footerForum-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+}

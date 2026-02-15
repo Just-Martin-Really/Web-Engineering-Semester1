@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Kursforum</title>
+    <script src="forumpage.js" defer></script>
+    <script src="utils.js"></script>
+    <link rel="stylesheet" href="forumpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+
+<header class="header2">
+    <section class="left-section-header">
+        <img src="logoreal.png" class="logo">
+        <h2> FRED FORUM</h2>
+    </section>
+
+    <section class="right-section-header">
+        <div class="avatar-wrapper">
+            <img class="foto-avatar" src="avatar.jpg">
+
+            <div id="userDropdown" class="dropdown-content">
+                <div class="user-info-top">
+                    <div class="user-text">
+                        <p style="margin-top: 10px;"><strong>Benutzername:</strong></p>
+                        <p class="user-username">fred.forum@student.local</p>
+                        <p><strong>Name:</strong></p>
+                        <p class="user-name">Fred_User</p>
+                        <p style="margin-top: 10px;"><strong>Kurs:</strong></p>
+                        <p class="user-course"><strong>TI</strong></p>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="buttonLogout"> Log-Out</button>
+        </div>
+    </section>
+</header>
+
+
+<main class="container_forumpage">
+    <div class="left-section">
+        <section class="Forum">
+            <h3 class="Topics"> Neu Topic: </h3>
+            <article class="ForumInput">
+                <input
+                        type="text"
+                        name="textForumTitel"
+                        class="textForumTitel"
+                        placeholder="Hier Titel eingeben...">
+                <textarea
+                        name="textForumInhalt"
+                        class="textForumInhalt"
+                        placeholder="Hier Text eingeben....">
+                </textarea>
+            </article>
+            <article class="input-actions-row">
+                <div class="category-chips">
+                    <label class="chip">
+                        <input type="radio" name="newPostKurs" value="TIA" checked>
+                        <span>TIA</span>
+                    </label>
+                    <label class="chip">
+                        <input type="radio" name="newPostKurs" value="TIS">
+                        <span>TIS</span>
+                    </label>
+                    <label class="chip">
+                        <input type="radio" name="newPostKurs" value="TIK">
+                        <span>TIK</span>
+                    </label>
+                </div>
+                <button type="submit" class="buttonForumNeu">Beitrag hochladen</button>
+            </article>
+        </section>
+
+        <section class="posts-container">
+            <h3 class="posts-title">Forum Beiträge:</h3>
+            <div id="postsList">
+            </div>
+        </section>
+    </div>
+
+
+    <aside class="right-sidebar">
+        <section class="nav-bar">
+            <article class="search-container">
+                <input type="text" id="forumSearch" placeholder="Suche Beiträge...">
+                <i class="fas fa-search search-icon"></i>
+            </article>
+            <article class="kurses">
+                <h3>Wähle einen Kurs:</h3>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="kurs" value="TIA" >
+                        TIA
+                    </label>
+                    <label>
+                        <input type="radio" name="kurs" value="TIS" >
+                        TIS
+                    </label>
+                    <label>
+                        <input type="radio" name="kurs" value="TIK">
+                        TIK
+                    </label>
+                    <label>
+                        <input type="radio" name="kurs" value="ALL" checked>
+                        ALL
+                    </label>
+                </div>
+            </article>
+
+            <article class="aside-photo-container">
+                <img class="aside-foto" src="forumpage.png" alt="Forum Illustration">
+            </article>
+            <button type="button" class="buttonOben">Zurück nach oben</button>
+        </section>
+    </aside>
+</main>
+
+
+<!--footer kontakt section-->
+<footer class="footerForum" id="kontaktForum">
+    <section class="footerForum-container">
+        <article class="footerForum-column">
+            <h4>Contact Us On:</h4>
+            <p>065 954 398</p>
+        </article>
+    </section>
+
+        <section class="footerForum-bottom">
+            <article>
+                <p>Kursforum - designed by Killers</p>
+            </article>
+        </section>
+</footer>
+</body>
+
