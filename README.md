@@ -252,3 +252,12 @@ The project uses **Mocha** (test runner), **Chai** (assertions), and **Supertest
   npm test
   ```
   *Note: If running tests locally, ensure the server is active on port 3001.*
+---
+
+installation:
+
+g clone
+
+npm install
+
+npm start

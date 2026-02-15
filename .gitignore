@@ -91,3 +91,5 @@ http-client.private.env.json
 
 .junie/
 
+/node_modules/
+.idea/*
