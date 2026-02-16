@@ -80,6 +80,8 @@ const corsConfig = {
  * Helmet configuration for HTTP security headers
  * Protects against various attacks (clickjacking, XSS, etc.)
  */
+const isProduction = process.env.NODE_ENV === 'production';
+
 const helmetConfig = {
     contentSecurityPolicy: {
         directives: {
@@ -87,7 +89,13 @@ const helmetConfig = {
             scriptSrc: ["'self'", "'unsafe-inline'"], // Adjust based on needs
             styleSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", 'data:', 'https:'],
-            connectSrc: ["'self'"]
+            connectSrc: ["'self'"],
+
+            // IMPORTANT (local dev):
+            // `upgrade-insecure-requests` can cause browsers to rewrite http->https subrequests.
+            // Combined with HSTS this can make Safari/Edge unable to reach http://localhost.
+            // Helmet may still emit the directive unless we explicitly disable it.
+            upgradeInsecureRequests: isProduction ? [] : null
         }
     },
     frameguard: {
@@ -98,11 +106,16 @@ const helmetConfig = {
     referrerPolicy: {
         policy: 'strict-origin-when-cross-origin' // Control referrer information
     },
-    hsts: {
-        maxAge: 31536000, // 1 year
-        includeSubDomains: true,
-        preload: true
-    }
+
+    // IMPORTANT (local dev): Never send HSTS on http://localhost.
+    // Some browsers cache HSTS and will then force https://localhost which breaks local Docker.
+    hsts: isProduction
+        ? {
+            maxAge: 31536000, // 1 year
+            includeSubDomains: true,
+            preload: true
+        }
+        : false
 };
 
 /**
@@ -135,4 +148,3 @@ module.exports = {
     passwordRequirements,
     accountLockoutConfig
 };
-
