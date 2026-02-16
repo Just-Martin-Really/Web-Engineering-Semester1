@@ -1,0 +1,45 @@
+extends layout
+
+block head
+  link(rel="stylesheet", href="/registration.css")
+
+block content
+  .page-wrapper
+    // nav sektion
+    header.header
+      section.left-header
+        img.logo(src="/logoreal.png")
+        h2.title Fredforum
+      section.right-header
+        nav
+          ul
+            li
+              a(href="/#HomeThumbnail") Home
+            li
+              a(href="/#aboutUs") About Us
+            li
+              a(href="/#kontakt") Kontakt
+
+    main.main-content
+      section.left-info
+        h2 Fredforum verbindet dich mit anderen und erleichtert den Wissensaustausch.
+        p Gemeinsam lernen. Gemeinsam wachsen.
+
+      section.registration-box
+        h2 Registrieren
+        form#registrationForm
+          input#textRegBenutzerVorname.inputField(type="text", name="regVorname", placeholder="Vorname", required)
+          input#textRegBenutzerNachname.inputField(type="text", name="regNachname", placeholder="Nachname", required)
+          input#textRegBenutzerName.inputField(type="text", name="regBenutzername", placeholder="Benutzername", required)
+          input#textRegBenutzerPasswort.inputField(type="password", name="regPasswort", placeholder="Passwort", required)
+          input#textRegBenutzerKurs.inputField(type="text", name="regKurs", placeholder="Kurs", required)
+          button#buttonRegReg.buttonRegReg(type="submit") Registrieren
+
+    footer.footer
+      section.footer-bottom
+        article
+          p Kursforum - designed by Amica Martin Stefan Tamara
+
+  script(src="/utils.js")
+  script(src="/app.js")
+

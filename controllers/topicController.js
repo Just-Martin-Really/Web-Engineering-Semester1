@@ -31,6 +31,8 @@ const getTopics = async (req, res, next) => {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limitNum)
+            .populate('author', 'username')
+            .populate('comments.author', 'username')
             .lean(); // Use lean() for read-only performance
 
         const total = await Topic.countDocuments(query);
@@ -195,9 +197,48 @@ const deleteTopic = async (req, res, next) => {
     }
 };
 
+/**
+ * @desc    Add a comment to a topic (embedded comment MVP)
+ * @route   POST /api/topics/:id/comments
+ * @access  Private
+ */
+const addComment = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        const { content } = req.body;
+
+        const topic = await Topic.findById(id);
+        if (!topic) {
+            return next(new Error('Thema nicht gefunden'));
+        }
+
+        topic.comments.push({
+            content: content.trim(),
+            author: userId
+        });
+
+        await topic.save();
+
+        // Populate just enough for the client to show immediately
+        await topic.populate('comments.author', 'username');
+
+        const response = successResponse(
+            topic,
+            'Kommentar erfolgreich erstellt',
+            201
+        );
+
+        res.status(201).json(response);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getTopics,
     createTopic,
     updateTopic,
-    deleteTopic
+    deleteTopic,
+    addComment
 };

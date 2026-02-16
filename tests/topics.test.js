@@ -4,6 +4,7 @@ const baseUrl = 'http://localhost:3001';
 
 describe('Topics API', () => {
     let token;
+    let createdTopicId;
 
     // Username must be 3-20 characters.
     const unique = Math.random().toString(36).slice(2, 8);
@@ -63,6 +64,35 @@ describe('Topics API', () => {
         expect(res.body.data).to.have.property('content', testTopic.content);
         expect(res.body.data).to.have.property('_id');
         expect(res.body.data).to.have.property('createdAt');
+
+        createdTopicId = res.body.data._id;
+    });
+
+    it('should add a comment to a topic and expose it in GET /api/topics', async () => {
+        expect(createdTopicId, 'Expected created topic id from createTopic test').to.be.a('string');
+
+        const commentRes = await request(baseUrl)
+            .post(`/api/topics/${createdTopicId}/comments`)
+            .set('X-Test-Run', '1')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ content: 'Mein erster Kommentar' });
+
+        expect(commentRes.status).to.equal(201);
+        expect(commentRes.body).to.have.property('success', true);
+        expect(commentRes.body?.data?.comments).to.be.an('array');
+        expect(commentRes.body.data.comments.length).to.be.greaterThan(0);
+
+        const latest = commentRes.body.data.comments[commentRes.body.data.comments.length - 1];
+        expect(latest).to.have.property('content', 'Mein erster Kommentar');
+
+        // Now verify GET /api/topics returns embedded comments
+        const listRes = await request(baseUrl).get('/api/topics');
+        expect(listRes.status).to.equal(200);
+
+        const found = listRes.body.data.find(t => String(t._id) === String(createdTopicId));
+        expect(found, 'Expected created topic in GET /api/topics list').to.not.be.undefined;
+        expect(found.comments).to.be.an('array');
+        expect(found.comments.some(c => c.content === 'Mein erster Kommentar')).to.be.true;
     });
 
     it('should return error if title is missing', async () => {

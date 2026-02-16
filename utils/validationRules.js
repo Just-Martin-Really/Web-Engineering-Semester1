@@ -90,6 +90,15 @@ const topicContentValidation = body('content')
     .withMessage('Inhalt muss zwischen 10 und 10000 Zeichen lang sein');
 
 /**
+ * Comment content validation rules
+ * - 1-1000 characters
+ */
+const commentContentValidation = body('content')
+    .trim()
+    .isLength({ min: 1, max: 1000 })
+    .withMessage('Kommentar muss zwischen 1 und 1000 Zeichen lang sein');
+
+/**
  * Middleware to handle validation errors
  * Extracts validation errors and throws ValidationError
  * This is called after validation middleware to check for errors
@@ -140,6 +149,13 @@ const topicValidation = [
         .withMessage('Kurs muss TIA, TIS oder TIK sein')
 ];
 
+/**
+ * Composable validation chains for adding a comment
+ */
+const commentValidation = [
+    commentContentValidation
+];
+
 module.exports = {
     // Individual validators
     usernameValidation,
@@ -149,6 +165,7 @@ module.exports = {
     courseValidation,
     topicTitleValidation,
     topicContentValidation,
+    commentContentValidation,
 
     // Handlers
     handleValidationErrors,
@@ -156,5 +173,6 @@ module.exports = {
     // Composable chains
     registrationValidation,
     loginValidation,
-    topicValidation
+    topicValidation,
+    commentValidation
 };

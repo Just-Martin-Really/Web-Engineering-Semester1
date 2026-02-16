@@ -51,7 +51,7 @@ async function login(username, password) {
             const result = await registration(firstname, lastname, username, password, course);
             const { status, body, payload } = unwrapApiResponse(result);
             console.log('📨 Server response:', result);
-            alert(body?.message ?? 'Unbekannte Serverantwort');
+            alert(buildUserAlertMessage(body));
 
             if (status === 201 && payload) {
                 // Save both access and refresh tokens from standardized API format
@@ -63,7 +63,7 @@ async function login(username, password) {
                 usernameField.value = '';
                 passwordField.value = '';
                 courseField.value = '';
-                window.location.href = "forumpage.html";
+                window.location.href = "/forum";
             }
         });
     }
@@ -71,31 +71,42 @@ async function login(username, password) {
         console.log('❌ Register button NOT found!');
     }
 
-    // Login-Button
+    /**
+     * Shared login handler (used for both click and form submit).
+     */
+    async function handleLoginSubmit(e) {
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+        const username = document.getElementById('textLoginBenutzerName')?.value;
+        const password = document.getElementById('textLoginBenutzerPasswort')?.value;
+
+        console.log('📝 Login data:', { username, password });
+
+        const result = await login(username, password);
+        const { status, body, payload } = unwrapApiResponse(result);
+        console.log('📨 Server response:', result);
+        alert(buildUserAlertMessage(body));
+
+        if (status === 200 && payload) {
+            // Save both access and refresh tokens from standardized API format
+            saveAuthData(payload.accessToken, payload.user);
+            // Also save refresh token for later use
+            localStorage.setItem('refreshToken', payload.refreshToken);
+            window.location.href = "/forum";
+        }
+    }
+
+    // Login form submit (Enter key)
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLoginSubmit);
+    }
+
+    // Login-Button (keep existing behavior)
     const loginBtn = document.getElementById('buttonLogin');
     console.log('🔍 Login button:', loginBtn);
     if (loginBtn) {
-        loginBtn.addEventListener('click', async (e) => {
-            console.log('🔥 LOGIN CLICKED!');
-            e.preventDefault();
-            const username = document.getElementById('textLoginBenutzerName').value;
-            const password = document.getElementById('textLoginBenutzerPasswort').value;
-
-            console.log('📝 Login data:', { username, password });
-
-            const result = await login(username, password);
-            const { status, body, payload } = unwrapApiResponse(result);
-            console.log('📨 Server response:', result);
-            alert(body?.message ?? 'Unbekannte Serverantwort');
-
-            if (status === 200 && payload) {
-                // Save both access and refresh tokens from standardized API format
-                saveAuthData(payload.accessToken, payload.user);
-                // Also save refresh token for later use
-                localStorage.setItem('refreshToken', payload.refreshToken);
-                window.location.href = "forumpage.html";
-            }
-        });
+        loginBtn.addEventListener('click', handleLoginSubmit);
     }
     else {
         console.log('❌ Login button NOT found!');

@@ -1,0 +1,17 @@
+extends layout
+
+block head
+  style.
+    body { background:#eee; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 40px; }
+    .card { max-width: 720px; margin: 0 auto; background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    h1 { margin: 0 0 10px; color: #442bd4; }
+    p { margin: 0 0 14px; color: #333; }
+    a { color:#7A5CFF; font-weight: 800; text-decoration: underline; }
+
+block content
+  .card
+    h1 404 – Seite nicht gefunden
+    p Die Seite „#{path}“ gibt es hier nicht.
+    p
+      a(href="/") Zur Startseite
+

@@ -1,5 +1,6 @@
 require('dotenv').config(); // Load environment variables
 
+const path = require('path');
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -27,6 +28,10 @@ const { logger } = require('./utils/errorLogger');
 const { corsConfig } = require('./utils/securityConfig');
 
 const app = express();
+
+// View engine (Pug) – required by assignment
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 /**
  * MIDDLEWARE STACK - Order is critical for security
@@ -63,7 +68,10 @@ app.use(cors(corsOpts));
 // Parse JSON requests
 app.use(express.json({ limit: '10kb' })); // Limit payload size to prevent DOS
 
-// Parse URL-encoded requests
+// Page routes (must be before static to ensure Pug is actually used)
+app.use('/', require('./routes/pageRoutes'));
+
+// Static assets (CSS/JS/images)
 app.use(express.static("public"));
 
 // Request timeout to prevent slowloris attacks
@@ -123,12 +131,18 @@ app.use((req, res) => {
         method: req.method
     });
 
-    res.status(404).json({
-        success: false,
-        message: 'Route nicht gefunden',
-        path: req.path,
-        requestId: req.id
-    });
+    // API: keep JSON contract
+    if (req.path.startsWith('/api')) {
+        return res.status(404).json({
+            success: false,
+            message: 'Route nicht gefunden',
+            path: req.path,
+            requestId: req.id
+        });
+    }
+
+    // Browser: user-friendly HTML
+    return res.status(404).render('404', { title: 'Seite nicht gefunden', path: req.path });
 });
 
 /**
@@ -143,34 +157,38 @@ app.use(errorHandler);
  * Listens on specified port
  */
 const PORT = process.env.PORT || 3001;
-const server = app.listen(PORT, '0.0.0.0', () => {
-    logger.info(`✅ Server läuft auf http://0.0.0.0:${PORT}`);
-    logger.info(`🕒 Started at: ${new Date().toISOString()}`);
-    logger.info(`📋 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
 
-/**
- * Server Error Handler
- * Catches any errors that occur during server operation
- */
-server.on('error', (error) => {
-    logger.error('❌ Server error: ' + error.message, {
-        stack: error.stack
+let server;
+if (require.main === module) {
+    server = app.listen(PORT, '0.0.0.0', () => {
+        logger.info(`✅ Server läuft auf http://0.0.0.0:${PORT}`);
+        logger.info(`🕒 Started at: ${new Date().toISOString()}`);
+        logger.info(`📋 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
-});
 
-/**
- * Graceful Shutdown
- * Closes connections when process terminates
- */
-process.on('SIGTERM', () => {
-    logger.info('SIGTERM signal received: closing HTTP server');
-    server.close(() => {
-        logger.info('HTTP server closed');
-        mongoose.connection.close();
-        process.exit(0);
+    /**
+     * Server Error Handler
+     * Catches any errors that occur during server operation
+     */
+    server.on('error', (error) => {
+        logger.error('❌ Server error: ' + error.message, {
+            stack: error.stack
+        });
     });
-});
+
+    /**
+     * Graceful Shutdown
+     * Closes connections when process terminates
+     */
+    process.on('SIGTERM', () => {
+        logger.info('SIGTERM signal received: closing HTTP server');
+        server.close(() => {
+            logger.info('HTTP server closed');
+            mongoose.connection.close();
+            process.exit(0);
+        });
+    });
+}
 
 /**
  * Uncaught Exception Handler

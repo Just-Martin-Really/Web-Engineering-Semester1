@@ -5,13 +5,15 @@ const { generalLimiter } = require('../middleware/rateLimitMiddleware');
 const { asyncHandler } = require('../middleware/validationMiddleware');
 const {
     topicValidation,
-    handleValidationErrors
+    handleValidationErrors,
+    commentValidation
 } = require('../utils/validationRules');
 const {
     getTopics,
     createTopic,
     updateTopic,
-    deleteTopic
+    deleteTopic,
+    addComment
 } = require('../controllers/topicController');
 
 /**
@@ -61,6 +63,20 @@ router.delete(
     protect,
     generalLimiter,
     asyncHandler(deleteTopic)
+);
+
+/**
+ * POST /api/topics/:id/comments
+ * Add a comment to a topic (embedded comments MVP)
+ * Requires authentication
+ */
+router.post(
+    '/:id/comments',
+    protect,
+    generalLimiter,
+    commentValidation,
+    asyncHandler(handleValidationErrors),
+    asyncHandler(addComment)
 );
 
 module.exports = router;

@@ -88,3 +88,33 @@ function unwrapApiResponse(apiResult) {
         payload
     };
 }
+
+/**
+ * Builds a user-friendly message from standardized backend responses.
+ *
+ * Backend error shape: { success:false, message, errorCode, details? }
+ * For ValidationError, `details` is an array like: [{ field, message, value }].
+ *
+ * @param {any} body
+ * @returns {string}
+ */
+function buildUserAlertMessage(body) {
+    if (!body || typeof body !== 'object') return 'Unbekannte Serverantwort';
+
+    const base = typeof body.message === 'string' && body.message.trim().length
+        ? body.message.trim()
+        : 'Fehler';
+
+    const details = Array.isArray(body.details) ? body.details : [];
+    if (!details.length) return base;
+
+    const lines = details
+        .map(d => {
+            const field = d?.field ? String(d.field) : 'Feld';
+            const msg = d?.message ? String(d.message) : 'Ungültiger Wert';
+            return `• ${field}: ${msg}`;
+        })
+        .join('\n');
+
+    return `${base}\n${lines}`;
+}
