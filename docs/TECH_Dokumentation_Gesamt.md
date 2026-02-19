@@ -14,10 +14,11 @@
 10. Forum-Funktionalität: Topics, Filter/Suche, Pagination
 11. Forum-Funktionalität: Autoren, Löschen, Kommentare (embedded)
 12. Tests: Mocha/Chai/Supertest und Docker-Testlauf
-13. Installationsanleitung
-14. Programmablauf (Flowchart)
-15. Glossar (Stichworte)
-16. Literatur- und Hilfsmittelverzeichnis_
+13. Seeds: Vorbefüllung der Datenbank mit Beispiel-Usern und Topics
+14. Installationsanleitung
+15. Programmablauf (Flowchart)
+16. Glossar (Stichworte)
+17. Literatur- und Hilfsmittelverzeichnis_
 
 ---
 
@@ -232,7 +233,13 @@ Wichtig ist die Ausführung im realistischen Setup. Deshalb existiert in `packag
 
 ---
 
-## 13. Installationsanleitung
+## 13. Seeds: Vorbefüllung der Datenbank mit Beispiel-Usern und Topics
+
+Wir haben `seedTopics.js`, ein Skript, das die MongoDB mit Beispiel-Usern und Topics füllt. Das ist nützlich, damit man direkt nach dem Starten der Anwendung Inhalte zum Testen und Anschauen hat. 
+Es werden drei User mit unterschiedlichen Kursen angelegt, sowie mehrere Topics mit verschiedenen Autoren und Kursen.
+
+---
+## 14. Installationsanleitung
 
 Voraussetzung ist Docker Desktop. Danach kann das Projekt lokal mit Docker Compose gestartet werden. Für Abgabe und Wiederholbarkeit ist der Docker-Weg die Referenz.
 
@@ -255,7 +262,7 @@ npm run test:docker
 
 ---
 
-## 14. Programmablauf (Flowchart)
+## 15. Programmablauf (Flowchart)
 
 ```mermaid
 flowchart TD
@@ -274,7 +281,7 @@ flowchart TD
 
 ---
 
-## 15. Glossar (Stichworte)
+## 16. Glossar (Stichworte)
 
 - **Access Token**: Kurzlebiges JWT für API-Requests.
 - **Bearer Token**: Token-Übertragung über `Authorization: Bearer ...`.
@@ -352,6 +359,7 @@ flowchart TD
 - **sameSite Cookie**: Cookie-Regel zur CSRF-Reduktion.
 - **Sanitization**: Bereinigung von Eingaben (z. B. Trimming), um Risiken zu reduzieren.
 - **Schema**: Strukturdefinition für Dokumente (z. B. User/Topic).
+- **Seeds**: Vorbefüllte Daten, um die Funktionalität zu demonstrieren (hier: `seedTopics.js`).
 - **Secret**: Geheimer Wert (z. B. JWT-Secret), der nicht in Git gehört.
 - **Security Header**: HTTP-Header, die Browser-Sicherheitsverhalten steuern.
 - **Session**: Serverseitiger Zustand pro Nutzer (typisch über Cookie-ID referenziert).
