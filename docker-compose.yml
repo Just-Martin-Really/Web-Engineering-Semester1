@@ -45,6 +45,10 @@ services:
       - ENFORCE_HTTPS=false
       # Port
       - PORT=3001
+      # Demo data (optional)
+      - SEED_TOPICS=true
+      - SEED_TOPICS_ON_EMPTY_ONLY=false
+      - SEED_TOPICS_FILE=/app/seeds/topics.seed.json
     depends_on:
       mongodb:
         condition: service_healthy

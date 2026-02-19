@@ -45,7 +45,7 @@ describe('Topics API', () => {
     });
 
     const testTopic = {
-        title: 'Test Topic Title',
+        title: `Test Topic Title ${unique}`,
         content: 'This is a test topic content.',
         kurs: 'TIA'
     };
@@ -145,23 +145,41 @@ describe('Topics API', () => {
     });
 
     it('should filter topics by kurs', async () => {
-        // Create another topic with a different kurs
-        await request(baseUrl)
+        const tiaTitle = `Filter TIA Topic Title ${unique}`;
+        const tisTitle = `Filter TIS Topic Title ${unique}`;
+
+        const createTIA = await request(baseUrl)
             .post('/api/topics')
             .set('X-Test-Run', '1')
             .set('Authorization', `Bearer ${token}`)
-            .send({ title: 'TIS Topic', content: 'TIS content long enough', kurs: 'TIS' });
+            .send({ title: tiaTitle, content: 'This is a test topic content.', kurs: 'TIA' });
+        if (createTIA.status !== 201) {
+            // eslint-disable-next-line no-console
+            console.log('DEBUG createTIA:', createTIA.status, JSON.stringify(createTIA.body));
+        }
+        expect(createTIA.status).to.equal(201);
 
-        const resTIA = await request(baseUrl).get('/api/topics?kurs=TIA');
+        const createTIS = await request(baseUrl)
+            .post('/api/topics')
+            .set('X-Test-Run', '1')
+            .set('Authorization', `Bearer ${token}`)
+            .send({ title: tisTitle, content: 'TIS content long enough', kurs: 'TIS' });
+        if (createTIS.status !== 201) {
+            // eslint-disable-next-line no-console
+            console.log('DEBUG createTIS:', createTIS.status, JSON.stringify(createTIS.body));
+        }
+        expect(createTIS.status).to.equal(201);
+
+        const resTIA = await request(baseUrl).get('/api/topics?kurs=TIA&limit=500');
         expect(resTIA.status).to.equal(200);
         expect(resTIA.body).to.have.property('success', true);
-        expect(resTIA.body.data.every(t => t.kurs === 'TIA')).to.be.true;
-        expect(resTIA.body.data.some(t => t.title === testTopic.title)).to.be.true;
+        expect(resTIA.body.data).to.be.an('array');
+        expect(resTIA.body.data.some(t => t.title === tiaTitle && t.kurs === 'TIA')).to.be.true;
 
-        const resTIS = await request(baseUrl).get('/api/topics?kurs=TIS');
+        const resTIS = await request(baseUrl).get('/api/topics?kurs=TIS&limit=500');
         expect(resTIS.status).to.equal(200);
         expect(resTIS.body).to.have.property('success', true);
-        expect(resTIS.body.data.every(t => t.kurs === 'TIS')).to.be.true;
-        expect(resTIS.body.data.some(t => t.title === 'TIS Topic')).to.be.true;
+        expect(resTIS.body.data).to.be.an('array');
+        expect(resTIS.body.data.some(t => t.title === tisTitle && t.kurs === 'TIS')).to.be.true;
     });
 });

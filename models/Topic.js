@@ -15,6 +15,20 @@ const topicSchema = new mongoose.Schema({
     content: { type: String, required: true },
     kurs: { type: String, required: true, enum: ['TIA', 'TIS', 'TIK'] },
 
+    // Optional marker for demo/seed data (idempotent upserts)
+    seedKey: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
+
+    // Optional display-only author for seeded/demo topics (does not require a User)
+    seedAuthorName: {
+        type: String,
+        trim: true,
+        maxlength: 50
+    },
+
     // Author of the topic (set on creation)
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -28,6 +42,8 @@ const topicSchema = new mongoose.Schema({
             {
                 content: { type: String, required: true, trim: true },
                 author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+                // Optional display-only author for seeded/demo comments
+                seedAuthorName: { type: String, trim: true, maxlength: 50 },
                 createdAt: { type: Date, default: Date.now }
             }
         ],

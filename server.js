@@ -27,6 +27,9 @@ const { logger } = require('./utils/errorLogger');
 // Security configuration
 const { corsConfig } = require('./utils/securityConfig');
 
+// Demo data seeding (optional)
+const { seedTopicsIfEnabled } = require('./seeds/seedTopics');
+
 const app = express();
 
 // View engine (Pug) – required by assignment
@@ -90,8 +93,11 @@ app.use(hppProtection);
 const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mongo-app";
 
 mongoose.connect(mongoURI)
-    .then(() => {
+    .then(async () => {
         logger.info("MongoDB Connected to " + mongoURI);
+
+        // Optional demo data seeding (disabled by default)
+        await seedTopicsIfEnabled();
 
         // Initialize session middleware after DB connection
         app.use(createSessionMiddleware(mongoURI));
@@ -120,9 +126,9 @@ app.get('/health', (req, res) => {
 app.use('/api', require('./routes/authRoutes'));
 app.use('/api/topics', require('./routes/topicRoutes'));
 
-/**
- * 404 Handler
- * For unmatched routes
+/** Handler
+ For
+ * 404unmatched routes
  */
 app.use((req, res) => {
     logger.warn('Route not found', {

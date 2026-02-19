@@ -131,6 +131,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return 'Unbekannt';
     }
 
+    function getCommentAuthorName(comment) {
+        if (!comment) return 'Unbekannt';
+        if (typeof comment.seedAuthorName === 'string' && comment.seedAuthorName.trim()) return comment.seedAuthorName.trim();
+        return getAuthorUsername(comment.author);
+    }
+
     /**
      * Render a single comment.
      */
@@ -143,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const author = document.createElement('span');
         author.className = 'comment-author';
-        author.textContent = getAuthorUsername(comment?.author);
+        author.textContent = getCommentAuthorName(comment);
 
         const date = document.createElement('span');
         date.className = 'comment-date';
@@ -223,7 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const metaRow = document.createElement('div');
             metaRow.className = 'post-meta';
 
-            const topicAuthorUsername = getAuthorUsername(topic.author);
+            const topicAuthorUsername = topic.authorName || getAuthorUsername(topic.author);
 
             const topicAuthor = document.createElement('span');
             topicAuthor.className = 'post-author';

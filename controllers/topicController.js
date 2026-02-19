@@ -33,13 +33,22 @@ const getTopics = async (req, res, next) => {
             .limit(limitNum)
             .populate('author', 'username')
             .populate('comments.author', 'username')
-            .lean(); // Use lean() for read-only performance
+            .lean();
+
+        // Normalize author display name (real user preferred, seeded fallback)
+        const normalizedTopics = topics.map(t => {
+            const authorName = t?.author?.username || t?.seedAuthorName || 'Unbekannt';
+            return {
+                ...t,
+                authorName
+            };
+        });
 
         const total = await Topic.countDocuments(query);
 
         // Return paginated response
         const response = paginatedResponse(
-            topics,
+            normalizedTopics,
             total,
             pageNum,
             limitNum,

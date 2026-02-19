@@ -1,0 +1,101 @@
+[
+  {
+    "seedKey": "demo1",
+    "seedAuthorName": "Amica",
+    "title": "Anfrage: Zigarette",
+    "content": "Hat mir jemand eine Kippe?",
+    "kurs": "TIA",
+    "seedComment": {
+      "seedAuthorName": "Janis",
+      "content": "Ich dachte du rauchst nicht mehr? :D"
+    }
+  },
+  {
+    "seedKey": "demo2",
+    "seedAuthorName": "derkurssprecher",
+    "title": "Regeln für Nutzung des Forums",
+    "content": "Seid respektvoll, bleibt beim Thema und teilt keine sensiblen Daten.",
+    "kurs": "TIA",
+    "seedComment": {
+      "seedAuthorName": "Stefan",
+      "content": "Kann man so unterschreiben."
+    }
+  },
+  {
+    "seedKey": "demo3",
+    "seedAuthorName": "Enes",
+    "title": "Übrige Server",
+    "content": "Hey Leute, wenn jemand noch Server rumliegen hat, könnte ich die gut gebrauchen. Danke im Voraus!",
+    "kurs": "TIA",
+    "seedComment": {
+      "seedAuthorName": "derkurssprecher",
+      "content": "Ich hab noch einen alten Server, den ich nicht mehr brauche. Kannst du den haben, wenn du möchtest."
+    }
+  },
+  {
+    "seedKey": "demo4",
+    "seedAuthorName": "Deadshot9128",
+    "title": "Frage zur Abgabe",
+    "content": "Hi zusammen, bis wann genau ist die Abgabe heute und welche Dateien müssen wir im Upload dabei haben?",
+    "kurs": "TIA",
+    "seedComment": {
+      "seedAuthorName": "LiterallyStupid",
+      "content": "Deadline ist 23:59. Gib einfach alles ab, was du hast"
+    }
+  },
+  {
+    "seedKey": "demo5",
+    "seedAuthorName": "MoritzDerEchte",
+    "title": "Docker Compose: Container resetten",
+    "content": "Kurzer Tipp: Wenn sich die DB komisch verhält, hilft oft ein kompletter Reset der Volumes. Aber nur machen, wenn ihr Demo-Daten nicht braucht.",
+    "kurs": "TIA",
+    "seedComment": {
+      "seedAuthorName": "LarryWheels",
+      "content": "Guter Hinweis – vorher immer checken, ob Seed nur-on-empty aktiv ist."
+    }
+  },
+  {
+    "seedKey": "demo-tis1",
+    "seedAuthorName": "SuperMario",
+    "title": "SQL vs. NoSQL: Wann was?",
+    "content": "Kann jemand kurz erklären, wann man eher SQL und wann eher NoSQL nutzt? Mir geht’s um praktische Kriterien.",
+    "kurs": "TIS",
+    "seedComment": {
+      "seedAuthorName": "Helga",
+      "content": "Faustregel: Relationen/Transactions -> SQL, flexible Dokumente/Read-heavy -> NoSQL."
+    }
+  },
+  {
+    "seedKey": "demo-tis2",
+    "seedAuthorName": "ZeldaR34Lover",
+    "title": "ER-Modell: Kardinalitäten verstehen",
+    "content": "Ich hänge bei den Kardinalitäten (1:n, n:m). Hat jemand ein gutes Beispiel aus dem Alltag?",
+    "kurs": "TIS",
+    "seedComment": {
+      "seedAuthorName": "PokemonFan123",
+      "content": "Kurs->Studierende ist 1:n. Studierende<->Module ist n:m."
+    }
+  },
+  {
+    "seedKey": "demo-tik1",
+    "seedAuthorName": "tikstudent",
+    "title": "Netzwerk: Warum funktioniert localhost in manchen Browsern nicht?",
+    "content": "Bei einigen funktioniert localhost, bei anderen nicht. Welche typischen Ursachen gibt es (DNS, Proxy, Browser-Einstellungen)?",
+    "kurs": "TIK",
+    "seedComment": {
+      "seedAuthorName": "firefoxlover",
+      "content": "Proxy/VPN checken, IPv6 vs IPv4, und ob der Browser localhost anders auflöst."
+    }
+  },
+  {
+    "seedKey": "demo-tik2",
+    "seedAuthorName": "peterprogrammierprofi",
+    "title": "HTTP Basics: Statuscodes kurz zusammengefasst",
+    "content": "Ich verliere den Überblick: Was sind die wichtigsten Statuscodes, die wir kennen sollten (200/201/400/401/403/404/409/500)?",
+    "kurs": "TIK",
+    "seedComment": {
+      "seedAuthorName": "swaggydev",
+      "content": "200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict, 500 Server Error."
+    }
+  }
+]

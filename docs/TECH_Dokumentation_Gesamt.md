@@ -2,7 +2,7 @@
 
 ## Inhaltsangabe
 
-1. Projektziel und Rahmen
+1. _Projektziel und Rahmen
 2. Architektur und Komponenten (Docker, Nginx, App, MongoDB)
 3. Basis-Backend: Node.js und Express
 4. Persistenzschicht: MongoDB und Mongoose
@@ -17,7 +17,7 @@
 13. Installationsanleitung
 14. Programmablauf (Flowchart)
 15. Glossar (Stichworte)
-16. Literatur- und Hilfsmittelverzeichnis
+16. Literatur- und Hilfsmittelverzeichnis_
 
 ---
 
