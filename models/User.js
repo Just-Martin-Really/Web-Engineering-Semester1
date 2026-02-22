@@ -13,7 +13,7 @@ const { accountLockoutConfig } = require('../utils/securityConfig');
  * @typedef {Object} User
  * @property {string} firstname - User's first name
  * @property {string} lastname - User's last name
- * @property {string} username - Unique username (email)
+ * @property {string} username - Unique username
  * @property {string} password - Hashed password
  * @property {string} course - User's course
  * @property {number} failedLoginAttempts - Tracks failed login attempts
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Benutzername ist erforderlich'],
         unique: true,
-        sparse: true, // Allow null values but enforce uniqueness for non-null
+        sparse: true,
         trim: true,
         minlength: [3, 'Benutzername muss mindestens 3 Zeichen lang sein'],
         maxlength: [20, 'Benutzername darf maximal 20 Zeichen lang sein'],

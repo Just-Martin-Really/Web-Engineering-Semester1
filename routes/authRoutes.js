@@ -18,12 +18,12 @@ const {
 /**
  * POST /api/registration
  * Register a new user
- * Rate limited to 5 attempts per 15 minutes
+ * Rate limits apply
  * Input validation required
  */
 router.post(
     '/registration',
-    authLimiter, // Rate limit: 5 attempts per 15 min
+    authLimiter, // Rate limit
     registrationValidation, // Validate all fields
     asyncHandler(handleValidationErrors), // Handle validation errors
     asyncHandler(registerUser)
@@ -32,7 +32,7 @@ router.post(
 /**
  * POST /api/login
  * Authenticate a user
- * Rate limited to 5 failed attempts per 15 minutes
+ * Rate limits apply
  * Input validation required
  */
 router.post(
@@ -46,7 +46,7 @@ router.post(
 /**
  * POST /api/refresh
  * Refresh access token using refresh token
- * Rate limited to 10 attempts per 15 minutes
+ * Rate limits apply
  */
 router.post(
     '/refresh',

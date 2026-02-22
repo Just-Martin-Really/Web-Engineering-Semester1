@@ -32,22 +32,9 @@ const { seedTopicsIfEnabled } = require('./seeds/seedTopics');
 
 const app = express();
 
-// View engine (Pug) – required by assignment
+// View engine (Pug)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
-/**
- * MIDDLEWARE STACK - Order is critical for security
- * 1. Request ID for tracking
- * 2. HTTPS enforcement
- * 3. Security headers
- * 4. CORS
- * 5. Request parsing
- * 6. Request timeout
- * 7. Input sanitization
- * 8. HTTP parameter pollution prevention
- * 9. Session management
- */
 
 // Add request ID for tracking
 app.use(addRequestId);
@@ -69,19 +56,16 @@ const corsOpts = process.env.NODE_ENV === 'production'
 app.use(cors(corsOpts));
 
 // Parse JSON requests
-app.use(express.json({ limit: '10kb' })); // Limit payload size to prevent DOS
+app.use(express.json({ limit: '10kb' }));
 
-// Page routes (must be before static to ensure Pug is actually used)
+// Page routes
 app.use('/', require('./routes/pageRoutes'));
 
-// Static assets (CSS/JS/images)
+// Static assets
 app.use(express.static("public"));
 
 // Request timeout to prevent slowloris attacks
 app.use(requestTimeout);
-
-// Note: mongo-sanitize removed - express-validator provides sufficient input validation
-// Input validation happens at route level with express-validator
 
 // Prevent HTTP Parameter Pollution
 app.use(hppProtection);
@@ -119,17 +103,11 @@ app.get('/health', (req, res) => {
     });
 });
 
-/**
- * API Routes
- * All routes go through the middleware stack above
- */
+// API routes
 app.use('/api', require('./routes/authRoutes'));
 app.use('/api/topics', require('./routes/topicRoutes'));
 
-/** Handler
- For
- * 404unmatched routes
- */
+// Handler for 404 routes
 app.use((req, res) => {
     logger.warn('Route not found', {
         requestId: req.id,

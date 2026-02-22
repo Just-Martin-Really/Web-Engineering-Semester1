@@ -399,7 +399,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             lastItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
 
-                        // Hide textarea again after successful submit (natural single-comment flow)
                         setFormVisible(false);
                     } else if (status === 401) {
                         alert('Sitzung abgelaufen. Bitte erneut anmelden.');

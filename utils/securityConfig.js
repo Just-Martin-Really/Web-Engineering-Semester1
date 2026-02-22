@@ -68,7 +68,7 @@ const corsConfig = {
     },
 
     production: {
-        origin: process.env.ALLOWED_ORIGINS?.split(',') || ['https://yourdomain.com'],
+        origin: process.env.ALLOWED_ORIGINS?.split(',') || ['https://futuredomain.com'],
         credentials: true,
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowedHeaders: ['Content-Type', 'Authorization'],
@@ -91,10 +91,6 @@ const helmetConfig = {
             imgSrc: ["'self'", 'data:', 'https:'],
             connectSrc: ["'self'"],
 
-            // IMPORTANT (local dev):
-            // `upgrade-insecure-requests` can cause browsers to rewrite http->https subrequests.
-            // Combined with HSTS this can make Safari/Edge unable to reach http://localhost.
-            // Helmet may still emit the directive unless we explicitly disable it.
             upgradeInsecureRequests: isProduction ? [] : null
         }
     },
@@ -107,8 +103,6 @@ const helmetConfig = {
         policy: 'strict-origin-when-cross-origin' // Control referrer information
     },
 
-    // IMPORTANT (local dev): Never send HSTS on http://localhost.
-    // Some browsers cache HSTS and will then force https://localhost which breaks local Docker.
     hsts: isProduction
         ? {
             maxAge: 31536000, // 1 year

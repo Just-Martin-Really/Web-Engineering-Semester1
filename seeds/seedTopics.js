@@ -35,7 +35,7 @@ async function upsertSeedTopic(topic) {
     throw new Error('Seed topic is missing a valid seedKey');
   }
 
-  // Minimal validation to surface clear errors early (schema will validate too)
+  // Minimal validation to surface clear errors early
   if (!title || !content || !kurs) {
     throw new Error(`Seed topic '${seedKey}' must include title, content and kurs`);
   }

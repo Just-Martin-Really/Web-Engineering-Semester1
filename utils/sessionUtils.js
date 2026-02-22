@@ -1,8 +1,6 @@
 /**
  * Session Utilities
  * Handles session creation, validation, and management
- * Works with both JWT tokens and server-side session store (MongoDB)
- * Provides dual-layer authentication: JWT for stateless + sessions for stateful
  */
 
 const jwt = require('jsonwebtoken');
@@ -37,7 +35,7 @@ const generateAccessToken = (user, sessionId) => {
 
 /**
  * Generates a refresh token (long-lived, used to get new access tokens)
- * Only sent in secure HTTP-only cookies, never in URL or localStorage
+ * For now saved in localStorage, will be stored in HTTP-Cookies in prod
  * @param {Object} user - User document from database
  * @param {string} sessionId - Unique session identifier
  * @returns {string} Signed JWT refresh token
@@ -55,8 +53,9 @@ const generateRefreshToken = (user, sessionId) => {
 };
 
 /**
- * Generates session metadata (device fingerprint, IP tracking)
+ * Generates metadata (sessionId, ip, userAgent). Not wired into request flow.
  * Used to detect suspicious sessions and enforce security
+ * currently not really used, will be stored in HTTP-Cookies in prod
  * @param {Object} req - Express request object
  * @returns {Object} Session metadata
  */
@@ -121,7 +120,8 @@ const verifyRefreshToken = (token) => {
 
 /**
  * Validates session metadata for security
- * Checks if session matches expected IP/User-Agent to prevent session hijacking
+ * Could check if session matches expected IP/User-Agent to prevent session hijacking
+ * Currently not used, will be stored in HTTP-Cookies in prod
  * @param {Object} sessionData - Session data from store
  * @param {Object} req - Express request object
  * @returns {boolean} True if session is valid, throws error otherwise

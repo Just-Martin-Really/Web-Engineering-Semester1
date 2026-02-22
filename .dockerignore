@@ -28,9 +28,7 @@ logs
 /docs
 *.md
 
-# Tests
-# (Tests must be included in the image for `npm run test:docker`)
-# tests
-
 # Development
 mongo-app
+
+# DO NOT ADD TESTS TO THIS, THEY RUN IN DOCKER NOW

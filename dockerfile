@@ -12,7 +12,6 @@ RUN npm install
 COPY . .
 
 # Copy Docker environment file as .env for the container
-# This ensures the app has all required environment variables
 RUN if [ -f .env.docker ]; then cp .env.docker .env; fi
 
 # Create logs directory (for Winston logger)

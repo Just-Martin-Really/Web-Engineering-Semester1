@@ -33,7 +33,6 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused
     }
 
     // Mongoose validation error - convert to custom error
-    // IMPORTANT: Don't treat our own ValidationError (express-validator) as a Mongoose ValidationError.
     if (err.name === 'ValidationError' && err.errors && typeof err.errors === 'object') {
         const details = Object.values(err.errors).map(val => ({
             field: val.path,
