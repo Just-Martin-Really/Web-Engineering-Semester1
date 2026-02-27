@@ -127,11 +127,19 @@ const loginUser = async (req, res, next) => {
             return next(new AuthenticationError('Benutzername oder Passwort ungültig'));
         }
 
-        // Password is correct - reset failed attempts and update last login
+        // Password is correct - reset failed login attempts
         await user.resetFailedLoginAttempts();
 
         // Generate token pair
         const tokenPair = generateTokenPair(user, req);
+
+        // Persist server-side session (MongoStore) for local app state.
+        // This is what causes a session document to be created and Set-Cookie to be returned.
+        if (req.session) {
+            req.session.userId = user._id.toString();
+            req.session.username = user.username;
+            req.session.sessionId = tokenPair.sessionId;
+        }
 
         // Log successful login
         logAuthEvent('USER_LOGIN', user._id, {
@@ -226,6 +234,13 @@ const logoutUser = async (req, res, next) => {
         logAuthEvent('USER_LOGOUT', req.user.id, {
             sessionId: req.user.sessionId
         });
+
+        // Destroy server-side session if present
+        if (req.session) {
+            req.session.destroy(() => {
+                // Intentionally ignore destroy errors here; logout should still succeed.
+            });
+        }
 
         const response = successResponse(
             {},

@@ -32,6 +32,9 @@ const { seedTopicsIfEnabled } = require('./seeds/seedTopics');
 
 const app = express();
 
+// Trust reverse proxy (nginx) so secure cookies / proxy settings behave correctly.
+app.set('trust proxy', 1);
+
 // View engine (Pug)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -58,33 +61,20 @@ app.use(cors(corsOpts));
 // Parse JSON requests
 app.use(express.json({ limit: '10kb' }));
 
-// Page routes
-app.use('/', require('./routes/pageRoutes'));
-
-// Static assets
-app.use(express.static("public"));
-
-// Request timeout to prevent slowloris attacks
-app.use(requestTimeout);
-
-// Prevent HTTP Parameter Pollution
-app.use(hppProtection);
-
 /**
  * MongoDB Connection
- * Connects before session middleware (session store uses MongoDB)
  */
 const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mongo-app";
 
+// Sessions must be mounted BEFORE routes so req.session exists.
+// connect-mongo will manage its own connection using mongoURI.
+app.use(createSessionMiddleware({ mongoUri: mongoURI }));
+
+// Connect mongoose (model layer) separately.
 mongoose.connect(mongoURI)
     .then(async () => {
         logger.info("MongoDB Connected to " + mongoURI);
-
-        // Optional demo data seeding (disabled by default)
         await seedTopicsIfEnabled();
-
-        // Initialize session middleware after DB connection
-        app.use(createSessionMiddleware(mongoURI));
     })
     .catch((err) => {
         logger.error("MongoDB Connection Error: " + err.message);
@@ -96,6 +86,11 @@ mongoose.connect(mongoURI)
  * Used by load balancers and monitoring systems
  */
 app.get('/health', (req, res) => {
+    // In test mode, touch session so we can deterministically verify session persistence.
+    if (process.env.NODE_ENV === 'test' && req.session) {
+        req.session.lastHealthCheckAt = new Date().toISOString();
+    }
+
     res.status(200).json({
         status: 'OK',
         timestamp: new Date().toISOString(),
@@ -107,27 +102,35 @@ app.get('/health', (req, res) => {
 app.use('/api', require('./routes/authRoutes'));
 app.use('/api/topics', require('./routes/topicRoutes'));
 
-// Handler for 404 routes
-app.use((req, res) => {
-    logger.warn('Route not found', {
-        requestId: req.id,
-        path: req.path,
-        method: req.method
-    });
+// Page routes
+app.use('/', require('./routes/pageRoutes'));
 
-    // API: keep JSON contract
-    if (req.path.startsWith('/api')) {
+// Static assets
+app.use(express.static("public"));
+
+// --- 404 fallback (must be after routes + static, before any error handler) ---
+app.use((req, res) => {
+    // API and non-HTML clients should get JSON 404 in our standard format.
+    if (req.path.startsWith('/api') || !req.accepts('html')) {
         return res.status(404).json({
             success: false,
             message: 'Route nicht gefunden',
-            path: req.path,
-            requestId: req.id
+            errorCode: 'NOT_FOUND',
+            details: []
         });
     }
 
-    // Browser: user-friendly HTML
-    return res.status(404).render('404', { title: 'Seite nicht gefunden', path: req.path });
+    return res.status(404).render('404', {
+        title: 'Seite nicht gefunden',
+        path: req.originalUrl
+    });
 });
+
+// Request timeout to prevent slowloris attacks
+app.use(requestTimeout);
+
+// Prevent HTTP Parameter Pollution
+app.use(hppProtection);
 
 /**
  * Error Handler Middleware

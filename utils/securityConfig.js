@@ -39,7 +39,7 @@ const rateLimitConfig = {
 const sessionConfig = {
     secret: process.env.SESSION_SECRET || 'your-session-secret-change-in-production',
     resave: false, // Don't save unchanged sessions
-    saveUninitialized: false, // Don't create session until modified
+    saveUninitialized: true, // Don't create session until modified
 
     cookie: {
         secure: process.env.NODE_ENV === 'production', // HTTPS only in production
