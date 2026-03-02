@@ -11,9 +11,9 @@ const mongoose = require('mongoose');
  * @property {Array} comments - Embedded comments
  */
 const topicSchema = new mongoose.Schema({
-    title: { type: String, required: true },
-    content: { type: String, required: true },
-    kurs: { type: String, required: true, enum: ['TIA', 'TIS', 'TIK'] },
+    title: {type: String, required: true},
+    content: {type: String, required: true},
+    kurs: {type: String, required: true, enum: ['TIA', 'TIS', 'TIK']},
 
     // Optional marker for demo/seed data (idempotent upserts)
     seedKey: {
@@ -36,21 +36,21 @@ const topicSchema = new mongoose.Schema({
         default: null
     },
 
-    // Embedded comments (MVP)
+    // Embedded comments for simplicity (not a separate collection)
     comments: {
         type: [
             {
-                content: { type: String, required: true, trim: true },
-                author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+                content: {type: String, required: true, trim: true},
+                author: {type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null},
                 // Optional display-only author for seeded/demo comments
-                seedAuthorName: { type: String, trim: true, maxlength: 50 },
-                createdAt: { type: Date, default: Date.now }
+                seedAuthorName: {type: String, trim: true, maxlength: 50},
+                createdAt: {type: Date, default: Date.now}
             }
         ],
         default: []
     },
 
-    createdAt: { type: Date, default: Date.now }
+    createdAt: {type: Date, default: Date.now}
 });
 
 module.exports = mongoose.model('Topic', topicSchema);

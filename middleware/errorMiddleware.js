@@ -1,5 +1,5 @@
-const { logError } = require('../utils/errorLogger');
-const { errorResponse } = require('../utils/responseHandler');
+const {logError} = require('../utils/errorLogger');
+const {errorResponse} = require('../utils/responseHandler');
 const {
     AppError,
     ValidationError,
@@ -18,7 +18,7 @@ const {
  * @param {Object} res - Express response
  * @param {Function} next - Express next (required signature for error handler)
  */
-const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused-vars
+const errorHandler = (err, req, res, next) => {
     let error = err;
 
     // Mongoose bad ObjectId error - convert to custom error
@@ -79,4 +79,4 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused
     res.status(statusCode).json(response);
 };
 
-module.exports = { errorHandler };
+module.exports = {errorHandler};
