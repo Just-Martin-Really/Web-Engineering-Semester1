@@ -1,7 +1,7 @@
 const Topic = require('../models/Topic');
-const { successResponse, paginatedResponse } = require('../utils/responseHandler');
-const { AuthorizationError } = require('../utils/errorClasses');
-const { logAuthEvent } = require('../utils/errorLogger');
+const {successResponse, paginatedResponse} = require('../utils/responseHandler');
+const {AuthorizationError} = require('../utils/errorClasses');
+const {logAuthEvent} = require('../utils/errorLogger');
 
 /**
  * @desc    Get all topics with optional filtering
@@ -13,7 +13,7 @@ const { logAuthEvent } = require('../utils/errorLogger');
  */
 const getTopics = async (req, res, next) => {
     try {
-        const { kurs, page = 1, limit = 10 } = req.query;
+        const {kurs, page = 1, limit = 10} = req.query;
 
         // Build query filter
         let query = {};
@@ -28,7 +28,7 @@ const getTopics = async (req, res, next) => {
 
         // Fetch topics and total count
         const topics = await Topic.find(query)
-            .sort({ createdAt: -1 })
+            .sort({createdAt: -1})
             .skip(skip)
             .limit(limitNum)
             .populate('author', 'username')
@@ -71,7 +71,7 @@ const getTopics = async (req, res, next) => {
  */
 const createTopic = async (req, res, next) => {
     try {
-        const { title, content, kurs } = req.body;
+        const {title, content, kurs} = req.body;
         const userId = req.user.id;
 
         // Create topic document
@@ -107,59 +107,6 @@ const createTopic = async (req, res, next) => {
 };
 
 /**
- * @desc    Update an existing topic
- * @route   PUT /api/topics/:id
- * @access  Private
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
- */
-const updateTopic = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const { title, content, kurs } = req.body;
-        const userId = req.user.id;
-
-        // Find topic
-        const topic = await Topic.findById(id);
-        if (!topic) {
-            return next(new Error('Thema nicht gefunden'));
-        }
-
-        // Check authorization (only author can update)
-        if (topic.author.toString() !== userId.toString()) {
-            logAuthEvent('TOPIC_UPDATE_UNAUTHORIZED', userId, {
-                topicId: id,
-                authorId: topic.author
-            });
-            return next(new AuthorizationError('Sie können dieses Thema nicht bearbeiten'));
-        }
-
-        // Update fields
-        topic.title = title.trim();
-        topic.content = content.trim();
-        topic.kurs = kurs;
-
-        await topic.save();
-
-        logAuthEvent('TOPIC_UPDATED', userId, {
-            topicId: id,
-            title: topic.title
-        });
-
-        const response = successResponse(
-            topic,
-            'Thema erfolgreich aktualisiert',
-            200
-        );
-
-        res.json(response);
-    } catch (error) {
-        next(error);
-    }
-};
-
-/**
  * @desc    Delete a topic
  * @route   DELETE /api/topics/:id
  * @access  Private
@@ -169,7 +116,7 @@ const updateTopic = async (req, res, next) => {
  */
 const deleteTopic = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         const userId = req.user.id;
 
         // Find and delete topic
@@ -207,15 +154,15 @@ const deleteTopic = async (req, res, next) => {
 };
 
 /**
- * @desc    Add a comment to a topic (embedded comment MVP)
+ * @desc    Add a comment to a topic
  * @route   POST /api/topics/:id/comments
  * @access  Private
  */
 const addComment = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const {id} = req.params;
         const userId = req.user.id;
-        const { content } = req.body;
+        const {content} = req.body;
 
         const topic = await Topic.findById(id);
         if (!topic) {
@@ -247,7 +194,6 @@ const addComment = async (req, res, next) => {
 module.exports = {
     getTopics,
     createTopic,
-    updateTopic,
     deleteTopic,
     addComment
 };

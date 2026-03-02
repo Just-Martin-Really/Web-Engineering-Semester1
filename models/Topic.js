@@ -15,7 +15,7 @@ const topicSchema = new mongoose.Schema({
     content: {type: String, required: true},
     kurs: {type: String, required: true, enum: ['TIA', 'TIS', 'TIK']},
 
-    // Optional marker for demo/seed data (idempotent upserts)
+    // Optional marker for demo/seed data
     seedKey: {
         type: String,
         unique: true,
@@ -36,7 +36,8 @@ const topicSchema = new mongoose.Schema({
         default: null
     },
 
-    // Embedded comments for simplicity (not a separate collection)
+    // Embedded comments for logic.
+    // A comment should never exist without a Topic, hence embedded.
     comments: {
         type: [
             {

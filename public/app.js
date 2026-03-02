@@ -1,37 +1,37 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log('🚀 App.js loaded');
+    console.log('App.js loaded');
 
 
-/**
- * Handles user registration by calling the API and managing the response.
- * 
- * @param {string} firstname 
- * @param {string} lastname 
- * @param {string} username 
- * @param {string} password 
- * @param {string} course 
- * @returns {Promise<{status: number, data: Object}>}
- */
-async function registration(firstname, lastname, username, password, course) {
-    return await apiRequest('/api/registration', 'POST', { firstname, lastname, username, password, course });
-}
+    /**
+     * Handles user registration by calling the API and managing the response.
+     *
+     * @param {string} firstname
+     * @param {string} lastname
+     * @param {string} username
+     * @param {string} password
+     * @param {string} course
+     * @returns {Promise<{status: number, data: Object}>}
+     */
+    async function registration(firstname, lastname, username, password, course) {
+        return await apiRequest('/api/registration', 'POST', {firstname, lastname, username, password, course});
+    }
 
-/**
- * Handles user login by calling the API and managing the response.
- * 
- * @param {string} username 
- * @param {string} password 
- * @returns {Promise<{status: number, data: Object}>}
- */
-async function login(username, password) {
-    return await apiRequest('/api/login', 'POST', { username, password });
-}
+    /**
+     * Handles user login by calling the API and managing the response.
+     *
+     * @param {string} username
+     * @param {string} password
+     * @returns {Promise<{status: number, data: Object}>}
+     */
+    async function login(username, password) {
+        return await apiRequest('/api/login', 'POST', {username, password});
+    }
 
-    // Registrierungs-Button
+    // Registrierung-Button
     const registerBtn = document.getElementById('buttonRegReg');
-    console.log('🔍 Register button:', registerBtn);
+    console.log('Register button:', registerBtn);
     if (registerBtn) {
-        console.log('✅ Register button found, adding listener');
+        console.log('Register button found, adding listener');
         registerBtn.addEventListener('click', async (e) => {
             e.preventDefault();
             const firstnameField = document.getElementById("textRegBenutzerVorname");
@@ -46,11 +46,11 @@ async function login(username, password) {
             const password = passwordField.value;
             const course = courseField.value;
 
-            console.log('📝 Form data:', { firstname, lastname, username, password, course });
+            console.log('Form data:', {firstname, lastname, username, password, course});
 
             const result = await registration(firstname, lastname, username, password, course);
-            const { status, body, payload } = unwrapApiResponse(result);
-            console.log('📨 Server response:', result);
+            const {status, body, payload} = unwrapApiResponse(result);
+            console.log('Server response:', result);
             alert(buildUserAlertMessage(body));
 
             if (status === 201 && payload) {
@@ -66,9 +66,8 @@ async function login(username, password) {
                 window.location.href = "/forum";
             }
         });
-    }
-    else{
-        console.log('❌ Register button NOT found!');
+    } else {
+        console.log('Register button NOT found!');
     }
 
     /**
@@ -80,11 +79,11 @@ async function login(username, password) {
         const username = document.getElementById('textLoginBenutzerName')?.value;
         const password = document.getElementById('textLoginBenutzerPasswort')?.value;
 
-        console.log('📝 Login data:', { username, password });
+        console.log('Login data:', {username, password});
 
         const result = await login(username, password);
-        const { status, body, payload } = unwrapApiResponse(result);
-        console.log('📨 Server response:', result);
+        const {status, body, payload} = unwrapApiResponse(result);
+        console.log('Server response:', result);
         alert(buildUserAlertMessage(body));
 
         if (status === 200 && payload) {
@@ -96,19 +95,18 @@ async function login(username, password) {
         }
     }
 
-    // Login form submit (Enter key)
+    // Login form submit so the user can press Enter
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLoginSubmit);
     }
 
-    // Login-Button (keep existing behavior)
+    // Login-Button
     const loginBtn = document.getElementById('buttonLogin');
-    console.log('🔍 Login button:', loginBtn);
+    console.log('Login button:', loginBtn);
     if (loginBtn) {
         loginBtn.addEventListener('click', handleLoginSubmit);
-    }
-    else {
-        console.log('❌ Login button NOT found!');
+    } else {
+        console.log('Login button NOT found!');
     }
 });

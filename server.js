@@ -16,19 +16,19 @@ const {
 } = require('./middleware/securityMiddleware');
 
 // Session middleware
-const { createSessionMiddleware } = require('./middleware/sessionMiddleware');
+const {createSessionMiddleware} = require('./middleware/sessionMiddleware');
 
 // Error handler
-const { errorHandler } = require("./middleware/errorMiddleware");
+const {errorHandler} = require("./middleware/errorMiddleware");
 
 // Logging
-const { logger } = require('./utils/errorLogger');
+const {logger} = require('./utils/errorLogger');
 
 // Security configuration
-const { corsConfig } = require('./utils/securityConfig');
+const {corsConfig} = require('./utils/securityConfig');
 
 // Demo data seeding (optional)
-const { seedTopicsIfEnabled } = require('./seeds/seedTopics');
+const {seedTopicsIfEnabled} = require('./seeds/seedTopics');
 
 const app = express();
 
@@ -59,7 +59,7 @@ const corsOpts = process.env.NODE_ENV === 'production'
 app.use(cors(corsOpts));
 
 // Parse JSON requests
-app.use(express.json({ limit: '10kb' }));
+app.use(express.json({limit: '10kb'}));
 
 /**
  * MongoDB Connection
@@ -68,7 +68,7 @@ const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mongo-app
 
 // Sessions must be mounted BEFORE routes so req.session exists.
 // connect-mongo will manage its own connection using mongoURI.
-app.use(createSessionMiddleware({ mongoUri: mongoURI }));
+app.use(createSessionMiddleware({mongoUri: mongoURI}));
 
 // Connect mongoose (model layer) separately.
 mongoose.connect(mongoURI)
@@ -108,7 +108,7 @@ app.use('/', require('./routes/pageRoutes'));
 // Static assets
 app.use(express.static("public"));
 
-// --- 404 fallback (must be after routes + static, before any error handler) ---
+// 404 fallback (must be after routes + static, before any error handler)
 app.use((req, res) => {
     // API and non-HTML clients should get JSON 404 in our standard format.
     if (req.path.startsWith('/api') || !req.accepts('html')) {
@@ -148,9 +148,9 @@ const PORT = process.env.PORT || 3001;
 let server;
 if (require.main === module) {
     server = app.listen(PORT, '0.0.0.0', () => {
-        logger.info(`✅ Server läuft auf http://0.0.0.0:${PORT}`);
-        logger.info(`🕒 Started at: ${new Date().toISOString()}`);
-        logger.info(`📋 Environment: ${process.env.NODE_ENV || 'development'}`);
+        logger.info(`Server läuft auf http://0.0.0.0:${PORT}`);
+        logger.info(`Started at: ${new Date().toISOString()}`);
+        logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 
     /**
@@ -158,7 +158,7 @@ if (require.main === module) {
      * Catches any errors that occur during server operation
      */
     server.on('error', (error) => {
-        logger.error('❌ Server error: ' + error.message, {
+        logger.error('Server error: ' + error.message, {
             stack: error.stack
         });
     });
@@ -182,7 +182,7 @@ if (require.main === module) {
  * Catches any unhandled errors
  */
 process.on('uncaughtException', (error) => {
-    logger.error('💥 Uncaught exception: ' + error.message, {
+    logger.error('Uncaught exception: ' + error.message, {
         stack: error.stack
     });
     // In production, you might want to exit the process here
@@ -194,7 +194,7 @@ process.on('uncaughtException', (error) => {
  * Catches unhandled promise rejections
  */
 process.on('unhandledRejection', (reason, promise) => {
-    logger.error('⚠️ Unhandled Rejection: ' + reason, {
+    logger.error('Unhandled Rejection: ' + reason, {
         promise: promise.toString()
     });
 });

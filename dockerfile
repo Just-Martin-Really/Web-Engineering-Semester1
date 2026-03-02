@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of your code (server.js, public folder, etc.)
+# Copy the rest of our code (server.js, public folder, etc.)
 COPY . .
 
 # Copy Docker environment file as .env for the container
@@ -17,7 +17,7 @@ RUN if [ -f .env.docker ]; then cp .env.docker .env; fi
 # Create logs directory (for Winston logger)
 RUN mkdir -p /app/logs
 
-# Expose the port your app runs on
+# Expose the port our app runs on
 EXPOSE 3001
 
 # Start the server

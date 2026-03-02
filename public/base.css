@@ -1,0 +1,53 @@
+/*
+  Base styles (shared across all pages)
+  Goal: sensible defaults + mobile-friendly behavior without changing page layouts.
+*/
+
+:root {
+    --container-padding: 16px;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Improve mobile form usability (tap targets + prevent iOS zoom by ensuring >=16px font-size) */
+input,
+textarea,
+select,
+button {
+    font: inherit;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-left: var(--container-padding);
+        padding-right: var(--container-padding);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+        font-size: 16px;
+    }
+}
+

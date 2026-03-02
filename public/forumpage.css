@@ -1,6 +1,6 @@
 /* CSS */
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -12,9 +12,10 @@
 html {
     scroll-behavior: smooth;
 }
+
 /* Body Einstellungen */
 
-body{
+body {
     width: 100%;
     margin: 0;
     padding-top: 80px;
@@ -37,15 +38,18 @@ body{
     padding: 0 30px;
     box-sizing: border-box;
 }
-.left-section-header    {
-    display: flex;       /* This puts items in a row */
+
+.left-section-header {
+    display: flex; /* This puts items in a row */
     align-items: center;
     gap: 15px;
 }
+
 .left-section-header h5 {
     margin: 0;
     white-space: nowrap; /* Keeps the text on one line */
 }
+
 .logo {
     width: 60px;
     height: 60px;
@@ -80,7 +84,7 @@ body{
     cursor: pointer;
 }
 
-.buttonLogout{
+.buttonLogout {
     background-color: #7A5CFF;
     color: white;
     border: 0;
@@ -103,6 +107,7 @@ body{
 .buttonLogout:active {
     opacity: 0.5;
 }
+
 #userDropdown {
     display: none;
     position: absolute;
@@ -117,10 +122,11 @@ body{
     min-width: 200px;
     padding: 15px;
     background: white;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
     z-index: 1000;
 }
+
 .user-text p {
     margin: 2px 0;
     font-size: 16px;
@@ -135,11 +141,12 @@ body{
     font-family: 'Times New Roman', Times, serif;
 }
 
-.user-email{
+.user-email {
     color: #7A5CFF;
     font-weight: normal;
     font-size: 18px;
-    font-family: 'Times New Roman', Times, serif;}
+    font-family: 'Times New Roman', Times, serif;
+}
 
 .right-sidebar {
     position: fixed;
@@ -250,7 +257,7 @@ body{
 
 @media (max-width: 1100px) {
     .nav-bar {
-        display: none;
+        display: flex;
     }
 }
 
@@ -272,7 +279,7 @@ body{
     transform: scale(1.05);
 }
 
-.container_forumpage{
+.container_forumpage {
     display: block;
     width: 100%;
     padding-top: 20px;
@@ -305,6 +312,7 @@ body{
     margin-bottom: 25px;
     margin-left: 0px;
 }
+
 .ForumInput {
     width: 100%;
     background-color: transparent;
@@ -406,7 +414,6 @@ body{
 }
 
 
-
 .post-card {
     padding: 20px 0;
     border-bottom: 1px solid #f0f0f0;
@@ -440,6 +447,7 @@ body{
     color: #555;
     margin: 5px 0;
 }
+
 .footerForum {
     background-color: #ffffff;
     padding: 40px 10% 20px 10%;
@@ -704,7 +712,6 @@ body{
     margin-top: 10px;
 }
 
-/* Casual "Kommentieren..." trigger (doesn't scream like a primary button) */
 .comment-reveal {
     background: rgba(122, 92, 255, 0.08);
     border: 1px solid rgba(122, 92, 255, 0.18);
@@ -861,4 +868,98 @@ body{
 
 .bug-report-link:hover {
     opacity: 0.85;
+}
+
+/* Mobile filter toggle button (shown on <=768px via JS) */
+.filter-toggle {
+    display: none;
+    width: 100%;
+    background: rgba(122, 92, 255, 0.10);
+    border: 1px solid rgba(122, 92, 255, 0.22);
+    color: #7A5CFF;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.filter-toggle:hover {
+    background: rgba(122, 92, 255, 0.14);
+}
+
+.filter-toggle:active {
+    opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+    /* Stack sidebar above posts */
+    .container_forumpage {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .right-sidebar {
+        position: static;
+        width: 100%;
+        right: auto;
+        top: auto;
+        order: 1;
+    }
+
+    .left-section {
+        width: 100%;
+        margin-left: 0;
+        order: 2;
+    }
+
+    /* Toggle visible on mobile */
+    .filter-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Start collapsed; expanded via .nav-bar--open */
+    #filterPanel.nav-bar {
+        display: none;
+    }
+
+    #filterPanel.nav-bar.nav-bar--open {
+        display: flex;
+    }
+
+    .Forum, .posts-container {
+        padding: 20px;
+    }
+
+    .input-actions-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .category-chips {
+        flex-wrap: wrap;
+    }
+
+    .buttonForumNeu {
+        width: 100%;
+    }
+
+    .post-meta {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .posts-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .posts-load-more {
+        width: 100%;
+        justify-content: center;
+    }
 }

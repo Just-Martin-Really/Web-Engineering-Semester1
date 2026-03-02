@@ -31,12 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let allTopics = [];
 
-    // Pagination state (chunk 3)
+    // Pagination state
     const PAGE_LIMIT = 10;
     let currentPage = 1;
     let currentKursFilter = 'ALL';
 
-    // Create a small load-more UI (inserted once above #postsList)
+    // Create a small load-more UI
     let loadMoreBtn;
     let loadMoreMeta;
     let isLoadingTopics = false;
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadMoreBtn.textContent = 'Mehr laden';
 
         loadMoreBtn.addEventListener('click', async () => {
-            await loadTopics(currentKursFilter, { mode: 'append' });
+            await loadTopics(currentKursFilter, {mode: 'append'});
         });
 
         wrapper.appendChild(loadMoreMeta);
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         host.appendChild(wrapper);
     }
 
-    function setLoadMoreState({ canLoadMore, page, totalPages } = {}) {
+    function setLoadMoreState({canLoadMore, page, totalPages} = {}) {
         ensureLoadMoreControls();
         if (!loadMoreBtn || !loadMoreMeta) return;
 
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         try {
             const result = await apiRequest(`/api/topics/${topicId}`, 'DELETE', null, token);
-            const { status, body } = unwrapApiResponse(result);
+            const {status, body} = unwrapApiResponse(result);
 
             if (status === 200) {
                 allTopics = allTopics.filter(t => String(t._id) !== String(topicId));
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Render a single comment.
      */
-    function renderCommentItem(comment, { highlight = false } = {}) {
+    function renderCommentItem(comment, {highlight = false} = {}) {
         const item = document.createElement('div');
         item.className = highlight ? 'comment-item comment-item--highlight' : 'comment-item';
 
@@ -170,7 +170,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Render comments list for a topic.
      */
-    function renderCommentsList(comments = [], { expanded = false, highlightIndex = null } = {}) {
+    function renderCommentsList(comments = [], {expanded = false, highlightIndex = null} = {}) {
         const wrapper = document.createElement('div');
         wrapper.className = 'comments-list';
 
@@ -183,14 +183,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (!expanded) {
-            // Collapsed: show only newest comment (last)
+            // Collapsed: show only newest comment (last in comments)
             const newestIndex = comments.length - 1;
-            wrapper.appendChild(renderCommentItem(comments[newestIndex], { highlight: highlightIndex === newestIndex }));
+            wrapper.appendChild(renderCommentItem(comments[newestIndex], {highlight: highlightIndex === newestIndex}));
             return wrapper;
         }
 
         comments.forEach((c, idx) => {
-            wrapper.appendChild(renderCommentItem(c, { highlight: highlightIndex === idx }));
+            wrapper.appendChild(renderCommentItem(c, {highlight: highlightIndex === idx}));
         });
 
         return wrapper;
@@ -242,7 +242,11 @@ document.addEventListener("DOMContentLoaded", () => {
             metaRow.appendChild(topicAuthor);
             metaRow.appendChild(topicDate);
 
-            // Author-only actions (Delete)
+            const topicContent = document.createElement("p");
+            topicContent.className = 'post-content';
+            topicContent.textContent = topic.content;
+
+            // Author-only Delete
             if (user && (user.username || '').toLowerCase() === String(topicAuthorUsername || '').toLowerCase()) {
                 const actions = document.createElement('div');
                 actions.className = 'post-actions';
@@ -257,9 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 metaRow.appendChild(actions);
             }
 
-            const topicContent = document.createElement("p");
-            topicContent.className = 'post-content';
-            topicContent.textContent = topic.content;
 
             // Comments
             const commentsSection = document.createElement('section');
@@ -302,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
             commentsHeader.appendChild(commentsCount);
             commentsHeader.appendChild(toggleBtn);
 
-            let commentsList = renderCommentsList(comments, { expanded: isExpanded });
+            let commentsList = renderCommentsList(comments, {expanded: isExpanded});
 
             const commentActionsRow = document.createElement('div');
             commentActionsRow.className = 'comment-actions';
@@ -332,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             function setExpanded(nextExpanded) {
                 isExpanded = Boolean(nextExpanded);
-                commentsList.replaceWith(renderCommentsList(comments, { expanded: isExpanded }));
+                commentsList.replaceWith(renderCommentsList(comments, {expanded: isExpanded}));
                 commentsList = commentsSection.querySelector('.comments-list');
                 rebuildToggleText();
             }
@@ -369,8 +370,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 try {
-                    const result = await apiRequest(`/api/topics/${topic._id}/comments`, 'POST', { content }, token);
-                    const { status, body, payload } = unwrapApiResponse(result);
+                    const result = await apiRequest(`/api/topics/${topic._id}/comments`, 'POST', {content}, token);
+                    const {status, body, payload} = unwrapApiResponse(result);
 
                     if (status === 201) {
                         commentInput.value = '';
@@ -389,14 +390,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                         // Re-render with highlight on last comment and scroll it into view
                         const highlightIndex = comments.length - 1;
-                        commentsList.replaceWith(renderCommentsList(comments, { expanded: true, highlightIndex }));
+                        commentsList.replaceWith(renderCommentsList(comments, {expanded: true, highlightIndex}));
                         commentsList = commentsSection.querySelector('.comments-list');
                         rebuildToggleText();
 
                         const items = commentsList.querySelectorAll('.comment-item');
                         const lastItem = items && items[items.length - 1];
                         if (lastItem && typeof lastItem.scrollIntoView === 'function') {
-                            lastItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            lastItem.scrollIntoView({behavior: 'smooth', block: 'center'});
                         }
 
                         setFormVisible(false);
@@ -434,7 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * @param {string} kurs - Optional filter for Kurs
      * @param {{ mode?: 'replace' | 'append' }} options - Loading options.
      */
-    async function loadTopics(kurs = 'ALL', { mode = 'replace' } = {}) {
+    async function loadTopics(kurs = 'ALL', {mode = 'replace'} = {}) {
         if (isLoadingTopics) return;
 
         try {
@@ -459,12 +460,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const result = await apiRequest(url);
-            const { body, payload } = unwrapApiResponse(result);
+            const {body, payload} = unwrapApiResponse(result);
 
             if (!Array.isArray(payload)) {
                 console.error('Unexpected topics payload shape:', body);
                 allTopics = [];
-                setLoadMoreState({ canLoadMore: false });
+                setLoadMoreState({canLoadMore: false});
             } else {
                 if (mode === 'append') {
                     // Avoid duplicates by _id
@@ -477,7 +478,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const pagination = body && typeof body === 'object' ? body.pagination : null;
                 const hasNextPage = Boolean(pagination?.hasNextPage);
-                setLoadMoreState({ canLoadMore: hasNextPage, page: pagination?.page, totalPages: pagination?.totalPages });
+                setLoadMoreState({
+                    canLoadMore: hasNextPage,
+                    page: pagination?.page,
+                    totalPages: pagination?.totalPages
+                });
 
                 // Only advance page after a successful fetch
                 if (mode === 'append') {
@@ -497,12 +502,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     return idAttr && idAttr !== scrollAnchorId;
                 });
                 if (firstNew) {
-                    firstNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    firstNew.scrollIntoView({behavior: 'smooth', block: 'start'});
                 }
             }
         } catch (error) {
             console.error("Error loading topics:", error);
-            setLoadMoreState({ canLoadMore: false });
+            setLoadMoreState({canLoadMore: false});
         } finally {
             isLoadingTopics = false;
             setLoadMoreLoading(false);
@@ -543,7 +548,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         try {
             const result = await apiRequest("/api/topics", "POST", {title, content, kurs: selectedKurs}, token);
-            const { status, body } = unwrapApiResponse(result);
+            const {status, body} = unwrapApiResponse(result);
 
             if (status === 201) {
                 titleInput.value = "";
@@ -556,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         currentFilter = radio.value;
                     }
                 });
-                await loadTopics(currentFilter, { mode: 'replace' });
+                await loadTopics(currentFilter, {mode: 'replace'});
             } else {
                 if (status === 401) {
                     alert("Sitzung abgelaufen. Bitte erneut anmelden.");
@@ -580,7 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Event listeners for filter radios
     filterRadios.forEach(radio => {
         radio.addEventListener("change", (e) => {
-            loadTopics(e.target.value, { mode: 'replace' });
+            loadTopics(e.target.value, {mode: 'replace'});
         });
     });
 
@@ -625,6 +630,53 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // Mobile filter toggle (forum sidebar)
+    const filterToggleBtn = document.getElementById('filterToggleBtn');
+    const filterPanel = document.getElementById('filterPanel');
+
+    const isMobileViewport = () => window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+
+    const setFilterPanelOpen = (open) => {
+        if (!filterPanel || !filterToggleBtn) return;
+        const nextOpen = Boolean(open);
+        filterPanel.classList.toggle('nav-bar--open', nextOpen);
+        filterToggleBtn.textContent = nextOpen ? 'Filter ausblenden' : 'Filter anzeigen';
+        filterToggleBtn.setAttribute('aria-expanded', String(nextOpen));
+    };
+
+    const syncFilterPanelForViewport = () => {
+        if (!filterPanel || !filterToggleBtn) return;
+
+        // Desktop: always open and hide the toggle button.
+        if (!isMobileViewport()) {
+            filterToggleBtn.style.display = 'none';
+            filterPanel.classList.add('nav-bar--open');
+            return;
+        }
+
+        // Mobile: show toggle and default collapsed.
+        filterToggleBtn.style.display = 'inline-flex';
+
+        // Only set default state if we haven't interacted yet.
+        if (!filterPanel.dataset.userToggled) {
+            setFilterPanelOpen(false);
+        }
+    };
+
+    if (filterToggleBtn && filterPanel) {
+        filterToggleBtn.setAttribute('aria-controls', 'filterPanel');
+        filterToggleBtn.setAttribute('aria-expanded', 'false');
+
+        filterToggleBtn.addEventListener('click', () => {
+            filterPanel.dataset.userToggled = '1';
+            const open = filterPanel.classList.contains('nav-bar--open');
+            setFilterPanelOpen(!open);
+        });
+
+        window.addEventListener('resize', syncFilterPanelForViewport);
+        syncFilterPanelForViewport();
+    }
+
     // Initial load
-    loadTopics('ALL', { mode: 'replace' });
+    loadTopics('ALL', {mode: 'replace'});
 })

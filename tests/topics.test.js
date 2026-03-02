@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { expect } = require('chai');
+const {expect} = require('chai');
 const baseUrl = 'http://localhost:3001';
 
 describe('Topics API', () => {
@@ -75,7 +75,7 @@ describe('Topics API', () => {
             .post(`/api/topics/${createdTopicId}/comments`)
             .set('X-Test-Run', '1')
             .set('Authorization', `Bearer ${token}`)
-            .send({ content: 'Mein erster Kommentar' });
+            .send({content: 'Mein erster Kommentar'});
 
         expect(commentRes.status).to.equal(201);
         expect(commentRes.body).to.have.property('success', true);
@@ -100,7 +100,7 @@ describe('Topics API', () => {
             .post('/api/topics')
             .set('X-Test-Run', '1')
             .set('Authorization', `Bearer ${token}`)
-            .send({ content: 'Missing title but long enough', kurs: 'TIA' });
+            .send({content: 'Missing title but long enough', kurs: 'TIA'});
 
         expect(res.status).to.equal(400);
         expect(res.body).to.have.property('success', false);
@@ -112,7 +112,7 @@ describe('Topics API', () => {
             .post('/api/topics')
             .set('X-Test-Run', '1')
             .set('Authorization', `Bearer ${token}`)
-            .send({ title: 'Missing content', kurs: 'TIA' });
+            .send({title: 'Missing content', kurs: 'TIA'});
 
         expect(res.status).to.equal(400);
         expect(res.body).to.have.property('success', false);
@@ -124,7 +124,7 @@ describe('Topics API', () => {
             .post('/api/topics')
             .set('X-Test-Run', '1')
             .set('Authorization', `Bearer ${token}`)
-            .send({ title: 'Missing kurs', content: 'Missing kurs but long enough' });
+            .send({title: 'Missing kurs', content: 'Missing kurs but long enough'});
 
         expect(res.status).to.equal(400);
         expect(res.body).to.have.property('success', false);
@@ -140,8 +140,11 @@ describe('Topics API', () => {
         expect(res.body).to.have.property('data');
         expect(res.body.data).to.be.an('array');
 
-        const found = res.body.data.find(t => t.title === testTopic.title && t.content === testTopic.content && t.kurs === testTopic.kurs);
+        const found = res.body.data.find(t => String(t._id) === String(createdTopicId));
         expect(found).to.not.be.undefined;
+        expect(found.kurs).to.equal(testTopic.kurs);
+        expect(found.title).to.equal(testTopic.title);
+        expect(found.content).to.equal(testTopic.content);
     });
 
     it('should filter topics by kurs', async () => {
@@ -152,7 +155,7 @@ describe('Topics API', () => {
             .post('/api/topics')
             .set('X-Test-Run', '1')
             .set('Authorization', `Bearer ${token}`)
-            .send({ title: tiaTitle, content: 'This is a test topic content.', kurs: 'TIA' });
+            .send({title: tiaTitle, content: 'This is a test topic content.', kurs: 'TIA'});
         if (createTIA.status !== 201) {
             // eslint-disable-next-line no-console
             console.log('DEBUG createTIA:', createTIA.status, JSON.stringify(createTIA.body));
@@ -163,7 +166,7 @@ describe('Topics API', () => {
             .post('/api/topics')
             .set('X-Test-Run', '1')
             .set('Authorization', `Bearer ${token}`)
-            .send({ title: tisTitle, content: 'TIS content long enough', kurs: 'TIS' });
+            .send({title: tisTitle, content: 'TIS content long enough', kurs: 'TIS'});
         if (createTIS.status !== 201) {
             // eslint-disable-next-line no-console
             console.log('DEBUG createTIS:', createTIS.status, JSON.stringify(createTIS.body));

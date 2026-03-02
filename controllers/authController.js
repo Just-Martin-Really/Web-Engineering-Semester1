@@ -1,13 +1,12 @@
 const User = require('../models/User');
-const { generateTokenPair } = require('../utils/tokenUtils');
-const { successResponse } = require('../utils/responseHandler');
+const {generateTokenPair} = require('../utils/tokenUtils');
+const {successResponse} = require('../utils/responseHandler');
 const {
-    ValidationError,
     ConflictError,
     AuthenticationError,
     InternalServerError
 } = require('../utils/errorClasses');
-const { logAuthEvent, logSecurityEvent } = require('../utils/errorLogger');
+const {logAuthEvent, logSecurityEvent} = require('../utils/errorLogger');
 
 /**
  * @desc    Register new user
@@ -19,10 +18,10 @@ const { logAuthEvent, logSecurityEvent } = require('../utils/errorLogger');
  */
 const registerUser = async (req, res, next) => {
     try {
-        const { firstname, lastname, username, password, course } = req.body;
+        const {firstname, lastname, username, password, course} = req.body;
 
         // Check if user already exists
-        const userExists = await User.findOne({ username: username.toLowerCase() });
+        const userExists = await User.findOne({username: username.toLowerCase()});
         if (userExists) {
             logSecurityEvent('REGISTRATION_DUPLICATE_USERNAME', req.ip, {
                 username,
@@ -88,10 +87,10 @@ const registerUser = async (req, res, next) => {
  */
 const loginUser = async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const {username, password} = req.body;
 
         // Find user by username
-        const user = await User.findOne({ username: username.toLowerCase() }).select('+password');
+        const user = await User.findOne({username: username.toLowerCase()}).select('+password');
 
         if (!user) {
             logSecurityEvent('LOGIN_USER_NOT_FOUND', req.ip, {
@@ -182,14 +181,14 @@ const loginUser = async (req, res, next) => {
  */
 const refreshAccessToken = async (req, res, next) => {
     try {
-        const { refreshToken } = req.body;
+        const {refreshToken} = req.body;
 
         if (!refreshToken) {
             return next(new AuthenticationError('Refresh token erforderlich'));
         }
 
         // Verify refresh token and get user info
-        const { verifyRefreshToken } = require('../utils/sessionUtils');
+        const {verifyRefreshToken} = require('../utils/sessionUtils');
         const decoded = verifyRefreshToken(refreshToken);
 
         // Find user
@@ -199,7 +198,7 @@ const refreshAccessToken = async (req, res, next) => {
         }
 
         // Generate new access token (keep same session ID)
-        const { generateAccessToken } = require('../utils/sessionUtils');
+        const {generateAccessToken} = require('../utils/sessionUtils');
         const newAccessToken = generateAccessToken(user, decoded.sessionId);
 
         logAuthEvent('TOKEN_REFRESHED', user._id, {

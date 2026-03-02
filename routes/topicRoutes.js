@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/authMiddleware');
-const { generalLimiter } = require('../middleware/rateLimitMiddleware');
-const { asyncHandler } = require('../middleware/validationMiddleware');
+const {protect} = require('../middleware/authMiddleware');
+const {generalLimiter} = require('../middleware/rateLimitMiddleware');
+const {asyncHandler} = require('../middleware/validationMiddleware');
 const {
     topicValidation,
     handleValidationErrors,
@@ -11,7 +11,6 @@ const {
 const {
     getTopics,
     createTopic,
-    updateTopic,
     deleteTopic,
     addComment
 } = require('../controllers/topicController');
@@ -39,21 +38,6 @@ router.post(
 );
 
 /**
- * PUT /api/topics/:id
- * Update an existing topic
- * Requires authentication (only author can update)
- * Input validation required
- */
-router.put(
-    '/:id',
-    protect,
-    generalLimiter,
-    topicValidation,
-    asyncHandler(handleValidationErrors),
-    asyncHandler(updateTopic)
-);
-
-/**
  * DELETE /api/topics/:id
  * Delete a topic
  * Requires authentication (only author can delete)
@@ -67,7 +51,7 @@ router.delete(
 
 /**
  * POST /api/topics/:id/comments
- * Add a comment to a topic (embedded comments MVP)
+ * Add a comment to a topic
  * Requires authentication
  */
 router.post(

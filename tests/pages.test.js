@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { expect } = require('chai');
+const {expect} = require('chai');
 
 const app = require('../server');
 
@@ -19,7 +19,13 @@ describe('Page routes (Pug)', () => {
     it('GET /forum should return 200 and contain forum marker', async () => {
         const res = await request(app).get('/forum');
         expect(res.status).to.equal(200);
-        expect(res.text).to.include('Forum Beiträge');
+        expect(res.text).to.include('Beiträge:');
+    });
+
+    it('GET /base.css should be served as static asset', async () => {
+        const res = await request(app).get('/base.css');
+        expect(res.status).to.equal(200);
+        expect(res.headers['content-type']).to.match(/text\/css/);
     });
 
     it('GET /does-not-exist should return 404 HTML page', async () => {
@@ -29,4 +35,3 @@ describe('Page routes (Pug)', () => {
         expect(res.text).to.include('404');
     });
 });
-
