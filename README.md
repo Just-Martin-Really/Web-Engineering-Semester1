@@ -1,263 +1,170 @@
 # Web-Engineering-Semester1
-Web-Engineering Projekt von Amica, Tamara, Stefan und Martin.
 
-## Architecture
+Web-Engineering Projekt von **Amica, Tamara, Stefan und Martin**.
 
-The project follows a typical 3-tier architecture with a reverse proxy, an application server, and a database.
+## Überblick
 
-### Dependency Map
+Dieses Repository enthält eine kleine Kursforum-Webanwendung mit:
+
+- **Node.js/Express** Backend (API + Page-Rendering)
+- **Pug** als Template Engine (Views unter `views/`)
+- **MongoDB** als Datenbank (via **Mongoose**)
+- **Nginx** als Reverse Proxy (Docker)
+- **Mocha/Chai/Supertest** Integrationstests
+
+---
+
+## Architektur (Docker / 3-Tier)
+
+Der Standard-Setup läuft über Docker Compose:
+
+- `mongodb` (MongoDB)
+- `app` (Express App auf Port `3001`)
+- `nginx` (Reverse Proxy auf Port `80`)
+
+**Request-Flow (vereinfacht):**
 
 ```text
-                     +-------------------+
-                     |      Client       |
-                     |  (Web Browser)    |
-                     +---------+---------+
-                               |
-                               | (HTTP/80)
-                               v
-                     +---------+---------+
-                     |      Nginx        |
-                     |  (Reverse Proxy)  |
-                     +---------+---------+
-                               |
-                               | (HTTP/3001)
-                               v
-                     +---------+---------+
-                     |   Express App     | <-----+ serviert
-                     |   (server.js)     |       |
-                     +---------+---------+       |
-                               |                 |
-                +--------------+--------------+  |  +-----------------+
-                |                             |  +--+     Public      |
-                v                             v     | (Static Assets) |
-      +---------+---------+         +---------+-----+-----------------+
-      |     MongoDB       |         |      tests/   |
-      |   (Database)      |         | (Mocha/Chai)  |
-      +-------------------+         +---------------+
+Browser -> http://localhost (Nginx:80) -> app:3001 (Express) -> MongoDB
 ```
 
-### Module Descriptions
+### Wichtige Dateien
 
-- **Nginx**: Handles incoming traffic on port 80 and forwards it to the application server. It is configured in `nginx.conf`.
-- **Express App (server.js)**: The backend server. It handles API requests, user authentication (registration/login), and serves static files from the `public/` directory.
-- **MongoDB**: The primary data store for the application, used via Mongoose to store user information.
-- **Public**: Contains the frontend assets (HTML, CSS, JS) that are served to the user's browser.
-- **Tests**: Contains integration tests to verify API functionality.
-
-
-# Project Documentation
-
-This document provides a comprehensive overview of the technical architecture, API, and setup procedures for the Web-Engineering-Semester1 project.
-
-## 1. Core Technologies
-
-### 1.1 Node.js
-Node.js is the runtime environment that allows the application to run JavaScript on the server-side. It is built on Chrome's V8 JavaScript engine and uses an event-driven, non-blocking I/O model, making it highly efficient for handling multiple concurrent requests, which is essential for a web application.
-
-### 1.2 Express.js
-Express is a minimal and flexible Node.js web application framework. In this project, it serves as the backbone of the backend, responsible for:
-- **Routing**: It maps incoming HTTP requests (like `GET /api/topics` or `POST /api/login`) to the correct logic in the code.
-- **Middleware**: Express uses middleware functions to process requests before they reach the final handler. This includes `express.json()` for parsing JSON data in request bodies and `express.static()` for serving the frontend files (HTML, CSS, JS).
-- **Request/Response Handling**: It simplifies the process of receiving data from the client and sending back appropriate status codes and data.
-
-### 1.3 CORS (Cross-Origin Resource Sharing)
-CORS is a security mechanism that allows or restricts resources on a web page from being requested from another domain outside the one from which the resource originated.
-In this project, the `cors` package is used to manage these permissions. This is crucial because, during development or when using different services (like Nginx), the frontend and backend might technically reside on different "origins." CORS ensures that the browser allows the frontend to communicate with the backend API securely.
-
-### 1.4 Mongoose & MongoDB
-MongoDB is a NoSQL database that stores data in flexible, JSON-like documents. Mongoose is an Object Data Modeling (ODM) library that acts as a bridge between Node.js and MongoDB.
-- **Schemas**: Mongoose allows us to define "Schemas," which act as templates for our data (e.g., ensuring every `User` has a `username` and `password`).
-- **Models**: Once a schema is defined, Mongoose creates "Models" that provide a powerful interface for interacting with the database—allowing us to easily save, find, and update records using standard JavaScript objects.
-- **Validation**: It provides built-in validation to ensure that only "clean" and correctly formatted data is saved to the database.
+- `server.js` – Express Setup, Middleware, MongoDB-Connect, Routing, 404-Fallback
+- `docker-compose.yml` – Container-Orchestrierung inkl. Healthchecks
+- `nginx.conf` – Reverse Proxy Konfiguration
+- `views/` – Pug Templates (`index.pug`, `registration.pug`, `forumpage.pug`, `404.pug`, `layout.pug`)
+- `public/` – Statische Assets (CSS/JS/Images) via `express.static("public")`
 
 ---
 
-## 2. Architecture Overview
+## Features
 
-The application follows a 3-tier architecture, containerized using Docker and served through an Nginx reverse proxy. The backend has been modularized for better maintainability and security.
+### Pages (Pug)
 
-### 2.1 Backend Structure (Modularized)
-- **`/models`**: Contains Mongoose schemas and models (User, Topic).
-- **`/controllers`**: Contains the business logic for each resource (Auth, Topics).
-- **`/routes`**: Defines the API endpoints and maps them to controllers.
-- **`/middleware`**: Custom middleware for authentication and error handling.
-- **Entry Point**: `server.js` (Initializes Express, connects to MongoDB, and registers routes).
-- **Port**: 3001
+Diese Routen rendern HTML über Pug:
 
-### 2.2 Security Implementation
-- **Password Hashing**: User passwords are never stored in plaintext. The application uses `bcryptjs` to hash passwords before they are saved to the database.
-- **JWT Authentication**: Secure authentication is implemented using JSON Web Tokens (JWT). Upon successful login, the server issues a token that the client must include in the `Authorization` header for protected requests.
-- **Protected Routes**: Sensitive endpoints (e.g., `POST /api/topics`) are protected by a middleware that verifies the JWT.
-- **Data Validation**: Server-side validation ensures that required fields are present and unique (e.g., `username`).
+- `GET /` → `views/index.pug`
+- `GET /register` → `views/registration.pug`
+- `GET /forum` → `views/forumpage.pug`
 
-### 2.3 Database Model (ERM)
-```mermaid
-erDiagram
-    USER ||--o{ TOPIC : writes
-    USER {
-        string _id
-        string firstname
-        string lastname
-        string username
-        string password
-        string course
-        date createdAt
-    }
-    TOPIC {
-        string _id
-        string title
-        string content
-        date createdAt
-    }
+Nicht gefundene Seiten werden über einen HTML-404-Fallback gerendert (Pug `views/404.pug`), sofern der Client HTML
+akzeptiert.
+
+### API
+
+- Authentifizierung (JWT) + Session (MongoDB Store)
+- Topics (CRUD-light: read/create/delete) + embedded Comments
+- Rate Limiting auf API-Routen (siehe `middleware/rateLimitMiddleware.js`)
+
+---
+
+## API Referenz (aus `routes/`)
+
+### Health
+
+- `GET /health`
+    - Antwort: JSON (`{ status, timestamp, uptime }`)
+    - Wird für Docker Healthchecks verwendet.
+
+### Auth
+
+Definiert in `routes/authRoutes.js`:
+
+- `POST /api/registration`
+- `POST /api/login`
+- `POST /api/refresh`
+- `POST /api/logout` (protected)
+
+### Topics
+
+Definiert in `routes/topicRoutes.js`:
+
+- `GET /api/topics`
+    - Optional: `?kurs=TIA|TIS|TIK` und Pagination via `?page=...&limit=...`
+- `POST /api/topics` (protected)
+- `DELETE /api/topics/:id` (protected, nur Author)
+- `POST /api/topics/:id/comments` (protected)
+
+Hinweis: **Topic-Update (PUT)** ist im aktuellen Code **nicht** vorhanden.
+
+---
+
+## Demo-Daten (Seed Topics)
+
+Beim Start kann die App Demo-Topics in MongoDB einspielen.
+
+Implementierung: `seeds/seedTopics.js` (wird in `server.js` nach erfolgreichem MongoDB-Connect ausgeführt).
+
+Relevante Umgebungsvariablen (siehe z.B. `docker-compose.yml`):
+
+- `SEED_TOPICS` (Boolean)
+- `SEED_TOPICS_ON_EMPTY_ONLY` (Boolean)
+- `SEED_TOPICS_FILE` (Pfad zur JSON-Datei; Default: `seeds/topics.seed.json`)
+
+Seed-Format: JSON-Array mit pro Topic u.a. `seedKey`, `title`, `content`, `kurs`. Optional:
+
+- `seedAuthorName`
+- `seedComment` (`{ content, seedAuthorName }`)
+
+---
+
+## Docker Setup
+
+Prerequisites: Docker & Docker Compose.
+
+Start:
+
+```bash
+docker compose up --build
 ```
 
-### 2.4 Login Process (Sequence Diagram)
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Server
-    participant MongoDB
-    Client->>Server: POST /api/login {username, password}
-    Server->>MongoDB: Find User by username
-    MongoDB-->>Server: User object (with hashed password)
-    Server->>Server: bcrypt.compare(password, hash)
-    alt Passwords match
-        Server->>Server: sign JWT
-        Server-->>Client: 200 OK {token, user}
-    else No match
-        Server-->>Client: 401 Unauthorized
-    end
+Danach ist die Anwendung über Nginx erreichbar:
+
+- http://localhost
+
+---
+
+## Tests
+
+### Lokal (Host)
+
+```bash
+npm test
 ```
 
-### 2.5 Frontend Structure
-The frontend logic is implemented in pure (Vanilla) JavaScript, emphasizing direct DOM manipulation and the Fetch API.
-- **Styling**: Uses Bootstrap 5.3 and custom CSS (`homepage.css`, `forumpage.css`) for a responsive and modern layout.
-- **Communication**: All data exchange between the frontend and backend happens via asynchronous `fetch` calls to the `/api/*` endpoints.
+### Docker-backed (Source of Truth)
 
-#### Frontend Logic Details:
-- **`app.js`**:
-    - Manages the authentication flow on the landing page.
-    - Implements `registration()` and `login()` functions that send POST requests to the backend.
-    - Handles UI feedback via alerts and redirects the user to the forum page upon successful authentication.
-- **`forumpage.js`**:
-    - Handles the core forum functionality.
-    - **Topic Loading**: Fetches the list of topics from `/api/topics` and dynamically generates the HTML structure for each post (using `article` tags).
-    - **Topic Creation**: Collects data from the input fields and sends it to the server.
-    - **Navigation**: Includes logic for the "Back to top" feature and secure logout (redirecting back to the index).
+```bash
+npm run test:docker
+```
 
-### 2.3 Infrastructure (Docker & Nginx)
-- **Docker**: Used to create a consistent environment across different machines. It orchestrates three containers: `mongodb` (Database), `app` (Node.js Server), and `nginx` (Proxy).
-- **Nginx**: Configured as a reverse proxy on port 80. It receives all external traffic and intelligently forwards it to the Node.js application.
+Dieser Befehl baut Container neu, startet sie, und führt Tests **im `app` Container** aus.
 
 ---
 
-## 3. API Reference
+## Tech Stack (aus `package.json`)
 
-### Health Check
-- **GET** `/health`
-    - Purpose: Checks if the server is running.
-    - Returns: `200 OK` (plain text)
+**Dependencies**:
 
-### Authentication
-- **POST** `/api/registration`
-    - Body: `{ firstname, lastname, username, password, course }`
-    - Returns: `201 Created` with a JWT token and user info.
-- **POST** `/api/login`
-    - Body: `{ username, password }`
-    - Returns: `200 OK` with a JWT token and user info, or `401 Unauthorized` on failure.
+- `bcryptjs`
+- `connect-mongo`
+- `cors`
+- `dotenv`
+- `express`
+- `express-rate-limit`
+- `express-session`
+- `express-validator`
+- `helmet`
+- `hpp`
+- `jsonwebtoken`
+- `mongoose`
+- `pug`
+- `uuid`
+- `winston`
 
-### Forum Topics
-- **GET** `/api/topics`
-    - Purpose: Fetch all topics.
-    - Access: Public.
-    - Returns: `200 OK` with an array of all topics, sorted by date.
-- **POST** `/api/topics`
-    - Purpose: Create a new topic.
-    - Access: Private (requires valid JWT in `Authorization` header).
-    - Body: `{ title, content }`
-    - Returns: `201 Created` with the saved topic or `401 Unauthorized` if no/invalid token.
+**Dev Dependencies**:
 
----
-
-## 4. Installation Guide
-
-### 4.1 Prerequisites
-- **Node.js**: v18 or higher.
-- **MongoDB**: Community Edition (required only for local, non-Docker runs).
-- **Docker Desktop**: Recommended for the easiest setup.
-
-### 4.2 MacOS Installation
-
-1. **Install Homebrew**:
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-2. **Install Node.js**:
-   ```bash
-   brew install node
-   ```
-3. **Install MongoDB**:
-   ```bash
-   brew tap mongodb/brew
-   brew install mongodb-community@7.0
-   ```
-4. **Start MongoDB Service**:
-   ```bash
-   brew services start mongodb-community@7.0
-   ```
-5. **Project Setup**:
-   ```bash
-   git clone <repository-url>
-   cd Web-Engineering-Semester1
-   npm install
-   ```
-6. **Run Locally**:
-   ```bash
-   npm start
-   ```
-
-### 4.3 Windows Installation
-
-1. **Install Node.js**:
-    - Download the Windows Installer (.msi) from [nodejs.org](https://nodejs.org/).
-2. **Install MongoDB**:
-    - Download the MongoDB Community Server from [mongodb.com](https://www.mongodb.com/try/download/community).
-    - During installation, ensure "Install MongoDB as a Service" is selected.
-3. **Project Setup**:
-    - Open PowerShell or Command Prompt.
-    - `git clone <repository-url>`
-    - `cd Web-Engineering-Semester1`
-    - `npm install`
-4. **Run Locally**:
-   ```cmd
-   npm start
-   ```
-
-### 4.4 Docker Setup (Recommended for MacOS & Windows)
-1. **Install Docker Desktop** from [docker.com](https://www.docker.com/).
-2. **Run the Application**:
-   ```bash
-   docker-compose up --build
-   ```
-   The application will be available at `http://localhost`.
-
----
-
-## 5. Testing
-
-The project uses **Mocha** (test runner), **Chai** (assertions), and **Supertest** (API testing).
-
-- **Run Tests**:
-  ```bash
-  npm test
-  ```
-  *Note: If running tests locally, ensure the server is active on port 3001.*
----
-
-installation:
-
-g clone
-
-npm install
-
-npm start
+- `mocha`
+- `chai`
+- `supertest`
