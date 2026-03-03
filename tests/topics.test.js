@@ -35,9 +35,7 @@ describe('Topics API', () => {
         token = loginRes.body?.data?.accessToken;
 
         if (!token) {
-            // eslint-disable-next-line no-console
             console.log('DEBUG topics before-hook registration:', regRes.status, JSON.stringify(regRes.body));
-            // eslint-disable-next-line no-console
             console.log('DEBUG topics before-hook login:', loginRes.status, JSON.stringify(loginRes.body));
         }
 
@@ -157,7 +155,6 @@ describe('Topics API', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({title: tiaTitle, content: 'This is a test topic content.', kurs: 'TIA'});
         if (createTIA.status !== 201) {
-            // eslint-disable-next-line no-console
             console.log('DEBUG createTIA:', createTIA.status, JSON.stringify(createTIA.body));
         }
         expect(createTIA.status).to.equal(201);
@@ -168,7 +165,6 @@ describe('Topics API', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({title: tisTitle, content: 'TIS content long enough', kurs: 'TIS'});
         if (createTIS.status !== 201) {
-            // eslint-disable-next-line no-console
             console.log('DEBUG createTIS:', createTIS.status, JSON.stringify(createTIS.body));
         }
         expect(createTIS.status).to.equal(201);
