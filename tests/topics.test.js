@@ -6,7 +6,6 @@ describe('Topics API', () => {
     let token;
     let createdTopicId;
 
-    // Username must be 3-20 characters.
     const unique = Math.random().toString(36).slice(2, 8);
     const testUser = {
         firstname: 'Topic',
@@ -17,13 +16,11 @@ describe('Topics API', () => {
     };
 
     before(async () => {
-        // Register user
         const regRes = await request(baseUrl)
             .post('/api/registration')
             .set('X-Test-Run', '1')
             .send(testUser);
 
-        // Login to get token
         const loginRes = await request(baseUrl)
             .post('/api/login')
             .set('X-Test-Run', '1')
@@ -60,14 +57,14 @@ describe('Topics API', () => {
         expect(res.body).to.have.property('data');
         expect(res.body.data).to.have.property('title', testTopic.title);
         expect(res.body.data).to.have.property('content', testTopic.content);
-        expect(res.body.data).to.have.property('_id');
+        expect(res.body.data).to.have.property('id');
         expect(res.body.data).to.have.property('createdAt');
 
-        createdTopicId = res.body.data._id;
+        createdTopicId = res.body.data.id;
     });
 
     it('should add a comment to a topic and expose it in GET /api/topics', async () => {
-        expect(createdTopicId, 'Expected created topic id from createTopic test').to.be.a('string');
+        expect(createdTopicId, 'Expected created topic id from createTopic test').to.not.be.undefined;
 
         const commentRes = await request(baseUrl)
             .post(`/api/topics/${createdTopicId}/comments`)
@@ -83,11 +80,10 @@ describe('Topics API', () => {
         const latest = commentRes.body.data.comments[commentRes.body.data.comments.length - 1];
         expect(latest).to.have.property('content', 'Mein erster Kommentar');
 
-        // Now verify GET /api/topics returns embedded comments
         const listRes = await request(baseUrl).get('/api/topics');
         expect(listRes.status).to.equal(200);
 
-        const found = listRes.body.data.find(t => String(t._id) === String(createdTopicId));
+        const found = listRes.body.data.find(t => String(t.id) === String(createdTopicId));
         expect(found, 'Expected created topic in GET /api/topics list').to.not.be.undefined;
         expect(found.comments).to.be.an('array');
         expect(found.comments.some(c => c.content === 'Mein erster Kommentar')).to.be.true;
@@ -138,7 +134,7 @@ describe('Topics API', () => {
         expect(res.body).to.have.property('data');
         expect(res.body.data).to.be.an('array');
 
-        const found = res.body.data.find(t => String(t._id) === String(createdTopicId));
+        const found = res.body.data.find(t => String(t.id) === String(createdTopicId));
         expect(found).to.not.be.undefined;
         expect(found.kurs).to.equal(testTopic.kurs);
         expect(found.title).to.equal(testTopic.title);
