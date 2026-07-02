@@ -7,7 +7,7 @@ describe('Seeding (demo data)', function () {
   this.timeout(20000);
 
   beforeEach(async () => {
-    await Topic.deleteMany({});
+    await Topic.deleteMany();
   });
 
   it('should insert seed topics once when enabled and collection empty', async () => {
@@ -16,10 +16,10 @@ describe('Seeding (demo data)', function () {
 
     await seedTopicsIfEnabled();
 
-    const count = await Topic.countDocuments();
+    const count = await Topic.count();
     expect(count).to.equal(9);
 
-    const hasSeedKey = await Topic.findOne({ seedKey: 'demo1' }).lean();
+    const hasSeedKey = await Topic.findOne({ seedKey: 'demo1' });
     expect(hasSeedKey).to.not.equal(null);
   });
 
@@ -30,7 +30,7 @@ describe('Seeding (demo data)', function () {
     await seedTopicsIfEnabled();
     await seedTopicsIfEnabled();
 
-    const count2 = await Topic.countDocuments();
+    const count2 = await Topic.count();
     expect(count2).to.equal(9);
   });
 

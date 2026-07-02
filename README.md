@@ -1,36 +1,36 @@
 # Web-Engineering-Semester1
 
-Web-Engineering Projekt von **Amica, Tamara, Stefan und Martin**.
+Web-Engineering Projekt von **Amica Schneider, Tamara Bronner, Stefan Malesevic und Martin Ließ**.
 
 ## Überblick
 
-Dieses Repository enthält eine kleine Kursforum-Webanwendung mit:
+Dieses Projekt enthält eine kleine Kursforum-Webanwendung mit:
 
 - **Node.js/Express** Backend (API + Page-Rendering)
 - **Pug** als Template Engine (Views unter `views/`)
-- **MongoDB** als Datenbank (via **Mongoose**)
-- **Nginx** als Reverse Proxy (Docker)
+- **PostgreSQL** als Datenbank (via **pg**)
+- **Nginx** als Reverse Proxy
 - **Mocha/Chai/Supertest** Integrationstests
 
 ---
 
-## Architektur (Docker / 3-Tier)
+## Architektur (Docker)
 
 Der Standard-Setup läuft über Docker Compose:
 
-- `mongodb` (MongoDB)
+- `postgres` (PostgreSQL)
 - `app` (Express App auf Port `3001`)
 - `nginx` (Reverse Proxy auf Port `80`)
 
 **Request-Flow (vereinfacht):**
 
 ```text
-Browser -> http://localhost (Nginx:80) -> app:3001 (Express) -> MongoDB
+Browser -> http://localhost (Nginx:80) -> app:3001 (Express) -> PostgreSQL
 ```
 
 ### Wichtige Dateien
 
-- `server.js` – Express Setup, Middleware, MongoDB-Connect, Routing, 404-Fallback
+- `server.js` – Express Setup, Middleware, PostgreSQL-Connect, Routing, 404-Fallback
 - `docker-compose.yml` – Container-Orchestrierung inkl. Healthchecks
 - `nginx.conf` – Reverse Proxy Konfiguration
 - `views/` – Pug Templates (`index.pug`, `registration.pug`, `forumpage.pug`, `404.pug`, `layout.pug`)
@@ -53,7 +53,7 @@ akzeptiert.
 
 ### API
 
-- Authentifizierung (JWT) + Session (MongoDB Store)
+- Authentifizierung (JWT) + Session (PostgreSQL Store)
 - Topics (CRUD-light: read/create/delete) + embedded Comments
 - Rate Limiting auf API-Routen (siehe `middleware/rateLimitMiddleware.js`)
 
@@ -86,15 +86,13 @@ Definiert in `routes/topicRoutes.js`:
 - `DELETE /api/topics/:id` (protected, nur Author)
 - `POST /api/topics/:id/comments` (protected)
 
-Hinweis: **Topic-Update (PUT)** ist im aktuellen Code **nicht** vorhanden.
-
 ---
 
 ## Demo-Daten (Seed Topics)
 
-Beim Start kann die App Demo-Topics in MongoDB einspielen.
+Beim Start kann die App Demo-Topics in PostgreSQL einspielen.
 
-Implementierung: `seeds/seedTopics.js` (wird in `server.js` nach erfolgreichem MongoDB-Connect ausgeführt).
+Implementierung: `seeds/seedTopics.js` (wird in `server.js` nach erfolgreichem PostgreSQL-Connect ausgeführt).
 
 Relevante Umgebungsvariablen (siehe z.B. `docker-compose.yml`):
 
@@ -111,7 +109,8 @@ Seed-Format: JSON-Array mit pro Topic u.a. `seedKey`, `title`, `content`, `kurs`
 
 ## Docker Setup
 
-Prerequisites: Docker & Docker Compose.
+Voraussetzung: Docker & Docker Compose.
+docker.com
 
 Start:
 
@@ -127,44 +126,10 @@ Danach ist die Anwendung über Nginx erreichbar:
 
 ## Tests
 
-### Lokal (Host)
-
-```bash
-npm test
-```
-
-### Docker-backed (Source of Truth)
+### Docker-backed
 
 ```bash
 npm run test:docker
 ```
 
 Dieser Befehl baut Container neu, startet sie, und führt Tests **im `app` Container** aus.
-
----
-
-## Tech Stack (aus `package.json`)
-
-**Dependencies**:
-
-- `bcryptjs`
-- `connect-mongo`
-- `cors`
-- `dotenv`
-- `express`
-- `express-rate-limit`
-- `express-session`
-- `express-validator`
-- `helmet`
-- `hpp`
-- `jsonwebtoken`
-- `mongoose`
-- `pug`
-- `uuid`
-- `winston`
-
-**Dev Dependencies**:
-
-- `mocha`
-- `chai`
-- `supertest`
