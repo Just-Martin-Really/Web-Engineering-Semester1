@@ -16,7 +16,7 @@ function getDefaultSeedFile() {
 function loadSeedTopics(seedFilePath) {
     const raw = fs.readFileSync(seedFilePath, 'utf8');
     const data = JSON.parse(raw);
-x
+
     if (!Array.isArray(data)) {
         throw new Error('Seed file must be a JSON array');
     }
