@@ -94,4 +94,6 @@ http-client.private.env.json
 /node_modules/
 .idea/*
 /logs/
-/.github/
+
+# Zensical docs build output
+site/
