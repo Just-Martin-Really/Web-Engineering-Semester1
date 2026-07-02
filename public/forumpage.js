@@ -106,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const {status, body} = unwrapApiResponse(result);
 
             if (status === 200) {
-                allTopics = allTopics.filter(t => String(t._id) !== String(topicId));
+                allTopics = allTopics.filter(t => String(t.id) !== String(topicId));
                 applySearchAndFilter();
             } else if (status === 401) {
                 alert('Sitzung abgelaufen. Bitte erneut anmelden.');
@@ -211,7 +211,7 @@ document.addEventListener("DOMContentLoaded", () => {
         topics.forEach(topic => {
             const topicArticle = document.createElement("article");
             topicArticle.className = "forum-post";
-            topicArticle.setAttribute('data-topic-id', String(topic._id));
+            topicArticle.setAttribute('data-topic-id', String(topic.id));
 
             const topicHeader = document.createElement("div");
             topicHeader.className = "post-header";
@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 delBtn.type = 'button';
                 delBtn.className = 'post-delete';
                 delBtn.textContent = 'Löschen';
-                delBtn.addEventListener('click', () => deleteTopicById(topic._id));
+                delBtn.addEventListener('click', () => deleteTopicById(topic.id));
 
                 actions.appendChild(delBtn);
                 metaRow.appendChild(actions);
@@ -370,7 +370,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 try {
-                    const result = await apiRequest(`/api/topics/${topic._id}/comments`, 'POST', {content}, token);
+                    const result = await apiRequest(`/api/topics/${topic.id}/comments`, 'POST', {content}, token);
                     const {status, body, payload} = unwrapApiResponse(result);
 
                     if (status === 201) {
@@ -445,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // If we're appending, remember where the list ended so we can scroll there.
             const scrollAnchorId = mode === 'append' && allTopics.length
-                ? String(allTopics[allTopics.length - 1]?._id)
+                ? String(allTopics[allTopics.length - 1]?.id)
                 : null;
 
             // When replacing (filter change / initial load) reset page
@@ -468,9 +468,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 setLoadMoreState({canLoadMore: false});
             } else {
                 if (mode === 'append') {
-                    // Avoid duplicates by _id
-                    const existingIds = new Set(allTopics.map(t => String(t._id)));
-                    const next = payload.filter(t => !existingIds.has(String(t._id)));
+                    // Avoid duplicates by id
+                    const existingIds = new Set(allTopics.map(t => String(t.id)));
+                    const next = payload.filter(t => !existingIds.has(String(t.id)));
                     allTopics = allTopics.concat(next);
                 } else {
                     allTopics = payload;
