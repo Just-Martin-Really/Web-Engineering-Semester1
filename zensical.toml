@@ -1,0 +1,125 @@
+[project]
+site_name = "Kursforum"
+site_url = "https://just-martin-really.github.io/Web-Engineering-Semester1/"
+site_description = "Course-forum web application built with Express, Pug and PostgreSQL."
+docs_dir = "docs"
+site_dir = "site"
+extra_css = ["stylesheets/extra.css"]
+
+[[project.nav]]
+title = "Home"
+path = "index.md"
+
+[[project.nav]]
+title = "Tutorials"
+icon = "lucide/graduation-cap"
+children = ["tutorials/index.md", "tutorials/10-quickstart.md"]
+
+[[project.nav]]
+title = "How-to guides"
+icon = "lucide/wrench"
+children = [
+    "how-to/index.md",
+    "how-to/run-with-docker.md",
+    "how-to/run-without-docker.md",
+    "how-to/seed-demo-topics.md",
+    "how-to/run-tests.md",
+]
+
+[[project.nav]]
+title = "Reference"
+icon = "lucide/library"
+children = [
+    "reference/index.md",
+    "reference/api.md",
+    "reference/environment.md",
+    "reference/database-schema.md",
+]
+
+[[project.nav]]
+title = "Explanation"
+icon = "lucide/book-open"
+children = [
+    "explanation/index.md",
+    "explanation/architecture.md",
+    "explanation/auth-model.md",
+    "explanation/security.md",
+]
+
+[project.theme]
+language = "en"
+logo = "assets/logo.png"
+favicon = "assets/favicon.png"
+features = [
+    "content.code.annotate",
+    "content.code.copy",
+    "content.code.select",
+    "content.footnote.tooltips",
+    "content.tabs.link",
+    "content.tooltips",
+    "navigation.footer",
+    "navigation.indexes",
+    "navigation.instant",
+    "navigation.instant.prefetch",
+    "navigation.path",
+    "navigation.sections",
+    "navigation.top",
+    "navigation.tracking",
+    "search.highlight",
+]
+
+[[project.theme.palette]]
+scheme = "default"
+primary = "deep purple"
+accent = "deep purple"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+scheme = "slate"
+primary = "deep purple"
+accent = "deep purple"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[project.markdown_extensions]
+abbr = {}
+admonition = {}
+attr_list = {}
+def_list = {}
+footnotes = {}
+md_in_html = {}
+"pymdownx.arithmatex" = { generic = true }
+"pymdownx.betterem" = {}
+"pymdownx.caret" = {}
+"pymdownx.details" = {}
+"pymdownx.inlinehilite" = {}
+"pymdownx.keys" = {}
+"pymdownx.magiclink" = {}
+"pymdownx.mark" = {}
+"pymdownx.smartsymbols" = {}
+"pymdownx.tasklist" = { custom_checkbox = true }
+"pymdownx.tilde" = {}
+
+[project.markdown_extensions.toc]
+permalink = true
+
+[project.markdown_extensions."pymdownx.emoji"]
+emoji_generator = "zensical.extensions.emoji.to_svg"
+emoji_index = "zensical.extensions.emoji.twemoji"
+
+[project.markdown_extensions."pymdownx.highlight"]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions."pymdownx.superfences"]
+custom_fences = [{ name = "mermaid", class = "mermaid" }]
+
+[project.markdown_extensions."pymdownx.tabbed"]
+alternate_style = true
+combine_header_slug = true
+
+[project.markdown_extensions."pymdownx.snippets"]
+base_path = [".", "docs"]
+check_paths = true
