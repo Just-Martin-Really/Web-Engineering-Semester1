@@ -1,0 +1,16 @@
+/* Match the docs to the app brand palette (see public/homepage.css). */
+
+:root {
+  --md-primary-fg-color: #7a5cff;
+  --md-primary-fg-color--light: #9c84ff;
+  --md-primary-fg-color--dark: #5a5ab5;
+  --md-accent-fg-color: #9c84ff;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #7a5cff;
+  --md-primary-fg-color--light: #9c84ff;
+  --md-primary-fg-color--dark: #5a5ab5;
+  --md-accent-fg-color: #9c84ff;
+  --md-typeset-a-color: #9c84ff;
+}

@@ -1,0 +1,926 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Course-forum web application built with Express, Pug and PostgreSQL.">
+      
+      
+      
+        <link rel="canonical" href="https://just-martin-really.github.io/Web-Engineering-Semester1/reference/api/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.png">
+      <meta name="generator" content="zensical-0.0.46">
+    
+    
+      
+        <title>HTTP API - Kursforum</title>
+      
+    
+    
+      
+        
+      
+      <link rel="stylesheet" href="../../assets/stylesheets/modern/main.19d3147f.min.css">
+      
+        
+          
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/modern/palette.dfe2e883.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,500,500i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_scope.pathname.endsWith("/")||(__md_scope=new URL(__md_scope.pathname+"/",location)),__md_hash=e=>[...e].reduce(((e,t)=>(e<<5)-e+t.charCodeAt(0)),0),__md_get=(e,t=localStorage,_=__md_scope)=>JSON.parse(t.getItem(_.pathname+"."+e)),__md_set=(e,t,_=localStorage,a=__md_scope)=>{try{_.setItem(a.pathname+"."+e,JSON.stringify(t))}catch(e){}},document.documentElement.setAttribute("data-platform",navigator.platform)</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer" aria-label="Navigation"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#http-api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Kursforum" class="md-header__button md-logo" aria-label="Kursforum" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="Kursforum">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer" aria-label="Navigation">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-menu" viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Kursforum
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              HTTP API
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="none" data-md-color-scheme="slate" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-moon" viewBox="0 0 24 24"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search" aria-label="Search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-search" viewBox="0 0 24 24"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog" aria-label="Search">
+  <button type="button" class="md-search__button">
+    Search
+  </button>
+</div>
+      
+    
+    <div class="md-header__source">
+      
+    </div>
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Kursforum" class="md-nav__button md-logo" aria-label="Kursforum" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="Kursforum">
+
+    </a>
+    Kursforum
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Home" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  title
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Tutorials" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  title
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../How-to guides" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  title
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Reference" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  title
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../Explanation" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  title
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  
+                    
+                    
+                    
+                      
+                    
+                    
+                      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+                      <div class="md-sidebar-button__wrapper">
+                        <label class="md-sidebar-button" for="__toc"></label>
+                      </div>
+                    
+                  
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#conventions" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Conventions
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Conventions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#success-envelope" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Success envelope
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#error-envelope" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Error envelope
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#health" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Health
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#auth" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Auth
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Auth">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#post-apiregistration" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        POST /api/registration
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apilogin" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        POST /api/login
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apirefresh" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        POST /api/refresh
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apilogout" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        POST /api/logout
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Topics
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Topics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-apitopics" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        GET /api/topics
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apitopics" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        POST /api/topics
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#delete-apitopicsid" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        DELETE /api/topics/:id
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-apitopicsidcomments" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        POST /api/topics/:id/comments
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Pages
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+<h1 id="http-api">HTTP API<a class="headerlink" href="#http-api" title="Permanent link">&para;</a></h1>
+<p>See also: <a href="../../explanation/auth-model/">Auth model</a> · <a href="../environment/">Environment variables</a> · <a href="../database-schema/">Database schema</a></p>
+<p>Every JSON endpoint the app exposes, its inputs, and its responses. Page routes that render HTML (<code>/</code>, <code>/register</code>, <code>/forum</code>) are listed under <a href="#pages">Pages</a>.</p>
+<h2 id="conventions">Conventions<a class="headerlink" href="#conventions" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Base path for the API is <code>/api</code>. Through Nginx the app is at <code>http://localhost</code>; direct, it's <code>http://localhost:3001</code>.</li>
+<li>All API requests and responses are JSON. The request body limit is <code>10kb</code>.</li>
+<li>Protected endpoints require an access token in the <code>Authorization</code> header: <code>Authorization: Bearer &lt;accessToken&gt;</code>.</li>
+<li>Rate limits apply per IP and are disabled when <code>NODE_ENV=test</code>. See <a href="../environment/#rate-limiting">Rate limiting</a>.</li>
+</ul>
+<h3 id="success-envelope">Success envelope<a class="headerlink" href="#success-envelope" title="Permanent link">&para;</a></h3>
+<p>Every successful response uses this shape:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">&quot;success&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Erfolg&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="nt">&quot;data&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-01-01T00:00:00.000Z&quot;</span><span class="p">,</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">  </span><span class="nt">&quot;requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>List endpoints add a <code>pagination</code> object alongside <code>data</code>.</p>
+<h3 id="error-envelope">Error envelope<a class="headerlink" href="#error-envelope" title="Permanent link">&para;</a></h3>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">&quot;success&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">&quot;statusCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">400</span><span class="p">,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="nt">&quot;message&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Validierungsfehler&quot;</span><span class="p">,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="nt">&quot;errorCode&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;VALIDATION_ERROR&quot;</span><span class="p">,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">&quot;errorId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid&quot;</span><span class="p">,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-01-01T00:00:00.000Z&quot;</span><span class="p">,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="nt">&quot;requestId&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;uuid&quot;</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">}</span>
+</span></code></pre></div>
+<p>Field-level <code>details</code> are included only when <code>NODE_ENV=development</code>.</p>
+<h2 id="health">Health<a class="headerlink" href="#health" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/health</code></td>
+<td>none</td>
+<td>Liveness probe used by Docker healthchecks</td>
+</tr>
+</tbody>
+</table>
+<p>Response <code>data</code> (returned at the top level, not wrapped):</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p">{</span><span class="w"> </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;OK&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;timestamp&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2026-01-01T00:00:00.000Z&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;uptime&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">12.34</span><span class="w"> </span><span class="p">}</span>
+</span></code></pre></div>
+<h2 id="auth">Auth<a class="headerlink" href="#auth" title="Permanent link">&para;</a></h2>
+<p>Defined in <code>routes/authRoutes.js</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/registration</code></td>
+<td>none</td>
+<td>Register a new user</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/login</code></td>
+<td>none</td>
+<td>Authenticate and receive tokens</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/refresh</code></td>
+<td>none</td>
+<td>Exchange a refresh token for a new access token</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/logout</code></td>
+<td>Bearer</td>
+<td>Invalidate the current session</td>
+</tr>
+</tbody>
+</table>
+<h3 id="post-apiregistration">POST /api/registration<a class="headerlink" href="#post-apiregistration" title="Permanent link">&para;</a></h3>
+<p>Request body:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Rules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>firstname</code></td>
+<td>1–50 chars, letters/spaces/apostrophes/hyphens</td>
+</tr>
+<tr>
+<td><code>lastname</code></td>
+<td>1–50 chars, letters/spaces/apostrophes/hyphens</td>
+</tr>
+<tr>
+<td><code>username</code></td>
+<td>3–20 chars, letters/numbers/underscores/hyphens; stored lowercase</td>
+</tr>
+<tr>
+<td><code>password</code></td>
+<td>min 8 chars, must include an uppercase letter, a lowercase letter and a number</td>
+</tr>
+<tr>
+<td><code>course</code></td>
+<td>one of <code>TIA</code>, <code>TIS</code>, <code>TIK</code></td>
+</tr>
+</tbody>
+</table>
+<p>Returns <code>201</code> with the created user plus an access token, refresh token, <code>sessionId</code>, and <code>expiresIn</code>. Returns <code>409</code> (<code>ConflictError</code>) if the username is taken.</p>
+<h3 id="post-apilogin">POST /api/login<a class="headerlink" href="#post-apilogin" title="Permanent link">&para;</a></h3>
+<p>Request body: <code>username</code>, <code>password</code>.</p>
+<p>Returns <code>200</code> with the user and a fresh token pair. Returns <code>401</code> for an unknown user, a wrong password, or a locked account. Repeated failures lock the account, see <a href="../../explanation/auth-model/#account-lockout">Auth model</a>.</p>
+<h3 id="post-apirefresh">POST /api/refresh<a class="headerlink" href="#post-apirefresh" title="Permanent link">&para;</a></h3>
+<p>Request body: <code>refreshToken</code>.</p>
+<p>Returns <code>200</code> with a new <code>accessToken</code> and <code>expiresIn: "15m"</code>. Returns <code>401</code> if the refresh token is missing, invalid, or its user no longer exists.</p>
+<h3 id="post-apilogout">POST /api/logout<a class="headerlink" href="#post-apilogout" title="Permanent link">&para;</a></h3>
+<p>Requires <code>Authorization: Bearer &lt;accessToken&gt;</code>. Destroys the server-side session and returns <code>200</code>.</p>
+<h2 id="topics">Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
+<p>Defined in <code>routes/topicRoutes.js</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/topics</code></td>
+<td>none</td>
+<td>List topics, filtered and paginated</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/topics</code></td>
+<td>Bearer</td>
+<td>Create a topic</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/api/topics/:id</code></td>
+<td>Bearer</td>
+<td>Delete a topic (author only)</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/topics/:id/comments</code></td>
+<td>Bearer</td>
+<td>Add a comment to a topic</td>
+</tr>
+</tbody>
+</table>
+<h3 id="get-apitopics">GET /api/topics<a class="headerlink" href="#get-apitopics" title="Permanent link">&para;</a></h3>
+<p>Query parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kurs</code></td>
+<td>—</td>
+<td>Filter by course; ignored unless it's <code>TIA</code>, <code>TIS</code> or <code>TIK</code></td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td><code>1</code></td>
+<td>Page number, clamped to <code>&gt;= 1</code></td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td><code>10</code></td>
+<td>Items per page, clamped to <code>1</code>–<code>100</code></td>
+</tr>
+</tbody>
+</table>
+<p>Returns <code>200</code> with a paginated list. Each topic carries a resolved <code>authorName</code> (the registered user's username, else the seed author name, else <code>Unbekannt</code>). The <code>pagination</code> object:</p>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="p">{</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">&quot;total&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">42</span><span class="p">,</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="nt">&quot;limit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">  </span><span class="nt">&quot;totalPages&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">  </span><span class="nt">&quot;hasNextPage&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">  </span><span class="nt">&quot;hasPrevPage&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="p">}</span>
+</span></code></pre></div>
+<h3 id="post-apitopics">POST /api/topics<a class="headerlink" href="#post-apitopics" title="Permanent link">&para;</a></h3>
+<p>Request body:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Rules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>5–100 chars</td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td>10–10000 chars</td>
+</tr>
+<tr>
+<td><code>kurs</code></td>
+<td>one of <code>TIA</code>, <code>TIS</code>, <code>TIK</code></td>
+</tr>
+</tbody>
+</table>
+<p>Returns <code>201</code> with the created topic. The author is taken from the access token, not the body.</p>
+<h3 id="delete-apitopicsid">DELETE /api/topics/:id<a class="headerlink" href="#delete-apitopicsid" title="Permanent link">&para;</a></h3>
+<p>Deletes the topic identified by <code>:id</code>. Returns <code>200</code> on success. Returns an authorization error if the caller is not the topic's author; deleting another user's topic is rejected.</p>
+<h3 id="post-apitopicsidcomments">POST /api/topics/:id/comments<a class="headerlink" href="#post-apitopicsidcomments" title="Permanent link">&para;</a></h3>
+<p>Request body: <code>content</code> (1–1000 chars).</p>
+<p>Returns <code>201</code> with the topic including the newly added comment and its resolved author.</p>
+<h2 id="pages">Pages<a class="headerlink" href="#pages" title="Permanent link">&para;</a></h2>
+<p>Defined in <code>routes/pageRoutes.js</code>. These render Pug templates and return HTML, not JSON.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Template</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/</code></td>
+<td><code>index.pug</code></td>
+<td>Landing page</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/register</code></td>
+<td><code>registration.pug</code></td>
+<td>Registration form</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/forum</code></td>
+<td><code>forumpage.pug</code></td>
+<td>Forum view</td>
+</tr>
+</tbody>
+</table>
+<p>Unknown paths return a JSON <code>404</code> for API/non-HTML clients, or the rendered <code>404.pug</code> page for browsers.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-circle-arrow-up" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4M12 16V8"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://zensical.org/" target="_blank" rel="noopener">
+      Zensical
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate":null,"base":"../..","features":["content.code.annotate","content.code.copy","content.code.select","content.footnote.tooltips","content.tabs.link","content.tooltips","navigation.footer","navigation.indexes","navigation.instant","navigation.instant.prefetch","navigation.path","navigation.sections","navigation.top","navigation.tracking","search.highlight"],"search":"../../assets/javascripts/workers/search.b6b7e04f.min.js","tags":null,"translations":{"clipboard.copied":"Copied to clipboard","clipboard.copy":"Copy to clipboard","search.result.more.one":"1 more on this page","search.result.more.other":"# more on this page","search.result.none":"No matching documents","search.result.one":"1 matching document","search.result.other":"# matching documents","search.result.placeholder":"Type to start searching","search.result.term.missing":"Missing","select.version":"Select version"},"version":null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.ee611ef6.min.js"></script>
+      
+    
+  </body>
+</html>
