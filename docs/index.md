@@ -50,3 +50,4 @@ How the pieces fit: architecture, the auth model, the security layers.
 | Run it locally | [Quickstart](tutorials/10-quickstart.md) |
 | API endpoints | [API reference](reference/api.md) |
 | Configuration | [Environment variables](reference/environment.md) |
+| Report an issue | [GitHub Issues](https://github.com/Just-Martin-Really/Web-Engineering-Semester1/issues) |
