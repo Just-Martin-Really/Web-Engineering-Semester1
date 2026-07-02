@@ -6,6 +6,8 @@ icon: lucide/messages-square
 
 A course-forum web application where students in the TIA, TIS and TIK courses post topics and comment on them. Built with Express 5, Pug and PostgreSQL, fronted by Nginx and run with Docker Compose.
 
+A DHBW Web-Engineering project by Amica Schneider, Tamara Bronner, Stefan Malesevic and Martin Ließ.
+
 <div class="grid cards" markdown>
 
 <div markdown>
