@@ -16,7 +16,7 @@ function getDefaultSeedFile() {
 function loadSeedTopics(seedFilePath) {
     const raw = fs.readFileSync(seedFilePath, 'utf8');
     const data = JSON.parse(raw);
-
+x
     if (!Array.isArray(data)) {
         throw new Error('Seed file must be a JSON array');
     }
@@ -35,35 +35,25 @@ async function upsertSeedTopic(topic) {
         throw new Error('Seed topic is missing a valid seedKey');
     }
 
-    // Minimal validation to surface clear errors early
     if (!title || !content || !kurs) {
         throw new Error(`Seed topic '${seedKey}' must include title, content and kurs`);
     }
 
-    const seedCommentDoc = (seedComment && typeof seedComment === 'object' && typeof seedComment.content === 'string')
-        ? {
+    const comments = (seedComment && typeof seedComment === 'object' && typeof seedComment.content === 'string')
+        ? [{
             content: seedComment.content,
-            author: null,
-            seedAuthorName: typeof seedComment.seedAuthorName === 'string' ? seedComment.seedAuthorName.trim() : undefined
-        }
-        : null;
+            seedAuthorName: typeof seedComment.seedAuthorName === 'string' ? seedComment.seedAuthorName.trim() : null
+        }]
+        : [];
 
-    await Topic.updateOne(
-        {seedKey},
-        {
-            $setOnInsert: {
-                seedKey,
-                title,
-                content,
-                kurs,
-                // Seeded/demo topics intentionally don't reference a real User
-                author: null,
-                seedAuthorName: typeof seedAuthorName === 'string' ? seedAuthorName.trim() : undefined,
-                comments: seedCommentDoc ? [seedCommentDoc] : []
-            }
-        },
-        {upsert: true}
-    );
+    await Topic.upsertSeed({
+        seedKey,
+        title,
+        content,
+        kurs,
+        seedAuthorName: typeof seedAuthorName === 'string' ? seedAuthorName.trim() : null,
+        comments
+    });
 }
 
 async function seedTopicsIfEnabled() {
@@ -74,7 +64,7 @@ async function seedTopicsIfEnabled() {
 
     try {
         if (onlyOnEmpty) {
-            const count = await Topic.countDocuments();
+            const count = await Topic.count();
             if (count > 0) {
                 logger.info('Seed topics skipped (collection not empty)', {count});
                 return;
@@ -100,7 +90,6 @@ async function seedTopicsIfEnabled() {
 
         logger.info('Seed topics completed', {insertedOrExisting: topics.length, seedFilePath, onlyOnEmpty});
     } catch (err) {
-        // Don’t crash local/dev by default; make it visible in logs.
         logger.error('Seed topics failed', {
             message: err.message,
             stack: err.stack,

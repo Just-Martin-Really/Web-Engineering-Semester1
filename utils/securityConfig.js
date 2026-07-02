@@ -50,7 +50,7 @@ const sessionConfig = {
 
     store: {
         // Configured in sessionMiddleware
-        // Uses MongoDB for persistent session storage
+        // Uses PostgreSQL for persistent session storage
         touchAfter: 24 * 3600 // Lazy session update (every 24h)
     }
 };

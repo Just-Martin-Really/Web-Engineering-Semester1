@@ -1,155 +1,96 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const pool = require('../db');
 const { accountLockoutConfig } = require('../utils/securityConfig');
 
-/**
- * User Schema
- * Includes security features:
- * - Account lockout after failed login attempts
- * - Password hashing on save
- * - Audit timestamps
- * - Login attempt tracking
- *
- * @typedef {Object} User
- * @property {string} firstname - User's first name
- * @property {string} lastname - User's last name
- * @property {string} username - Unique username
- * @property {string} password - Hashed password
- * @property {string} course - User's course
- * @property {number} failedLoginAttempts - Tracks failed login attempts
- * @property {Date} lockoutUntil - When account lockout expires
- */
-const userSchema = new mongoose.Schema({
-    firstname: {
-        type: String,
-        required: [true, 'Vorname ist erforderlich'],
-        trim: true,
-        minlength: [1, 'Vorname muss mindestens 1 Zeichen lang sein'],
-        maxlength: [50, 'Vorname darf maximal 50 Zeichen lang sein']
-    },
-    lastname: {
-        type: String,
-        required: [true, 'Nachname ist erforderlich'],
-        trim: true,
-        minlength: [1, 'Nachname muss mindestens 1 Zeichen lang sein'],
-        maxlength: [50, 'Nachname darf maximal 50 Zeichen lang sein']
-    },
-    username: {
-        type: String,
-        required: [true, 'Benutzername ist erforderlich'],
-        unique: true,
-        sparse: true,
-        trim: true,
-        minlength: [3, 'Benutzername muss mindestens 3 Zeichen lang sein'],
-        maxlength: [20, 'Benutzername darf maximal 20 Zeichen lang sein'],
-        lowercase: true,
-        index: true // Index for faster lookups
-    },
-    password: {
-        type: String,
-        required: [true, 'Passwort ist erforderlich'],
-        minlength: [8, 'Passwort muss mindestens 8 Zeichen lang sein'],
-        select: false // Never return password in queries by default
-    },
-    course: {
-        type: String,
-        required: [true, 'Kurs ist erforderlich'],
-        enum: {
-            values: ['TIA', 'TIS', 'TIK'],
-            message: 'Kurs muss TIA, TIS oder TIK sein'
-        }
-    },
+const BASE_COLS = 'id, firstname, lastname, username, course, failed_login_attempts, lockout_until, last_failed_login_at, last_login_at, created_at, updated_at';
+const WITH_PASSWORD = BASE_COLS + ', password';
 
-    // Account lockout security fields
-    failedLoginAttempts: {
-        type: Number,
-        default: 0,
-        min: 0
-    },
-    lockoutUntil: {
-        type: Date,
-        default: null
-    },
-    lastFailedLoginAt: {
-        type: Date,
-        default: null
-    },
-    lastLoginAt: {
-        type: Date,
-        default: null
+class UserInstance {
+    constructor(row) {
+        this.id = row.id;
+        this.firstname = row.firstname;
+        this.lastname = row.lastname;
+        this.username = row.username;
+        this.password = row.password;
+        this.course = row.course;
+        this.failedLoginAttempts = row.failed_login_attempts;
+        this.lockoutUntil = row.lockout_until;
+        this.lastFailedLoginAt = row.last_failed_login_at;
+        this.lastLoginAt = row.last_login_at;
+        this.createdAt = row.created_at;
+        this.updatedAt = row.updated_at;
     }
-}, { timestamps: true });
 
-/**
- * Pre-save middleware to hash password
- * Only hashes if password is modified (not on every save)
- * Uses bcryptjs with salt rounds for security
- */
-userSchema.pre('save', async function() {
-    if (!this.isModified('password')) return;
+    async comparePassword(candidatePassword) {
+        return bcrypt.compare(candidatePassword, this.password);
+    }
 
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
+    isAccountLocked() {
+        return this.lockoutUntil && this.lockoutUntil > new Date();
+    }
 
-        // Reset failed attempts when password is changed
+    async incrementFailedLoginAttempts() {
+        if (this.lastFailedLoginAt &&
+            new Date() - this.lastFailedLoginAt > accountLockoutConfig.resetFailuresAfter) {
+            this.failedLoginAttempts = 0;
+        }
+
+        this.failedLoginAttempts += 1;
+        this.lastFailedLoginAt = new Date();
+
+        if (this.failedLoginAttempts >= accountLockoutConfig.maxFailedAttempts) {
+            this.lockoutUntil = new Date(Date.now() + accountLockoutConfig.lockoutDuration);
+        }
+
+        await pool.query(
+            `UPDATE users SET failed_login_attempts = $1, last_failed_login_at = $2, lockout_until = $3, updated_at = NOW() WHERE id = $4`,
+            [this.failedLoginAttempts, this.lastFailedLoginAt, this.lockoutUntil, this.id]
+        );
+    }
+
+    async resetFailedLoginAttempts() {
         this.failedLoginAttempts = 0;
         this.lockoutUntil = null;
-    } catch (err) {
-        throw err;
+        this.lastFailedLoginAt = null;
+        this.lastLoginAt = new Date();
+
+        await pool.query(
+            `UPDATE users SET failed_login_attempts = 0, lockout_until = NULL, last_failed_login_at = NULL, last_login_at = $1, updated_at = NOW() WHERE id = $2`,
+            [this.lastLoginAt, this.id]
+        );
     }
-});
+}
 
-/**
- * Compares a candidate password with the hashed password
- * Used during login authentication
- *
- * @param {string} candidatePassword - The password to compare
- * @returns {Promise<boolean>} True if passwords match
- */
-userSchema.methods.comparePassword = async function(candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
-};
+const User = {
+    async findOne({ username }, { includePassword = false } = {}) {
+        const cols = includePassword ? WITH_PASSWORD : BASE_COLS;
+        const { rows } = await pool.query(
+            `SELECT ${cols} FROM users WHERE username = $1`,
+            [username]
+        );
+        return rows[0] ? new UserInstance(rows[0]) : null;
+    },
 
-/**
- * Checks if account is locked due to failed login attempts
- * @returns {boolean} True if account is currently locked
- */
-userSchema.methods.isAccountLocked = function() {
-    return this.lockoutUntil && this.lockoutUntil > new Date();
-};
+    async findById(id) {
+        const { rows } = await pool.query(
+            `SELECT ${BASE_COLS} FROM users WHERE id = $1`,
+            [id]
+        );
+        return rows[0] ? new UserInstance(rows[0]) : null;
+    },
 
-/**
- * Increments failed login attempt counter
- * Locks account after max failed attempts
- */
-userSchema.methods.incrementFailedLoginAttempts = async function() {
-    // Reset counter if last failed attempt was older than reset duration
-    if (this.lastFailedLoginAt &&
-        new Date() - this.lastFailedLoginAt > accountLockoutConfig.resetFailuresAfter) {
-        this.failedLoginAttempts = 0;
+    async create({ firstname, lastname, username, password, course }) {
+        const salt = await bcrypt.genSalt(10);
+        const hashed = await bcrypt.hash(password, salt);
+
+        const { rows } = await pool.query(
+            `INSERT INTO users (firstname, lastname, username, password, course)
+             VALUES ($1, $2, $3, $4, $5)
+             RETURNING ${BASE_COLS}`,
+            [firstname, lastname, username, hashed, course]
+        );
+        return new UserInstance(rows[0]);
     }
-
-    this.failedLoginAttempts += 1;
-    this.lastFailedLoginAt = new Date();
-
-    // Lock account if max attempts exceeded
-    if (this.failedLoginAttempts >= accountLockoutConfig.maxFailedAttempts) {
-        this.lockoutUntil = new Date(Date.now() + accountLockoutConfig.lockoutDuration);
-    }
-
-    await this.save();
 };
 
-/**
- * Resets failed login attempts after successful authentication
- */
-userSchema.methods.resetFailedLoginAttempts = async function() {
-    this.failedLoginAttempts = 0;
-    this.lockoutUntil = null;
-    this.lastFailedLoginAt = null;
-    this.lastLoginAt = new Date();
-    await this.save();
-};
-
-module.exports = mongoose.model('User', userSchema);
+module.exports = User;

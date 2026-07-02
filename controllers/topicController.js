@@ -7,46 +7,29 @@ const {logAuthEvent} = require('../utils/errorLogger');
  * @desc    Get all topics with optional filtering
  * @route   GET /api/topics
  * @access  Public
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
  */
 const getTopics = async (req, res, next) => {
     try {
         const {kurs, page = 1, limit = 10} = req.query;
 
-        // Build query filter
-        let query = {};
+        const filter = {};
         if (kurs && ['TIA', 'TIS', 'TIK'].includes(kurs)) {
-            query.kurs = kurs;
+            filter.kurs = kurs;
         }
 
-        // Calculate pagination
         const pageNum = Math.max(1, parseInt(page) || 1);
-        const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 10)); // Max 100 per page
+        const limitNum = Math.min(100, Math.max(1, parseInt(limit) || 10));
         const skip = (pageNum - 1) * limitNum;
 
-        // Fetch topics and total count
-        const topics = await Topic.find(query)
-            .sort({createdAt: -1})
-            .skip(skip)
-            .limit(limitNum)
-            .populate('author', 'username')
-            .populate('comments.author', 'username')
-            .lean();
+        const topics = await Topic.find(filter, {skip, limit: limitNum});
 
-        // Normalize author display name (real user preferred, seeded fallback)
         const normalizedTopics = topics.map(t => {
             const authorName = t?.author?.username || t?.seedAuthorName || 'Unbekannt';
-            return {
-                ...t,
-                authorName
-            };
+            return {...t, authorName};
         });
 
-        const total = await Topic.countDocuments(query);
+        const total = await Topic.count(filter);
 
-        // Return paginated response
         const response = paginatedResponse(
             normalizedTopics,
             total,
@@ -65,35 +48,29 @@ const getTopics = async (req, res, next) => {
  * @desc    Create a new topic
  * @route   POST /api/topics
  * @access  Private
- * @param {Object} req - Express request object (must be authenticated)
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
  */
 const createTopic = async (req, res, next) => {
     try {
         const {title, content, kurs} = req.body;
         const userId = req.user.id;
 
-        // Create topic document
         const topic = await Topic.create({
             title: title.trim(),
             content: content.trim(),
             kurs,
-            author: userId // Link topic to user
+            authorId: userId
         });
 
         if (!topic) {
             return next(new Error('Thema konnte nicht erstellt werden'));
         }
 
-        // Log topic creation
         logAuthEvent('TOPIC_CREATED', userId, {
-            topicId: topic._id,
+            topicId: topic.id,
             title: topic.title,
             kurs: topic.kurs
         });
 
-        // Return success response
         const response = successResponse(
             topic,
             'Thema erfolgreich erstellt',
@@ -110,26 +87,21 @@ const createTopic = async (req, res, next) => {
  * @desc    Delete a topic
  * @route   DELETE /api/topics/:id
  * @access  Private
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next middleware function
  */
 const deleteTopic = async (req, res, next) => {
     try {
         const {id} = req.params;
         const userId = req.user.id;
 
-        // Find and delete topic
         const topic = await Topic.findById(id);
         if (!topic) {
             return next(new Error('Thema nicht gefunden'));
         }
 
-        // Check authorization
-        if (topic.author.toString() !== userId.toString()) {
+        if (String(topic.authorId) !== String(userId)) {
             logAuthEvent('TOPIC_DELETE_UNAUTHORIZED', userId, {
                 topicId: id,
-                authorId: topic.author
+                authorId: topic.authorId
             });
             return next(new AuthorizationError('Sie können dieses Thema nicht löschen'));
         }
@@ -169,15 +141,8 @@ const addComment = async (req, res, next) => {
             return next(new Error('Thema nicht gefunden'));
         }
 
-        topic.comments.push({
-            content: content.trim(),
-            author: userId
-        });
-
-        await topic.save();
-
-        // Populate just enough for the client to show immediately
-        await topic.populate('comments.author', 'username');
+        await topic.pushComment({content: content.trim(), authorId: userId});
+        await topic.populateCommentAuthors();
 
         const response = successResponse(
             topic,
