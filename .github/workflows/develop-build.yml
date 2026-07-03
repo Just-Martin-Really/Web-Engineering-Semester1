@@ -1,0 +1,78 @@
+name: Develop Build
+
+# A push to `develop` builds and pushes the application image tagged
+# `<version>-dev` (e.g. `1.0.0-dev`, version read from package.json). The dev
+# cluster's `app-image` OCIArtifactTag provider floats on the highest `-dev`
+# tag, so dev refreshes on the next provider poll (~1m) WITHOUT cutting a
+# GitHub release.
+#
+# Release builds (release.yml) push the suffixless `X.Y.Z` tag, which test/prod
+# are promoted from by retagging it `-test` / `-prod` (promote-image.yaml).
+
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - "controllers/**"
+      - "db/**"
+      - "middleware/**"
+      - "models/**"
+      - "routes/**"
+      - "seeds/**"
+      - "utils/**"
+      - "views/**"
+      - "public/**"
+      - "server.js"
+      - "package.json"
+      - "package-lock.json"
+      - "dockerfile"
+      - ".dockerignore"
+      - ".github/workflows/develop-build.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: develop-build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: europe-west3-docker.pkg.dev/digitalgedacht/docker/digitalgedacht/kursforum/app
+
+jobs:
+  build:
+    name: "Build and push the -dev image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "Resolve version tag"
+        id: version
+        run: echo "tag=$(node -p "require('./package.json').version")-dev" >> "$GITHUB_OUTPUT"
+
+      - name: "Auth GCloud"
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_ARTIFACTORY_SERVICE_ACCOUNT_KEY }}
+
+      - name: "Auth Docker"
+        run: gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
+
+      - name: "Set up QEMU"
+        uses: docker/setup-qemu-action@v3
+
+      - name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v3
+
+      - name: "Build and push (multi-arch)"
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ env.IMAGE }}:${{ steps.version.outputs.tag }}
+          provenance: false
