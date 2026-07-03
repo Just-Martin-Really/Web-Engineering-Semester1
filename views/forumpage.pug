@@ -1,99 +1,100 @@
 extends layout
+include mixins
 
 block head
-    script(src="/forumpage.js", defer)
-    script(src="/utils.js")
-    link(rel="stylesheet", href="/forumpage.css")
-    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css")
+  link(rel="stylesheet", href="/forumpage.css")
+  script(src="/forumpage.js", defer)
+  script(src="/utils.js")
 
 block content
-    header.header2
-        section.left-section-header
-            img.logo(src="/img/logoreal.png")
-            h2 FRED FORUM
+  nav.navbar.bg-body.border-bottom.sticky-top.shadow-sm
+    .container-fluid.px-3.px-lg-4
+      +brand("/forum")
+      .d-flex.align-items-center.gap-2
+        +themeToggle
+        .dropdown
+          a.d-inline-flex.p-0.border-0.bg-transparent(href="#", role="button", data-bs-toggle="dropdown", aria-expanded="false", aria-label="Benutzermenü")
+            img.foto-avatar.rounded-circle(src="/img/avatar.jpg", alt="Profil", width="44", height="44")
+          #userDropdown.dropdown-menu.dropdown-menu-end.shadow.p-3(style="min-width: 250px")
+            .small.text-body-secondary Benutzername
+            p.user-username.fw-semibold.text-brand.mb-2 -
+            .small.text-body-secondary Name
+            p.user-name.fw-semibold.mb-2 -
+            .small.text-body-secondary Kurs
+            p.user-course.fw-semibold.mb-3 -
+            .d-grid
+              button.buttonLogout.btn.btn-outline-primary(type="button") Log-Out
 
-        section.right-section-header
-            .avatar-wrapper
-                img.foto-avatar(src="/img/avatar.jpg")
+  main.container-fluid.px-3.px-lg-4.py-4
+    .row.g-4
+      .col-lg-8
+        // New post
+        section.card.border-0.shadow-brand.rounded-4.mb-4
+          .card-body.p-4
+            h2.h4.fw-bold.text-brand.mb-3 Neuer Beitrag
+            .mb-3
+              input.textForumTitel.form-control.form-control-lg(type="text", name="textForumTitel", placeholder="Titel eingeben…", maxlength="100")
+            .mb-2
+              textarea.textForumInhalt.form-control(name="textForumInhalt", rows="5", placeholder="Was möchtest du teilen?", maxlength="10000")
+            .text-end.mb-3
+              small.text-body-secondary
+                span#contentCount 0
+                | /10000 Zeichen
+            .d-flex.flex-wrap.justify-content-between.align-items-center.gap-3
+              .btn-group(role="group", aria-label="Kurs auswählen")
+                input#newKursTIA.btn-check(type="radio", name="newPostKurs", value="TIA", checked, autocomplete="off")
+                label.btn.btn-outline-primary(for="newKursTIA") TIA
+                input#newKursTIS.btn-check(type="radio", name="newPostKurs", value="TIS", autocomplete="off")
+                label.btn.btn-outline-primary(for="newKursTIS") TIS
+                input#newKursTIK.btn-check(type="radio", name="newPostKurs", value="TIK", autocomplete="off")
+                label.btn.btn-outline-primary(for="newKursTIK") TIK
+              button.buttonForumNeu.btn.btn-primary.px-4(type="button") Beitrag hochladen
 
-                #userDropdown.dropdown-content
-                    .user-info-top
-                        .user-text
-                            p(style="margin-top: 10px;")
-                                strong Benutzername:
-                            p.user-username fred.forum@student.local
-                            p
-                                strong Name:
-                            p.user-name Fred_User
-                            p(style="margin-top: 10px;")
-                                strong Kurs:
-                            p.user-course
-                                strong TI
+        // Posts
+        section.card.border-0.shadow-brand.rounded-4
+          .card-body.p-4
+            h2.posts-title.h4.fw-bold.text-brand.mb-3 Beiträge:
+            #postsList
 
-                button.buttonLogout(type="button") Log-Out
+      .col-lg-4
+        aside
+          button.btn.btn-brand-soft.w-100.mb-3.d-lg-none(type="button", data-bs-toggle="collapse", data-bs-target="#filterPanel", aria-controls="filterPanel", aria-expanded="false") Filter & Suche
+          #filterPanel.collapse.d-lg-block
+            .card.border-0.shadow-brand.rounded-4
+              .card-body.p-4
+                .mb-3
+                  label.form-label.small.text-body-secondary(for="forumSearch") Suche
+                  input#forumSearch.form-control(type="search", placeholder="Beiträge durchsuchen…")
+                .mb-3
+                  label.form-label.small.text-body-secondary(for="sortSelect") Sortieren nach
+                  select#sortSelect.form-select
+                    option(value="newest", selected) Neueste zuerst
+                    option(value="oldest") Älteste zuerst
+                    option(value="comments") Meiste Kommentare
+                .mb-3
+                  span.form-label.small.text-body-secondary.d-block Kurs
+                  .d-flex.flex-wrap.gap-2
+                    .form-check.form-check-inline.me-0
+                      input#filterTIA.form-check-input(type="radio", name="kurs", value="TIA")
+                      label.form-check-label(for="filterTIA") TIA
+                    .form-check.form-check-inline.me-0
+                      input#filterTIS.form-check-input(type="radio", name="kurs", value="TIS")
+                      label.form-check-label(for="filterTIS") TIS
+                    .form-check.form-check-inline.me-0
+                      input#filterTIK.form-check-input(type="radio", name="kurs", value="TIK")
+                      label.form-check-label(for="filterTIK") TIK
+                    .form-check.form-check-inline.me-0
+                      input#filterALL.form-check-input(type="radio", name="kurs", value="ALL", checked)
+                      label.form-check-label(for="filterALL") ALL
+                .aside-photo-container.rounded-3.overflow-hidden.mb-3
+                  img.aside-foto.img-fluid.w-100(src="/img/forumpage.png", alt="Forum Illustration")
+                button.buttonOben.btn.btn-outline-primary.w-100(type="button") Zurück nach oben
 
-    main.container_forumpage
-        .left-section
-            section.Forum
-                h3.Topics Neuer Beitrag:
-                article.ForumInput
-                    input.textForumTitel(type="text", name="textForumTitel", placeholder="Hier Titel eingeben...")
-                    textarea.textForumInhalt(name="textForumInhalt", placeholder="Hier Text eingeben....")
-
-                article.input-actions-row
-                    .category-chips
-                        label.chip
-                            input(type="radio", name="newPostKurs", value="TIA", checked)
-                            span TIA
-                        label.chip
-                            input(type="radio", name="newPostKurs", value="TIS")
-                            span TIS
-                        label.chip
-                            input(type="radio", name="newPostKurs", value="TIK")
-                            span TIK
-                    button.buttonForumNeu(type="submit") Beitrag hochladen
-
-            section.posts-container
-                h3.posts-title Beiträge:
-                #postsList
-
-        aside.right-sidebar
-            // Collapsible filters (mobile)
-            button#filterToggleBtn.filter-toggle(type="button") Filter anzeigen
-
-            section#filterPanel.nav-bar
-                article.search-container
-                    input#forumSearch(type="text", placeholder="Suche Beiträge...")
-                    i.fas.fa-search.search-icon
-
-                article.kurses
-                    h3 Wähle einen Kurs:
-                    .radio-group
-                        label
-                            input(type="radio", name="kurs", value="TIA")
-                            | TIA
-                        label
-                            input(type="radio", name="kurs", value="TIS")
-                            | TIS
-                        label
-                            input(type="radio", name="kurs", value="TIK")
-                            | TIK
-                        label
-                            input(type="radio", name="kurs", value="ALL", checked)
-                            | ALL
-
-                article.aside-photo-container
-                    img.aside-foto(src="/img/forumpage.png", alt="Forum Illustration")
-
-                button.buttonOben(type="button") Zurück nach oben
-
-    footer.footerForum#kontaktForum
-        section.footerForum-container.footerForum-container--single
-            article.footerForum-column.footerForum-column--center
-                h4 Kontakt
-                p Du hast einen Bug gefunden oder Feedback?
-                a.bug-report-btn(href="https://www.youtube.com/watch?v=dQw4w9WgXcQ", target="_blank", rel="noopener noreferrer") Kontaktformular
-
-        section.footerForum-bottom
-            article
-                p Kursforum — gebaut von Amica, Tamara, Stefan und Martin
+  footer.bg-body.border-top.py-4.mt-4
+    .container
+      .text-center
+        h2.h6.fw-bold Kontakt
+        p.text-body-secondary.small.mb-2 Du hast einen Bug gefunden oder Feedback?
+        a.btn.btn-brand-soft.btn-sm(href="https://www.youtube.com/watch?v=dQw4w9WgXcQ", target="_blank", rel="noopener noreferrer") Kontaktformular
+        hr.my-3
+        p.text-body-secondary.small.mb-0 Kursforum - gebaut von Amica, Tamara, Stefan und Martin
