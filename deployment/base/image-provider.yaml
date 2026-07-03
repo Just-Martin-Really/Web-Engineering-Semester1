@@ -1,0 +1,73 @@
+---
+# Generates the `app-image` ResourceSetInputProvider (type OCIArtifactTag),
+# which resolves the Kursforum application image's tag + digest from GAR at
+# runtime and exports them as inputs for the `kursforum-deployment` ResourceSet
+# (deployment/base/resourceset.yaml).
+#
+# Same mechanism sichtung uses for its dbt/docs images: a single base
+# definition serves every environment. dev/test/prod all FLOAT on the highest
+# tag carrying their env-suffix (`-dev` / `-test` / `-prod`, derived from the
+# infra `cluster-config` provider's `env` key). Image promotion between
+# environments is a registry retag, not a git change (see the CI promote
+# workflows and docs/how-to/deploy-to-kubernetes.md).
+#
+# The filter (SemVer range + env-suffix) is templated from the overlay-provided
+# `app-image-config` Static provider, so the same base works for dev/test/prod.
+#
+# `prune: disabled` is intentional: if the generator (or the resolved provider)
+# ever exports nothing, the last-good `app-image` RSIP and Deployment are
+# retained rather than torn down.
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSet
+metadata:
+  name: kursforum-image-provider
+  annotations:
+    fluxcd.controlplane.io/prune: disabled
+spec:
+  inputStrategy:
+    name: Permute
+  inputsFrom:
+    - kind: ResourceSetInputProvider
+      name: tenant-config
+    # cluster-config supplies `env` (dev/test/prod), the env-suffix source.
+    - kind: ResourceSetInputProvider
+      name: cluster-config
+    - kind: ResourceSetInputProvider
+      name: app-image-config
+
+  resources:
+    # OCIArtifactTag provider: polls GAR every minute, filters tags by the
+    # env-suffix regex (floating environments only) then by the SemVer range,
+    # sorts descending and keeps the highest (limit: 1). Exports
+    # `{ tag, digest }` consumed by the deployment ResourceSet as
+    # `<<inputs.app_image.tag>>` / `<<inputs.app_image.digest>>`.
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: ResourceSetInputProvider
+      metadata:
+        name: app-image
+        namespace: <<inputs.tenant_config.namespace>>
+        annotations:
+          # Poll the registry every minute (matches the sichtung image providers).
+          fluxcd.controlplane.io/reconcileEvery: "1m"
+          fluxcd.controlplane.io/prune: disabled
+      spec:
+        type: OCIArtifactTag
+        # GAR path is hardcoded (same convention as the sichtung providers): the
+        # literal repository is the source of truth, matching what CI pushes.
+        url: oci://europe-west3-docker.pkg.dev/digitalgedacht/docker/digitalgedacht/kursforum/app
+        secretRef:
+          # Reuse the cluster's existing dockerconfigjson pull Secret.
+          name: image-pull-secret
+        filter:
+          limit: 1
+          # Env-suffix tag filter, derived from cluster-config `env`. With
+          # `floating: true` (all kursforum environments) this renders
+          # `(?i)-dev$` / `(?i)-test$` / `(?i)-prod$`, matching the
+          # `<version>-<env>` tags CI publishes. The `<< else >>` branch renders
+          # the match-all regex `.*` for the `floating: false` (exact-pin) case,
+          # so matching falls through to the SemVer range only. Both branches
+          # must be a non-null string or the CRD rejects `includeTag`.
+          includeTag: '<< if inputs.app_image_config.floating >>(?i)-<<inputs.cluster_config.env>>$<< else >>.*<< end >>'
+          # `| quote` is required: an unquoted `>=0.0.0-0` starts with the YAML
+          # flow indicator `>` and stalls the generator.
+          semver: <<inputs.app_image_config.Version | quote>>

@@ -1,0 +1,67 @@
+name: Promote Image
+
+# Image-promotion axis of the release process (the registry half).
+#
+# A release publishes the suffixless `X.Y.Z` tag, but the test/prod
+# OCIArtifactTag providers float on `-test` / `-prod` tags, so the released
+# image does NOT roll out until it is retagged with the env suffix. This
+# workflow performs that retag (resolving the release tag to its immutable
+# digest first, so the env tag pins the exact artifact) from the GitHub UI.
+# No git commit, no cluster apply: Flux's provider floats onto the new tag on
+# its next poll (~1m).
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Released version (suffixless, e.g. 1.0.0)"
+        required: true
+        type: string
+      env:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - test
+          - prod
+
+env:
+  IMAGE: europe-west3-docker.pkg.dev/digitalgedacht/docker/digitalgedacht/kursforum/app
+
+jobs:
+  promote:
+    name: "Retag ${{ inputs.version }} -> -${{ inputs.env }}"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Google workload identity federation
+    steps:
+      - name: "Auth GCloud"
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_ARTIFACTORY_SERVICE_ACCOUNT_KEY }}
+
+      - name: "Retag ${{ inputs.version }} as ${{ inputs.version }}-${{ inputs.env }}"
+        run: |
+          set -euo pipefail
+          SRC="${IMAGE}:${{ inputs.version }}"
+          DEST_TAG="${{ inputs.version }}-${{ inputs.env }}"
+
+          # Resolve the release tag to its immutable digest.
+          DIGEST=$(gcloud artifacts docker images describe "${SRC}" --format='value(image_summary.digest)')
+          if [ -z "${DIGEST}" ]; then
+            echo "error: could not resolve a digest for ${SRC}. Was the release built and pushed?" >&2
+            exit 1
+          fi
+
+          # No-op if the env tag already points at that digest.
+          EXISTING=$(gcloud artifacts docker images describe "${IMAGE}:${DEST_TAG}" --format='value(image_summary.digest)' 2>/dev/null || true)
+          if [ "${EXISTING}" = "${DIGEST}" ]; then
+            echo "Already promoted: ${IMAGE}:${DEST_TAG} already points at ${DIGEST}. Nothing to do."
+            exit 0
+          fi
+
+          echo "Tagging ${IMAGE}@${DIGEST} as :${DEST_TAG} ..."
+          gcloud artifacts docker tags add "${IMAGE}@${DIGEST}" "${IMAGE}:${DEST_TAG}"
+          echo "Promoted ${{ inputs.version }} -> ${DEST_TAG} (digest ${DIGEST})."
+          echo "The ${{ inputs.env }} image provider will float onto the new tag within ~1m."

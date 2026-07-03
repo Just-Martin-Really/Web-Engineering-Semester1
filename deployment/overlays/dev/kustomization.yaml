@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization.json
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  # Static input provider that drives the app-image OCIArtifactTag filter for
+  # dev: floats on the highest `-dev` tag (see file header). The test/prod
+  # overlays are symmetric — they float on `-test` / `-prod` tags; promotion to
+  # those environments is a registry retag, not a config change here.
+  - app-image-config.yaml

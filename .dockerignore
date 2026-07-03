@@ -1,7 +1,12 @@
 # Environment files
+# Never bake env/secrets into the image. Runtime config is injected by the
+# platform Deployment (or docker-compose) as environment variables.
 .env
 .env.local
 .env.*.local
+.env.docker
+.env.production
+.env.example
 
 # Node
 node_modules
@@ -31,4 +36,13 @@ logs
 # Development
 mongo-app
 
-# DO NOT ADD TESTS TO THIS, THEY RUN IN DOCKER NOW
+# Deployment / infra artifacts (not needed inside the runtime image)
+deployment
+nginx.conf
+docker-compose.yml
+zensical.toml
+site
+
+# Tests are intentionally kept in the build context: the `dev` stage runs them
+# (`npm run test:docker`). The `runtime` stage installs no devDependencies, so
+# the shipped image cannot execute them regardless.
