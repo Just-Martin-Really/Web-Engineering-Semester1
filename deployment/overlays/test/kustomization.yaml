@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization.json
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  # Static input provider that drives the app-image OCIArtifactTag filter for
+  # test: floats on the highest `-test` tag (`floating: true`), see file header.
+  - app-image-config.yaml
+
+# Tag scheme: no `v` prefix, matching what CI publishes (the package.json
+# version, e.g. `1.0.0`). Image promotion to test adds the env-suffix tag
+# (`1.0.0` -> `1.0.0-test`) via the Promote Image workflow; the provider floats
+# onto it. This is the single SemVer scheme the OCIArtifactTag provider requires.

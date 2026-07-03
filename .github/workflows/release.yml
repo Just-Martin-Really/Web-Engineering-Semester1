@@ -1,0 +1,66 @@
+name: Release
+
+# On a published GitHub release, build and push the application image with the
+# suffixless release tag (e.g. `1.0.0`) plus `latest`. The release tag is the
+# single SemVer the OCIArtifactTag providers reason about.
+#
+# A released image does NOT roll out to test/prod on its own: those environments
+# float on `-test` / `-prod` tags. Promote a release into an environment with
+# the Promote Image workflow (promote-image.yaml), which retags this image's
+# digest as `X.Y.Z-test` / `X.Y.Z-prod`.
+
+on:
+  release:
+    types: [published]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  IMAGE: europe-west3-docker.pkg.dev/digitalgedacht/docker/digitalgedacht/kursforum/app
+
+jobs:
+  build:
+    name: "Build and push the release image"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Google workload identity federation
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - name: "Resolve release version"
+        id: version
+        # Strip a leading `v` so the tag is a bare SemVer (`v1.0.0` -> `1.0.0`),
+        # matching what the OCIArtifactTag providers filter on.
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      - name: "Auth GCloud"
+        uses: google-github-actions/auth@v3
+        with:
+          credentials_json: ${{ secrets.GCP_ARTIFACTORY_SERVICE_ACCOUNT_KEY }}
+
+      - name: "Auth Docker"
+        run: gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
+
+      - name: "Set up QEMU"
+        uses: docker/setup-qemu-action@v3
+
+      - name: "Set up Docker Buildx"
+        uses: docker/setup-buildx-action@v3
+
+      - name: "Build and push (multi-arch)"
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE }}:latest
+          provenance: false

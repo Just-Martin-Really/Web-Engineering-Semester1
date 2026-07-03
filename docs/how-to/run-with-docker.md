@@ -45,8 +45,12 @@ The container environment is defined inline in `docker-compose.yml` under the `a
 
 ## Verify
 
+Check the Express app's JSON health endpoint directly:
+
 ```bash
-curl http://localhost/health
+curl http://localhost:3001/health
 ```
 
 A `200` response with `"status": "OK"` means the app is up and connected to PostgreSQL.
+
+`http://localhost/health` (through Nginx on port `80`) returns a plain `OK` instead: Nginx answers that path itself for its own healthcheck and does not proxy it to the app.

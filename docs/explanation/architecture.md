@@ -20,7 +20,7 @@ In development without Docker, Nginx is absent and the browser talks to Express 
 A request passes through a fixed middleware chain before reaching a route, set up in `server.js`:
 
 1. **Request ID** — tags each request for tracing in the logs.
-2. **HTTPS enforcement** — redirects to HTTPS when `ENFORCE_HTTPS=true`.
+2. **HTTPS enforcement** — redirects to HTTPS in production (when `NODE_ENV=production` and the request did not arrive over HTTPS).
 3. **Security headers** — Helmet plus a few custom headers.
 4. **CORS** — a development or production config depending on `NODE_ENV`.
 5. **Body parsing** — JSON only, capped at `10kb`.

@@ -1,0 +1,203 @@
+---
+# ResourceSet for the Kursforum web application.
+#
+# Renders a Deployment running the Express app plus a ClusterIP Service named
+# EXACTLY `<<inputs.tenant_config.app.name>>` (i.e. `kursforum`) on port 3000.
+# That Service name + port is the entire interface to infra: the platform's
+# HTTPRoute (owned in dg-k8s apps/kursforum) targets `kursforum:3000`. Do not
+# rename the Service or change the port without coordinating the HTTPRoute.
+#
+# The image tag+digest are resolved at runtime by the `app-image` OCIArtifactTag
+# provider (image-provider.yaml); the float-vs-pin filter is set per environment
+# by the overlay `app-image-config` Static provider.
+#
+# Config/secrets consumed (created by the platform team in dg-k8s, see
+# docs/reference/k8s-platform-handoff.md):
+#   - Secret `kursforum-database-secrets` (basic-auth: username/password) for
+#     the CNPG application role.
+#   - Secret `kursforum-app-secrets` (Opaque) holding the session + JWT secrets.
+#   - Secret `image-pull-secret` (dockerconfigjson) for GAR.
+#   - Postgres reachable at `kursforum-cluster-rw:5432`, database `kursforum`.
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSet
+metadata:
+  name: kursforum-deployment
+  annotations:
+    fluxcd.controlplane.io/prune: disabled
+spec:
+  inputStrategy:
+    name: Permute
+  commonMetadata:
+    labels:
+      app.kubernetes.io/part-of: kursforum
+      tier: application
+  inputsFrom:
+    - kind: ResourceSetInputProvider
+      name: tenant-config
+    - kind: ResourceSetInputProvider
+      name: cluster-config
+    # app image reference resolved from GAR by the OCIArtifactTag provider
+    # (`app-image`), plus its Static filter config (`app-image-config`). Each
+    # exports exactly one input set, so Permute still yields a single rendering.
+    - kind: ResourceSetInputProvider
+      name: app-image
+    - kind: ResourceSetInputProvider
+      name: app-image-config
+
+  resources:
+    # Application Deployment. restricted-PSA compliant (runAsNonRoot 65532, RO
+    # root FS, drop ALL caps, seccomp RuntimeDefault). The image writes only to
+    # the /app/logs and /tmp emptyDirs, so the root filesystem stays read-only.
+    - apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: <<inputs.tenant_config.app.name>>
+        namespace: <<inputs.tenant_config.namespace>>
+        labels:
+          app.kubernetes.io/name: <<inputs.tenant_config.app.name>>
+          app.kubernetes.io/component: web
+      spec:
+        replicas: << if eq inputs.cluster_config.env "prod" >>2<< else >>1<< end >>
+        selector:
+          matchLabels:
+            app.kubernetes.io/name: <<inputs.tenant_config.app.name>>
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: <<inputs.tenant_config.app.name>>
+              app.kubernetes.io/component: web
+          spec:
+            imagePullSecrets:
+              - name: image-pull-secret
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 65532
+              runAsGroup: 65532
+              fsGroup: 65532
+              seccompProfile:
+                type: RuntimeDefault
+            containers:
+              - name: app
+                image: europe-west3-docker.pkg.dev/digitalgedacht/docker/digitalgedacht/kursforum/app:<<inputs.app_image.tag>>@<<inputs.app_image.digest>>
+                imagePullPolicy: Always
+                ports:
+                  - name: http
+                    containerPort: 3000
+                    protocol: TCP
+                securityContext:
+                  allowPrivilegeEscalation: false
+                  readOnlyRootFilesystem: true
+                  capabilities:
+                    drop: ["ALL"]
+                env:
+                  - name: NODE_ENV
+                    value: production
+                  - name: PORT
+                    value: "3000"
+                  - name: LOG_LEVEL
+                    value: info
+                  # Behind the Envoy edge (TLS terminated there, x-forwarded-proto
+                  # set to https). Probes bypass this redirect because /healthz and
+                  # /readyz are mounted before the enforceHttps middleware.
+                  - name: ENFORCE_HTTPS
+                    value: "true"
+                  # Public origin, used for CORS. Matches the HTTPRoute hostname
+                  # the platform provisions (kursforum.<fqdn>).
+                  - name: ALLOWED_ORIGINS
+                    value: "https://<<inputs.tenant_config.app.name>>.<<inputs.cluster_config.fqdn>>"
+                  # CNPG serves plaintext on the in-cluster rw service.
+                  - name: DATABASE_SSL
+                    value: "false"
+                  # DB credentials for the CNPG application role, from the
+                  # ExternalSecret provisioned in dg-k8s. Kubernetes expands
+                  # $(DB_USER)/$(DB_PASS) into DATABASE_URL below. The password
+                  # must be URL-safe (alphanumeric) — see the handoff note.
+                  - name: DB_USER
+                    valueFrom:
+                      secretKeyRef:
+                        name: kursforum-database-secrets
+                        key: username
+                  - name: DB_PASS
+                    valueFrom:
+                      secretKeyRef:
+                        name: kursforum-database-secrets
+                        key: password
+                  - name: DATABASE_URL
+                    value: "postgres://$(DB_USER):$(DB_PASS)@kursforum-cluster-rw:5432/kursforum"
+                  # Session + JWT secrets from the app-secrets ExternalSecret.
+                  - name: SESSION_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: kursforum-app-secrets
+                        key: session-secret
+                  - name: ACCESS_TOKEN_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: kursforum-app-secrets
+                        key: access-token-secret
+                  - name: REFRESH_TOKEN_SECRET
+                    valueFrom:
+                      secretKeyRef:
+                        name: kursforum-app-secrets
+                        key: refresh-token-secret
+                volumeMounts:
+                  - name: logs
+                    mountPath: /app/logs
+                  - name: tmp
+                    mountPath: /tmp
+                # Boot applies the DB schema before the server binds; the startup
+                # probe gives that headroom without a slack liveness delay.
+                startupProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 3000
+                  initialDelaySeconds: 3
+                  periodSeconds: 5
+                  failureThreshold: 12
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 3000
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  timeoutSeconds: 3
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 30
+                  timeoutSeconds: 3
+                resources:
+                  requests:
+                    memory: "128Mi"
+                    cpu: "50m"
+                  limits:
+                    memory: "512Mi"
+                    cpu: "500m"
+            volumes:
+              # readOnlyRootFilesystem requires writable emptyDirs for the
+              # Winston log files (/app/logs) and any process scratch (/tmp).
+              - name: logs
+                emptyDir: {}
+              - name: tmp
+                emptyDir: {}
+
+    # The Service infra's HTTPRoute targets by name. Name == app name, port 3000.
+    - apiVersion: v1
+      kind: Service
+      metadata:
+        name: <<inputs.tenant_config.app.name>>
+        namespace: <<inputs.tenant_config.namespace>>
+        labels:
+          app.kubernetes.io/name: <<inputs.tenant_config.app.name>>
+          app.kubernetes.io/component: web
+      spec:
+        type: ClusterIP
+        selector:
+          app.kubernetes.io/name: <<inputs.tenant_config.app.name>>
+        ports:
+          - name: http
+            port: 3000
+            targetPort: 3000
+            protocol: TCP

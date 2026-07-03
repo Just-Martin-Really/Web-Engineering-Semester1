@@ -42,15 +42,17 @@ The database is seeded with demo topics on startup (`SEED_TOPICS=true` in `docke
 
 ## 4. Check the health endpoint
 
+The Express app exposes a JSON health endpoint. Query it directly on port `3001`:
+
 ```bash
-curl http://localhost/health
+curl http://localhost:3001/health
 ```
 
 ```json
 { "status": "OK", "timestamp": "2026-01-01T00:00:00.000Z", "uptime": 12.34 }
 ```
 
-This is the same endpoint the Docker healthchecks poll.
+The app's own Docker healthcheck polls this endpoint. Note that `http://localhost/health` (through Nginx on port `80`) is answered by Nginx itself with a plain `OK`, not this JSON, because Nginx short-circuits that path for its own healthcheck.
 
 ## What you have now
 

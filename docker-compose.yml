@@ -24,6 +24,10 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+      # Local dev / test image: the `dev` stage carries devDependencies so the
+      # in-container test suite (`npm run test:docker`) can run. The dev-free
+      # `runtime` stage is what CI builds and pushes to the registry.
+      target: dev
     restart: always
     ports:
       - "3001:3001"

@@ -2,7 +2,7 @@
 
 See also: [Run without Docker](../how-to/run-without-docker.md) · [Security](../explanation/security.md)
 
-Every variable the app reads at runtime, its default, and where it matters. For local runs these live in `.env` (copy from `.env.example`); under Docker they are set inline in `docker-compose.yml`.
+The configuration the app reads at runtime, its defaults, and where it matters. For local runs these live in `.env` (copy from `.env.example`); under Docker they are set inline in `docker-compose.yml`. Some entries in `.env.example` are placeholders that the app does not yet read; those are called out where they appear below.
 
 ## Server
 
@@ -41,26 +41,33 @@ Every variable the app reads at runtime, its default, and where it matters. For 
 
 | Variable | Default | Description |
 | -------- | ------- | ----------- |
-| `ALLOWED_ORIGINS` | — | Comma-separated CORS allowlist, used when `NODE_ENV=production`. |
-| `ENFORCE_HTTPS` | `false` | Redirect HTTP to HTTPS. Must be `false` for local development. |
+| `ALLOWED_ORIGINS` | — | Comma-separated CORS allowlist, read when `NODE_ENV=production`. |
+
+HTTPS redirection is not controlled by an environment variable. The app redirects HTTP to HTTPS only when `NODE_ENV=production` and the incoming `X-Forwarded-Proto` header is not `https` (see `middleware/securityMiddleware.js`). The `ENFORCE_HTTPS` entry in `.env.example` is a placeholder and is not read by the app.
 
 ## Rate limiting
 
-Requests per window, per IP. Bypassed entirely when `NODE_ENV=test`.
+The rate-limit thresholds are fixed constants defined in `utils/securityConfig.js`, not environment variables. The `GENERAL_RATE_LIMIT`, `AUTH_RATE_LIMIT` and `REFRESH_RATE_LIMIT` entries in `.env.example` are placeholders and are not read by the app.
 
-| Variable | Default | Applies to |
-| -------- | ------- | ---------- |
-| `GENERAL_RATE_LIMIT` | `100` | General API routes (topics, comments) |
-| `AUTH_RATE_LIMIT` | `5` | Login and registration |
-| `REFRESH_RATE_LIMIT` | `10` | Token refresh |
+Current values (requests per 15-minute window, per IP):
+
+| Scope | Limit | Applies to |
+| ----- | ----- | ---------- |
+| General | `100` | General API routes (topics, comments) |
+| Auth | `5` | Login and registration (only failed attempts count) |
+| Refresh | `10` | Token refresh |
 
 ## Account lockout
 
-| Variable | Default | Description |
-| -------- | ------- | ----------- |
-| `MAX_FAILED_LOGIN_ATTEMPTS` | `5` | Failed logins before the account locks. |
-| `LOCKOUT_DURATION_MINUTES` | `15` | How long an account stays locked. |
-| `RESET_FAILURES_AFTER_MINUTES` | `60` | Idle window after which the failure counter resets. |
+Like the rate limits, the lockout thresholds are fixed constants in `utils/securityConfig.js`, not environment variables. The entries below appear in `.env.example` but are not read by the app.
+
+Current values:
+
+| Setting | Value | Description |
+| ------- | ----- | ----------- |
+| Max failed attempts | `5` | Failed logins before the account locks. |
+| Lockout duration | `15` minutes | How long an account stays locked. |
+| Reset window | `60` minutes | Idle window after which the failure counter resets. |
 
 ## Demo data seeding
 
