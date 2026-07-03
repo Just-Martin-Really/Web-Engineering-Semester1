@@ -6,44 +6,31 @@ docs_dir = "docs"
 site_dir = "site"
 extra_css = ["stylesheets/extra.css"]
 
-[[project.nav]]
-title = "Home"
-path = "index.md"
-
-[[project.nav]]
-title = "Tutorials"
-icon = "lucide/graduation-cap"
-children = ["tutorials/index.md", "tutorials/10-quickstart.md"]
-
-[[project.nav]]
-title = "How-to guides"
-icon = "lucide/wrench"
-children = [
-    "how-to/index.md",
-    "how-to/run-with-docker.md",
-    "how-to/run-without-docker.md",
-    "how-to/seed-demo-topics.md",
-    "how-to/run-tests.md",
-]
-
-[[project.nav]]
-title = "Reference"
-icon = "lucide/library"
-children = [
-    "reference/index.md",
-    "reference/api.md",
-    "reference/environment.md",
-    "reference/database-schema.md",
-]
-
-[[project.nav]]
-title = "Explanation"
-icon = "lucide/book-open"
-children = [
-    "explanation/index.md",
-    "explanation/architecture.md",
-    "explanation/auth-model.md",
-    "explanation/security.md",
+nav = [
+    { "Home" = "index.md" },
+    { "Tutorials" = [
+        "tutorials/index.md",
+        "tutorials/10-quickstart.md",
+    ] },
+    { "How-to guides" = [
+        "how-to/index.md",
+        "how-to/run-with-docker.md",
+        "how-to/run-without-docker.md",
+        "how-to/seed-demo-topics.md",
+        "how-to/run-tests.md",
+    ] },
+    { "Reference" = [
+        "reference/index.md",
+        "reference/api.md",
+        "reference/environment.md",
+        "reference/database-schema.md",
+    ] },
+    { "Explanation" = [
+        "explanation/index.md",
+        "explanation/architecture.md",
+        "explanation/auth-model.md",
+        "explanation/security.md",
+    ] },
 ]
 
 [project.theme]
