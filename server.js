@@ -29,6 +29,44 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(addRequestId);
+
+/**
+ * Kubernetes probe endpoints.
+ *
+ * Mounted before enforceHttps, the session store and the route-level rate
+ * limiters so kubelet probes are never redirected to HTTPS, never open a
+ * session and are never throttled. Kept intentionally cheap.
+ *
+ * - /healthz (liveness): the process is up. No dependency checks, so a
+ *   transient database outage never restarts an otherwise healthy pod.
+ * - /readyz (readiness): the pod can serve traffic, which requires a reachable
+ *   database. Returns 503 while the pool cannot answer a trivial query so the
+ *   Service stops routing to this pod until it recovers.
+ */
+app.get('/healthz', (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString()
+    });
+});
+
+app.get('/readyz', async (req, res) => {
+    try {
+        await pool.query('SELECT 1');
+        res.status(200).json({
+            status: 'ready',
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        logger.error('Readiness check failed: ' + err.message);
+        res.status(503).json({
+            status: 'unavailable',
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
 app.use(enforceHttps);
 app.use(securityHeaders);
 app.use(customSecurityHeaders);
