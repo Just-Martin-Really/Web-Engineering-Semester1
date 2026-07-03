@@ -18,12 +18,14 @@ nav = [
         "how-to/run-without-docker.md",
         "how-to/seed-demo-topics.md",
         "how-to/run-tests.md",
+        "how-to/deploy-to-kubernetes.md",
     ] },
     { "Reference" = [
         "reference/index.md",
         "reference/api.md",
         "reference/environment.md",
         "reference/database-schema.md",
+        "reference/k8s-platform-handoff.md",
     ] },
     { "Explanation" = [
         "explanation/index.md",
