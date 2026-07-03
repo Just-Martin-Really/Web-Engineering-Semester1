@@ -1,53 +1,237 @@
 /*
-  Base styles (shared across all pages)
-  Goal: sensible defaults + mobile-friendly behavior without changing page layouts.
+  Base theme layer for Kursforum.
+  Loaded AFTER Bootstrap 5.3 so it can remap Bootstrap's design tokens to the
+  Fredforum brand and add a few shared component polishes. Works in both the
+  light and dark Bootstrap colour modes (toggled via data-bs-theme).
 */
 
 :root {
-    --container-padding: 16px;
+    /* Brand palette */
+    --brand: #6d4bff;
+    --brand-rgb: 109, 75, 255;
+    --brand-strong: #5a3fd6;
+    --brand-stronger: #4c34bd;
+    --brand-soft: rgba(109, 75, 255, 0.10);
+    --brand-soft-strong: rgba(109, 75, 255, 0.16);
+
+    /* Remap Bootstrap tokens onto the brand */
+    --bs-primary: var(--brand);
+    --bs-primary-rgb: var(--brand-rgb);
+    --bs-link-color: var(--brand);
+    --bs-link-color-rgb: var(--brand-rgb);
+    --bs-link-hover-color: var(--brand-strong);
+
+    --bs-border-radius: 0.75rem;
+    --bs-border-radius-lg: 1rem;
+    --bs-border-radius-xl: 1.25rem;
+
+    --bs-body-font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+    scroll-behavior: smooth;
 }
 
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
+/* Surface colours per theme so cards/sections read cohesively */
+:root,
+[data-bs-theme="light"] {
+    --surface-muted: #f4f2ff;
+    --page-bg: #f6f7fb;
 }
 
-html,
+[data-bs-theme="dark"] {
+    --brand: #9a82ff;
+    --brand-rgb: 154, 130, 255;
+    --brand-strong: #b0a0ff;
+    --brand-soft: rgba(154, 130, 255, 0.14);
+    --brand-soft-strong: rgba(154, 130, 255, 0.22);
+    --surface-muted: #23233a;
+    --page-bg: #16161f;
+    --bs-body-bg: #1c1c27;
+}
+
 body {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
+    background-color: var(--page-bg);
+    min-height: 100vh;
 }
 
-body {
-    margin: 0;
+/* Buttons ------------------------------------------------------------- */
+.btn-primary {
+    --bs-btn-bg: var(--brand);
+    --bs-btn-border-color: var(--brand);
+    --bs-btn-hover-bg: var(--brand-strong);
+    --bs-btn-hover-border-color: var(--brand-strong);
+    --bs-btn-active-bg: var(--brand-stronger);
+    --bs-btn-active-border-color: var(--brand-stronger);
+    --bs-btn-disabled-bg: var(--brand);
+    --bs-btn-disabled-border-color: var(--brand);
+    --bs-btn-focus-shadow-rgb: var(--brand-rgb);
 }
 
-img {
-    max-width: 100%;
-    height: auto;
+.btn-outline-primary {
+    --bs-btn-color: var(--brand);
+    --bs-btn-border-color: var(--brand);
+    --bs-btn-hover-bg: var(--brand);
+    --bs-btn-hover-border-color: var(--brand);
+    --bs-btn-active-bg: var(--brand-strong);
+    --bs-btn-active-border-color: var(--brand-strong);
+    --bs-btn-focus-shadow-rgb: var(--brand-rgb);
 }
 
-/* Improve mobile form usability (tap targets + prevent iOS zoom by ensuring >=16px font-size) */
-input,
-textarea,
-select,
-button {
-    font: inherit;
+.btn-brand-soft {
+    --bs-btn-color: var(--brand);
+    --bs-btn-bg: var(--brand-soft);
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-color: var(--brand);
+    --bs-btn-hover-bg: var(--brand-soft-strong);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-bg: var(--brand-soft-strong);
+    --bs-btn-focus-shadow-rgb: var(--brand-rgb);
+    font-weight: 600;
 }
 
+/* Text + links -------------------------------------------------------- */
+.text-brand {
+    color: var(--brand) !important;
+}
+
+.text-bg-primary {
+    background-color: var(--brand) !important;
+    color: #fff !important;
+}
+
+a {
+    text-underline-offset: 3px;
+}
+
+/* Brand wordmark used in every navbar */
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.brand-mark:hover {
+    text-decoration: none;
+}
+
+.brand-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--brand);
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.brand-mark:hover .brand-logo {
+    transform: rotate(360deg) scale(1.06);
+}
+
+.brand-name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--brand);
+    background: linear-gradient(135deg, var(--brand), var(--brand-strong));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Cards get a slightly softer, deeper shadow than the Bootstrap default */
+.card {
+    border-color: rgba(var(--brand-rgb), 0.12);
+}
+
+.card.shadow-brand {
+    box-shadow: 0 12px 30px rgba(var(--brand-rgb), 0.12);
+}
+
+/* Focus rings picked up by inputs/buttons */
+.form-control:focus,
+.form-select:focus,
+.btn-check:focus + .btn,
+.btn:focus-visible {
+    border-color: rgba(var(--brand-rgb), 0.55);
+    box-shadow: 0 0 0 0.2rem rgba(var(--brand-rgb), 0.20);
+}
+
+/* Theme toggle button */
+.theme-toggle .icon-sun {
+    display: none;
+}
+
+.theme-toggle .icon-moon {
+    display: inline;
+}
+
+[data-bs-theme="dark"] .theme-toggle .icon-sun {
+    display: inline;
+}
+
+[data-bs-theme="dark"] .theme-toggle .icon-moon {
+    display: none;
+}
+
+/* Toast container sits above everything */
+.toast-container {
+    z-index: 1200;
+}
+
+.toast-body {
+    white-space: pre-line;
+}
+
+/* Improve mobile form usability (prevent iOS zoom by ensuring >=16px font-size) */
 @media (max-width: 768px) {
-    body {
-        padding-left: var(--container-padding);
-        padding-right: var(--container-padding);
-    }
-
-    button,
-    input,
+    .form-control,
+    .form-select,
     textarea,
-    select {
+    input {
         font-size: 16px;
     }
 }
 
+/* Reveal-on-scroll animation, respecting reduced-motion preferences */
+.reveal,
+.reveal-left,
+.reveal-right {
+    opacity: 0;
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    will-change: opacity, transform;
+}
+
+.reveal {
+    transform: translateY(40px);
+}
+
+.reveal-left {
+    transform: translateX(-60px);
+}
+
+.reveal-right {
+    transform: translateX(60px);
+}
+
+.reveal.active,
+.reveal-left.active,
+.reveal-right.active {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        scroll-behavior: auto;
+    }
+
+    .reveal,
+    .reveal-left,
+    .reveal-right {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}

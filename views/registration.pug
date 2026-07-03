@@ -1,44 +1,69 @@
 extends layout
+include mixins
 
 block head
   link(rel="stylesheet", href="/registration.css")
 
 block content
-  .page-wrapper
-    // nav sektion
-    header.header
-      section.left-header
-        img.logo(src="/img/logoreal.png")
-        h2.title Fredforum
-      section.right-header
-        nav
-          ul
-            li
-              a(href="/#HomeThumbnail") Home
-            li
-              a(href="/#aboutUs") About Us
-            li
-              a(href="/#kontakt") Kontakt
+  nav.navbar.navbar-expand-lg.bg-body.border-bottom.sticky-top.shadow-sm
+    .container
+      +brand("/")
+      .d-flex.align-items-center.gap-2.ms-auto
+        a.btn.btn-brand-soft(href="/#top") Home
+        +themeToggle
 
-    main.main-content
-      section.left-info
-        h2 Fredforum verbindet dich mit anderen und erleichtert den Wissensaustausch.
-        p Gemeinsam lernen. Gemeinsam wachsen.
+  main.py-5
+    .container
+      .row.justify-content-center.align-items-center.g-5
+        .col-lg-5.d-none.d-lg-block
+          h1.display-6.fw-bold.mb-3 Fredforum verbindet dich mit anderen und erleichtert den Wissensaustausch.
+          p.lead.text-body-secondary.mb-0 Gemeinsam lernen. Gemeinsam wachsen.
+        .col-lg-6.col-xl-5
+          .card.border-0.shadow-brand.rounded-4
+            .card-body.p-4.p-lg-5
+              h2.h3.fw-bold.text-center.text-brand.mb-4 Registrieren
+              form#registrationForm(novalidate)
+                .row.g-3
+                  .col-md-6
+                    .form-floating
+                      input#textRegBenutzerVorname.form-control(type="text", name="regVorname", placeholder="Vorname", required, maxlength="50")
+                      label(for="textRegBenutzerVorname") Vorname
+                      .invalid-feedback Bitte gib deinen Vornamen ein.
+                  .col-md-6
+                    .form-floating
+                      input#textRegBenutzerNachname.form-control(type="text", name="regNachname", placeholder="Nachname", required, maxlength="50")
+                      label(for="textRegBenutzerNachname") Nachname
+                      .invalid-feedback Bitte gib deinen Nachnamen ein.
+                  .col-12
+                    .form-floating
+                      input#textRegBenutzerName.form-control(type="text", name="regBenutzername", placeholder="Benutzername", required, minlength="3", maxlength="20", pattern="[a-zA-Z0-9_-]+")
+                      label(for="textRegBenutzerName") Benutzername
+                      .invalid-feedback 3-20 Zeichen: Buchstaben, Zahlen, _ oder -.
+                  .col-12
+                    .form-floating
+                      input#textRegBenutzerPasswort.form-control(type="password", name="regPasswort", placeholder="Passwort", required, minlength="8")
+                      label(for="textRegBenutzerPasswort") Passwort
+                      .form-text Mindestens 8 Zeichen, mit Groß-, Kleinbuchstabe und Zahl.
+                      .invalid-feedback Passwort muss mindestens 8 Zeichen lang sein.
+                  .col-12
+                    .form-floating
+                      select#textRegBenutzerKurs.form-select(name="regKurs", required)
+                        option(value="", selected, disabled) Bitte wählen…
+                        option(value="TIA") TIA
+                        option(value="TIS") TIS
+                        option(value="TIK") TIK
+                      label(for="textRegBenutzerKurs") Kurs
+                      .invalid-feedback Bitte wähle deinen Kurs.
+                  .col-12.d-grid
+                    button#buttonRegReg.btn.btn-primary.btn-lg(type="submit") Registrieren
+              p.text-center.text-body-secondary.mt-4.mb-0
+                | Schon registriert?
+                |
+                a.fw-semibold.text-brand(href="/#loginRegister") Zum Login
 
-      section.registration-box
-        h2 Registrieren
-        form#registrationForm
-          input#textRegBenutzerVorname.inputField(type="text", name="regVorname", placeholder="Vorname", required)
-          input#textRegBenutzerNachname.inputField(type="text", name="regNachname", placeholder="Nachname", required)
-          input#textRegBenutzerName.inputField(type="text", name="regBenutzername", placeholder="Benutzername", required)
-          input#textRegBenutzerPasswort.inputField(type="password", name="regPasswort", placeholder="Passwort", required)
-          input#textRegBenutzerKurs.inputField(type="text", name="regKurs", placeholder="Kurs", required)
-          button#buttonRegReg.buttonRegReg(type="submit") Registrieren
-
-    footer.footer
-      section.footer-bottom
-        article
-          p Kursforum - designed by Amica Martin Stefan Tamara
+  footer.bg-body.border-top.py-4.mt-auto
+    .container
+      p.text-center.text-body-secondary.small.mb-0 Kursforum - designed by Amica, Martin, Stefan und Tamara
 
   script(src="/utils.js")
   script(src="/app.js")

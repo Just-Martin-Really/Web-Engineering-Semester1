@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    console.log('App.js loaded');
-
-
     /**
      * Handles user registration by calling the API and managing the response.
      *
@@ -27,13 +24,17 @@ document.addEventListener("DOMContentLoaded", () => {
         return await apiRequest('/api/login', 'POST', {username, password});
     }
 
-    // Registrierung-Button
-    const registerBtn = document.getElementById('buttonRegReg');
-    console.log('Register button:', registerBtn);
-    if (registerBtn) {
-        console.log('Register button found, adding listener');
-        registerBtn.addEventListener('click', async (e) => {
+    // Registration form
+    const registrationForm = document.getElementById('registrationForm');
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (!validateForm(registrationForm)) {
+                showToast('Bitte fülle alle Felder korrekt aus.', 'warning');
+                return;
+            }
+
             const firstnameField = document.getElementById("textRegBenutzerVorname");
             const lastnameField = document.getElementById("textRegBenutzerNachname");
             const usernameField = document.getElementById('textRegBenutzerName');
@@ -46,28 +47,21 @@ document.addEventListener("DOMContentLoaded", () => {
             const password = passwordField.value;
             const course = courseField.value;
 
-            console.log('Form data:', {firstname, lastname, username, password, course});
-
             const result = await registration(firstname, lastname, username, password, course);
             const {status, body, payload} = unwrapApiResponse(result);
-            console.log('Server response:', result);
-            alert(buildUserAlertMessage(body));
 
             if (status === 201 && payload) {
                 // Save both access and refresh tokens from standardized API format
                 saveAuthData(payload.accessToken, payload.user);
-                // Also save refresh token for later use
                 localStorage.setItem('refreshToken', payload.refreshToken);
-                firstnameField.value = '';
-                lastnameField.value = '';
-                usernameField.value = '';
-                passwordField.value = '';
-                courseField.value = '';
+                registrationForm.reset();
+                registrationForm.classList.remove('was-validated');
+                showToast('Registrierung erfolgreich. Weiterleitung…', 'success');
                 window.location.href = "/forum";
+            } else {
+                showToast(buildUserAlertMessage(body), 'danger');
             }
         });
-    } else {
-        console.log('Register button NOT found!');
     }
 
     /**
@@ -76,22 +70,26 @@ document.addEventListener("DOMContentLoaded", () => {
     async function handleLoginSubmit(e) {
         if (e && typeof e.preventDefault === 'function') e.preventDefault();
 
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm && !validateForm(loginForm)) {
+            showToast('Bitte Benutzername und Passwort eingeben.', 'warning');
+            return;
+        }
+
         const username = document.getElementById('textLoginBenutzerName')?.value;
         const password = document.getElementById('textLoginBenutzerPasswort')?.value;
 
-        console.log('Login data:', {username, password});
-
         const result = await login(username, password);
         const {status, body, payload} = unwrapApiResponse(result);
-        console.log('Server response:', result);
-        alert(buildUserAlertMessage(body));
 
         if (status === 200 && payload) {
             // Save both access and refresh tokens from standardized API format
             saveAuthData(payload.accessToken, payload.user);
-            // Also save refresh token for later use
             localStorage.setItem('refreshToken', payload.refreshToken);
+            showToast('Anmeldung erfolgreich. Weiterleitung…', 'success');
             window.location.href = "/forum";
+        } else {
+            showToast(buildUserAlertMessage(body), 'danger');
         }
     }
 
@@ -99,14 +97,5 @@ document.addEventListener("DOMContentLoaded", () => {
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLoginSubmit);
-    }
-
-    // Login-Button
-    const loginBtn = document.getElementById('buttonLogin');
-    console.log('Login button:', loginBtn);
-    if (loginBtn) {
-        loginBtn.addEventListener('click', handleLoginSubmit);
-    } else {
-        console.log('Login button NOT found!');
     }
 });

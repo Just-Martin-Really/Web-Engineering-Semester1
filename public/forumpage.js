@@ -26,8 +26,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterRadios = document.querySelectorAll('input[name="kurs"]');
     const newPostKursRadios = document.querySelectorAll('input[name="newPostKurs"]');
     const searchInput = document.getElementById("forumSearch");
-    const avatarBtn = document.querySelector(".foto-avatar");
-    const userDropdown = document.getElementById("userDropdown");
+    const sortSelect = document.getElementById("sortSelect");
+    const contentCounter = document.getElementById("contentCount");
 
     let allTopics = [];
 
@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const PAGE_LIMIT = 10;
     let currentPage = 1;
     let currentKursFilter = 'ALL';
+    let currentSort = 'newest';
 
     // Create a small load-more UI
     let loadMoreBtn;
@@ -48,14 +49,14 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!host) return;
 
         const wrapper = document.createElement('div');
-        wrapper.className = 'posts-controls';
+        wrapper.className = 'posts-controls d-flex align-items-center justify-content-between gap-2 mt-3';
 
         loadMoreMeta = document.createElement('div');
-        loadMoreMeta.className = 'posts-controls-meta';
+        loadMoreMeta.className = 'posts-controls-meta text-body-secondary small';
 
         loadMoreBtn = document.createElement('button');
         loadMoreBtn.type = 'button';
-        loadMoreBtn.className = 'posts-load-more';
+        loadMoreBtn.className = 'posts-load-more btn btn-brand-soft';
         loadMoreBtn.textContent = 'Mehr laden';
 
         loadMoreBtn.addEventListener('click', async () => {
@@ -108,16 +109,17 @@ document.addEventListener("DOMContentLoaded", () => {
             if (status === 200) {
                 allTopics = allTopics.filter(t => String(t.id) !== String(topicId));
                 applySearchAndFilter();
+                showToast('Beitrag gelöscht.', 'success');
             } else if (status === 401) {
-                alert('Sitzung abgelaufen. Bitte erneut anmelden.');
+                showToast('Sitzung abgelaufen. Bitte erneut anmelden.', 'warning');
                 clearAuthData();
                 window.location.href = '/';
             } else {
-                alert(buildUserAlertMessage(body));
+                showToast(buildUserAlertMessage(body), 'danger');
             }
         } catch (error) {
             console.error('Error deleting topic:', error);
-            alert('Fehler beim Löschen des Beitrags.');
+            showToast('Fehler beim Löschen des Beitrags.', 'danger');
         }
     }
 
@@ -153,7 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const date = document.createElement('span');
         date.className = 'comment-date';
-        date.textContent = comment?.createdAt ? formatDate(comment.createdAt) : '';
+        date.textContent = comment?.createdAt ? timeAgo(comment.createdAt) : '';
+        if (comment?.createdAt) date.title = formatDate(comment.createdAt);
 
         meta.appendChild(author);
         meta.appendChild(date);
@@ -204,7 +207,11 @@ document.addEventListener("DOMContentLoaded", () => {
         forumContainer.innerHTML = "";
 
         if (!topics || topics.length === 0) {
-            forumContainer.innerHTML = "<p>Keine Beiträge gefunden.</p>";
+            forumContainer.innerHTML =
+                '<div class="text-center text-body-secondary py-5">' +
+                '<p class="mb-1 fw-semibold">Noch keine Beiträge gefunden.</p>' +
+                '<p class="small mb-0">Sei die erste Person, die hier etwas teilt.</p>' +
+                '</div>';
             return;
         }
 
@@ -237,7 +244,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const topicDate = document.createElement("span");
             topicDate.className = 'post-date';
-            topicDate.textContent = formatDate(topic.createdAt);
+            topicDate.textContent = timeAgo(topic.createdAt);
+            topicDate.title = formatDate(topic.createdAt);
 
             metaRow.appendChild(topicAuthor);
             metaRow.appendChild(topicDate);
@@ -365,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const content = commentInput.value.trim();
                 if (!content.length) {
-                    alert('Bitte Kommentar eingeben.');
+                    showToast('Bitte Kommentar eingeben.', 'warning');
                     return;
                 }
 
@@ -401,16 +409,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
 
                         setFormVisible(false);
+                        showToast('Kommentar hinzugefügt.', 'success');
                     } else if (status === 401) {
-                        alert('Sitzung abgelaufen. Bitte erneut anmelden.');
+                        showToast('Sitzung abgelaufen. Bitte erneut anmelden.', 'warning');
                         clearAuthData();
                         window.location.href = '/';
                     } else {
-                        alert(buildUserAlertMessage(body));
+                        showToast(buildUserAlertMessage(body), 'danger');
                     }
                 } catch (error) {
                     console.error('Error creating comment:', error);
-                    alert('Fehler beim Erstellen des Kommentars.');
+                    showToast('Fehler beim Erstellen des Kommentars.', 'danger');
                 }
             });
 
@@ -517,6 +526,18 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * Applies search and filter to the topics and displays them.
      */
+    function sortTopics(list) {
+        const arr = list.slice();
+        if (currentSort === 'oldest') {
+            arr.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        } else if (currentSort === 'comments') {
+            arr.sort((a, b) => (b.comments?.length || 0) - (a.comments?.length || 0));
+        } else {
+            arr.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
+        return arr;
+    }
+
     function applySearchAndFilter() {
         const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
@@ -525,7 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
             topic.content.toLowerCase().includes(searchTerm)
         ));
 
-        displayTopics(filteredTopics);
+        displayTopics(sortTopics(filteredTopics));
     }
 
     /**
@@ -543,7 +564,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (!title || !content || !selectedKurs) {
-            alert("Bitte Titel, Inhalt und Kurs auswählen.");
+            showToast("Bitte Titel, Inhalt und Kurs auswählen.", 'warning');
             return;
         }
         try {
@@ -553,6 +574,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (status === 201) {
                 titleInput.value = "";
                 contentInput.value = "";
+                if (contentCounter) contentCounter.textContent = '0';
+                showToast("Beitrag veröffentlicht.", 'success');
 
                 // After creating a topic, reset pagination and reload the current filter.
                 let currentFilter = 'ALL';
@@ -564,16 +587,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 await loadTopics(currentFilter, {mode: 'replace'});
             } else {
                 if (status === 401) {
-                    alert("Sitzung abgelaufen. Bitte erneut anmelden.");
+                    showToast("Sitzung abgelaufen. Bitte erneut anmelden.", 'warning');
                     clearAuthData();
                     window.location.href = "/";
                 } else {
-                    alert(buildUserAlertMessage(body));
+                    showToast(buildUserAlertMessage(body), 'danger');
                 }
             }
         } catch (error) {
             console.error("Error creating topic:", error);
-            alert("Fehler beim Hochladen des Beitrags.");
+            showToast("Fehler beim Hochladen des Beitrags.", 'danger');
         }
     }
 
@@ -594,21 +617,21 @@ document.addEventListener("DOMContentLoaded", () => {
         searchInput.addEventListener("input", applySearchAndFilter);
     }
 
-    // User dropdown logic
-    if (avatarBtn && userDropdown) {
-        avatarBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const isVisible = userDropdown.style.display === "block";
-            userDropdown.style.display = isVisible ? "none" : "block";
+    // Sort control (client-side ordering of the loaded topics)
+    if (sortSelect) {
+        sortSelect.addEventListener("change", (e) => {
+            currentSort = e.target.value;
+            applySearchAndFilter();
         });
+    }
 
-        window.addEventListener("click", () => {
-            userDropdown.style.display = "none";
-        });
-
-        userDropdown.addEventListener("click", (e) => {
-            e.stopPropagation();
-        });
+    // Live character counter for the new-post content
+    if (contentInput && contentCounter) {
+        const updateCount = () => {
+            contentCounter.textContent = String(contentInput.value.length);
+        };
+        contentInput.addEventListener("input", updateCount);
+        updateCount();
     }
 
     // Logic for "Back to top" button
@@ -624,57 +647,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
             clearAuthData();
-            alert('Abgemeldet');
             window.location.href = "/";
         });
-    }
-
-
-    // Mobile filter toggle (forum sidebar)
-    const filterToggleBtn = document.getElementById('filterToggleBtn');
-    const filterPanel = document.getElementById('filterPanel');
-
-    const isMobileViewport = () => window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
-
-    const setFilterPanelOpen = (open) => {
-        if (!filterPanel || !filterToggleBtn) return;
-        const nextOpen = Boolean(open);
-        filterPanel.classList.toggle('nav-bar--open', nextOpen);
-        filterToggleBtn.textContent = nextOpen ? 'Filter ausblenden' : 'Filter anzeigen';
-        filterToggleBtn.setAttribute('aria-expanded', String(nextOpen));
-    };
-
-    const syncFilterPanelForViewport = () => {
-        if (!filterPanel || !filterToggleBtn) return;
-
-        // Desktop: always open and hide the toggle button.
-        if (!isMobileViewport()) {
-            filterToggleBtn.style.display = 'none';
-            filterPanel.classList.add('nav-bar--open');
-            return;
-        }
-
-        // Mobile: show toggle and default collapsed.
-        filterToggleBtn.style.display = 'inline-flex';
-
-        // Only set default state if we haven't interacted yet.
-        if (!filterPanel.dataset.userToggled) {
-            setFilterPanelOpen(false);
-        }
-    };
-
-    if (filterToggleBtn && filterPanel) {
-        filterToggleBtn.setAttribute('aria-controls', 'filterPanel');
-        filterToggleBtn.setAttribute('aria-expanded', 'false');
-
-        filterToggleBtn.addEventListener('click', () => {
-            filterPanel.dataset.userToggled = '1';
-            const open = filterPanel.classList.contains('nav-bar--open');
-            setFilterPanelOpen(!open);
-        });
-
-        window.addEventListener('resize', syncFilterPanelForViewport);
-        syncFilterPanelForViewport();
     }
 
     // Initial load
