@@ -1,0 +1,36 @@
+---
+# Static input provider feeding the `app-image` OCIArtifactTag filter for the
+# dev environment.
+#
+# `floating: true` + `Version: ">=0.0.0-0"` make the `app-image` provider
+# FLOAT: it always resolves the highest app tag carrying this environment's
+# suffix. The suffix itself is NOT configured here: the
+# `kursforum-image-provider` generator derives it from the infra-provided
+# `cluster-config` provider's `env` key (`dev` -> `(?i)-dev$`), matching the
+# `<version>-dev` tags CI publishes on a push to `develop`. A merge to `develop`
+# therefore refreshes the dev deployment on the next provider poll (~1m) WITHOUT
+# cutting a release.
+#
+# test/prod use the same shape (`floating: true` + `>=0.0.0-0`), floating on
+# `-test` / `-prod` tags respectively. Promotion to those environments is a
+# registry retag (the Promote Image workflow), not a config change here.
+#
+# NOTE: the namespace below is a default; the platform's Flux Kustomization that
+# reconciles this overlay sets `targetNamespace` to the kursforum namespace,
+# which governs where this lands. See docs/reference/k8s-platform-handoff.md.
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: app-image-config
+  namespace: kursforum-intern
+  annotations:
+    fluxcd.controlplane.io/prune: disabled
+spec:
+  type: Static
+  defaultValues:
+    # Floating range: take the newest matching tag (prereleases included).
+    Version: ">=0.0.0-0"
+    # Float on this environment's `-<env>` tags (suffix derived from
+    # cluster-config). Keep `true` for all environments — a `false` value makes
+    # the generator take its `<< else >>` (match-all `.*`) branch instead.
+    floating: true
