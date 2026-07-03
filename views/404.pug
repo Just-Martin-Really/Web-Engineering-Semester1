@@ -1,66 +1,19 @@
 extends layout
-
-block head
-    style.
-        body {
-            background: #eee;
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            padding: 40px;
-        }
-
-        .card {
-            max-width: 720px;
-            margin: 0 auto;
-            background: #fff;
-            border-radius: 14px;
-            padding: 24px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-        }
-
-        h1 {
-            margin: 0 0 10px;
-            color: #442bd4;
-        }
-
-        p {
-            margin: 0 0 14px;
-            color: #333;
-        }
-
-        a {
-            color: #7A5CFF;
-            font-weight: 800;
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 20px;
-            }
-
-            .card {
-                padding: 18px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            body {
-                padding: 16px;
-            }
-
-            .card {
-                padding: 16px;
-                border-radius: 12px;
-            }
-
-            h1 {
-                font-size: 26px;
-            }
-        }
+include mixins
 
 block content
-    .card
-        h1 404 – Seite nicht gefunden
-        p Die Seite „#{path}“ gibt es hier nicht.
-        p
-            a(href="/") Zur Startseite
+  nav.navbar.bg-body.border-bottom.shadow-sm
+    .container
+      +brand("/")
+      .ms-auto
+        +themeToggle
+
+  main.container.py-5
+    .row.justify-content-center
+      .col-lg-7
+        .card.border-0.shadow-brand.rounded-4.text-center
+          .card-body.p-5
+            p.display-1.fw-bold.text-brand.mb-2 404
+            h1.h4.fw-bold.mb-3 Seite nicht gefunden
+            p.text-body-secondary.mb-4 Die Seite „#{path}“ gibt es hier nicht.
+            a.btn.btn-primary.btn-lg(href="/") Zur Startseite

@@ -1,95 +1,111 @@
 extends layout
+include mixins
 
 block head
   link(rel="stylesheet", href="/homepage.css")
-  link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600;700&display=swap")
   script(src="/homepage.js", defer)
 
 block content
-  // nav sektion
-  header.header
-    section.left-header
-      img.logo(src="/img/logoreal.png")
-      h2.title Fredforum
-    section.right-header
-      nav
-        ul
-          li
-            a(href="#HomeThumbnail") Home
-          li
-            a(href="#aboutUs") About Us
-          li
-            a(href="#kontakt") Kontakt
+  nav.navbar.navbar-expand-lg.bg-body.border-bottom.sticky-top.shadow-sm
+    .container
+      +brand("#top")
+      button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#homeNav", aria-controls="homeNav", aria-expanded="false", aria-label="Navigation umschalten")
+        span.navbar-toggler-icon
+      #homeNav.collapse.navbar-collapse
+        ul.navbar-nav.ms-auto.mb-2.mb-lg-0.align-items-lg-center.gap-lg-1
+          li.nav-item
+            a.nav-link(href="#top") Home
+          li.nav-item
+            a.nav-link(href="#aboutUs") About Us
+          li.nav-item
+            a.nav-link(href="#kontakt") Kontakt
+          li.nav-item.ms-lg-2.my-2.my-lg-0
+            a.btn.btn-primary.px-3(href="#loginRegister") Login
+          li.nav-item.ms-lg-2
+            +themeToggle
 
-  main
-    // Home section
-    section.thumbnail#HomeThumbnail
-      article.hero-image
-        img.photoThumbnail(src="/img/book.jpg")
-      article.thumbnailContent
-        h1 Willkommen im Kursforum
-        a.buttonToLogin(href="#loginRegister") Login
+  main#top
+    // Hero
+    section.py-5.py-lg-6.bg-body-tertiary.border-bottom
+      .container
+        .row.align-items-center.g-5
+          .col-lg-6.reveal-left
+            span.badge.text-bg-primary.rounded-pill.mb-3.px-3.py-2 Das Kursforum für Studierende
+            h1.display-4.fw-bold.mb-3 Willkommen im #[span.text-brand Kursforum]
+            p.lead.text-body-secondary.mb-4 Stelle Fragen, teile Wissen und vernetze dich mit deinem Kurs. Ein Ort für den Austausch, der wirklich hängen bleibt.
+            .d-flex.flex-wrap.gap-3
+              a.btn.btn-primary.btn-lg.px-4(href="#loginRegister") Jetzt anmelden
+              a.btn.btn-outline-primary.btn-lg.px-4(href="#aboutUs") Mehr erfahren
+          .col-lg-6.reveal-right.text-center
+            img.img-fluid.rounded-4.shadow(src="/img/book.jpg", alt="Kursforum")
 
-    // about us section
-    section.AboutUs-box1#aboutUs
-      article.About-image1.reveal-left
-        img.AboutusImage(src="/img/aboutUs.jpg")
-      article.AboutusContent1.reveal
-        h3.AboutusTitle About us
-        p
-          | Wir sind vier Informatikstudenten, die eine gemeinsame Überzeugung teilen: Technologie sollte den Alltag bereichern. Als wir im Rahmen eines Schulprojekts vor der Aufgabe standen, etwas Neues zu entwickeln, war unser persönlicher Wunsch sofort klar: Wir wollten etwas sinnvolles entwickeln, das einen bleibenden Wert und einen echten Nutzen für uns alle hat.
+    // About
+    section#aboutUs.py-5.py-lg-6
+      .container
+        .row.align-items-center.g-5.mb-5
+          .col-lg-6.reveal-left
+            img.img-fluid.rounded-4.shadow-sm(src="/img/aboutUs.jpg", alt="Über uns")
+          .col-lg-6.reveal-right
+            h2.fw-bold.text-brand.mb-3 About us
+            p.text-body-secondary.mb-0 Wir sind vier Informatikstudenten, die eine gemeinsame Überzeugung teilen: Technologie sollte den Alltag bereichern. Als wir im Rahmen eines Schulprojekts vor der Aufgabe standen, etwas Neues zu entwickeln, war unser Wunsch sofort klar: Wir wollten etwas Sinnvolles entwickeln, das einen bleibenden Wert und einen echten Nutzen für uns alle hat.
+        .row.align-items-center.g-5.flex-lg-row-reverse
+          .col-lg-6.reveal-right
+            img.img-fluid.rounded-4.shadow-sm(src="/img/AboutUsBild2.jpg", alt="Ein Kursforum")
+          .col-lg-6.reveal-left
+            .card.border-0.shadow-brand.mb-3
+              .card-body
+                h3.h5.fw-bold.text-brand Ein Kursforum
+                p.text-body-secondary.mb-0 Oft fehlt der richtige Ort für den Austausch unter Kommilitonen. Wir wollten die Kommunikation zwischen uns Studierenden einfacher und lebendiger gestalten: eine zentrale Anlaufstelle für Fragen und Antworten.
+            .card.border-0.shadow-brand
+              .card-body
+                h3.h5.fw-bold.text-brand Nachhaltigkeit
+                p.text-body-secondary.mb-0 Mit dem Kursforum hoffen wir, etwas zu entwickeln, das sich fortlaufend weiterentwickelt und auch für weitere Studiengänge nützlich sein kann.
 
-    section.AboutUs-box2
-      article.AboutusContent2.reveal-left
-        h4.AboutUsSmallTitle Ein Kursforum
-        p
-          | Oft fehlt der richtige Ort für den Austausch unter Komillitonen. Wir haben uns gefragt, wie man die Kommunikation zwischen uns Studierenden einfacher und lebendiger gestalten könnte. Unser Ziel war es, eine Plattform zu bauen, die den Austausch von Interessen erleichter und als zentrale Anlaufstelle für Fragen und Antworten dient.
-          | Das Kursforum sollte ein Schritt in eine vernetztere Gemeinschaft werden.
-        h4.AboutUsSmallTitle Nachhaltigkeit
-        p
-          | Mit dem Kursforum haben wir die Hoffnung etwas zu entwickelt, dass sich fortgehend weiterentwickelt und auch noch nützlich für weitere Studiengänge sein könnte.
-      article.About-image2.reveal-right
-        img.AboutusImage(src="/img/AboutUsBild2.jpg")
+    // Login / Register
+    section#loginRegister.py-5.py-lg-6.bg-body-tertiary.border-top
+      .container
+        .row.justify-content-center.align-items-center.g-5
+          .col-lg-6.col-xl-5.reveal-left
+            .card.border-0.shadow-brand.rounded-4
+              .card-body.p-4.p-lg-5
+                h2.h3.fw-bold.text-center.text-brand.mb-4 Login
+                form#loginForm(novalidate)
+                  .form-floating.mb-3
+                    input#textLoginBenutzerName.form-control(type="text", name="loginBenutzername", placeholder="Benutzername", required)
+                    label(for="textLoginBenutzerName") Benutzername
+                    .invalid-feedback Bitte gib deinen Benutzernamen ein.
+                  .form-floating.mb-3
+                    input#textLoginBenutzerPasswort.form-control(type="password", name="loginPasswort", placeholder="Passwort", required)
+                    label(for="textLoginBenutzerPasswort") Passwort
+                    .invalid-feedback Bitte gib dein Passwort ein.
+                  .d-grid
+                    button#buttonLogin.btn.btn-primary.btn-lg(type="submit") Anmelden
+                p.text-center.text-body-secondary.mt-4.mb-0
+                  | Du hast keinen Account?
+                  |
+                  a.fw-semibold.text-brand(href="/register") Registrieren
+          .col-lg-6.col-xl-5.text-center.reveal-right
+            img.img-fluid.floating(src="/img/robot.png", alt="Willkommen", style="max-width: 340px")
+            p.h4.text-brand.fw-bold.mt-3 Willkommen!
 
-    // login section
-    section.login-box#loginRegister
-      article.login-boxContent.reveal-left
-        h1 Login
-        form#loginForm
-          .input-box
-            input#textLoginBenutzerName.inputField(type="text", name="loginBenutzername", placeholder="Benutzername", required)
-          .input-box
-            input#textLoginBenutzerPasswort.inputField(type="password", name="loginPasswort", placeholder="Passwort", required)
-          button#buttonLogin.buttonLogin(type="submit") Anmelden
-        .register-link
-          p
-            | Du hast keinen Account?
-            a(href="/register")  Registrieren
-      article.photo-robot.reveal-right
-        img.robot-image(src="/img/robot.png")
-        .welcome-text Willkommen!
-
-  // footer kontakt section
-  footer.footer-section#kontakt
-    section.footer-container
-      article.footer-column
-        h4 Kontakt
-        p Du hast einen Bug gefunden oder Feedback?
-        a.bug-report-btn(href="https://www.youtube.com/watch?v=dQw4w9WgXcQ", target="_blank", rel="noopener noreferrer") Kontaktformular
-
-      article.footer-column
-        h4 Pages
-        ul
-          li
-            a(href="#HomeThumbnail") Home
-          li
-            a(href="#aboutUs") About Us
-          li
-            a(href="#loginRegister") Login and Registration
-
-    section.footer-bottom
-      article
-        p Kursforum - designed by Amica Martin Stefan Tamara
+  footer#kontakt.bg-body.border-top.pt-5.pb-4.mt-auto
+    .container
+      .row.g-4
+        .col-md-6
+          h2.h5.fw-bold Kontakt
+          p.text-body-secondary.mb-2 Du hast einen Bug gefunden oder Feedback?
+          a.btn.btn-brand-soft(href="https://www.youtube.com/watch?v=dQw4w9WgXcQ", target="_blank", rel="noopener noreferrer") Kontaktformular
+        .col-md-6.text-md-end
+          h2.h5.fw-bold Pages
+          ul.list-unstyled.mb-0
+            li
+              a.link-secondary.text-decoration-none(href="#top") Home
+            li
+              a.link-secondary.text-decoration-none(href="#aboutUs") About Us
+            li
+              a.link-secondary.text-decoration-none(href="#loginRegister") Login und Registrierung
+      hr.my-4
+      p.text-center.text-body-secondary.small.mb-0 Kursforum - designed by Amica, Martin, Stefan und Tamara
 
   script(src="/utils.js")
   script(src="/app.js")
