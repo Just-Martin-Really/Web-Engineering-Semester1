@@ -35,3 +35,36 @@ describe('Page routes (Pug)', () => {
         expect(res.text).to.include('404');
     });
 });
+
+describe('Frontend assets (Bootstrap + theme)', () => {
+    it('GET /vendor/bootstrap/css/bootstrap.min.css should be served as CSS', async () => {
+        const res = await request(app).get('/vendor/bootstrap/css/bootstrap.min.css');
+        expect(res.status).to.equal(200);
+        expect(res.headers['content-type']).to.match(/text\/css/);
+    });
+
+    it('GET /vendor/bootstrap/js/bootstrap.bundle.min.js should be served as JS', async () => {
+        const res = await request(app).get('/vendor/bootstrap/js/bootstrap.bundle.min.js');
+        expect(res.status).to.equal(200);
+        expect(res.headers['content-type']).to.match(/javascript/);
+    });
+
+    it('GET /theme.js should be served as JS', async () => {
+        const res = await request(app).get('/theme.js');
+        expect(res.status).to.equal(200);
+        expect(res.headers['content-type']).to.match(/javascript/);
+    });
+
+    it('rendered pages link the self-hosted Bootstrap stylesheet and expose the theme toggle', async () => {
+        const res = await request(app).get('/');
+        expect(res.status).to.equal(200);
+        expect(res.text).to.include('/vendor/bootstrap/css/bootstrap.min.css');
+        expect(res.text).to.include('theme-toggle');
+    });
+
+    it('forum page exposes the sort control', async () => {
+        const res = await request(app).get('/forum');
+        expect(res.status).to.equal(200);
+        expect(res.text).to.include('id="sortSelect"');
+    });
+});
