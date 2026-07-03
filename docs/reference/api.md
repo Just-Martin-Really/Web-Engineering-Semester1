@@ -162,5 +162,6 @@ Defined in `routes/pageRoutes.js`. These render Pug templates and return HTML, n
 | `GET` | `/` | `index.pug` | Landing page |
 | `GET` | `/register` | `registration.pug` | Registration form |
 | `GET` | `/forum` | `forumpage.pug` | Forum view |
+| `GET` | `/404` | `404.pug` | Not-found page, returns status `404` |
 
 Unknown paths return a JSON `404` for API/non-HTML clients, or the rendered `404.pug` page for browsers.

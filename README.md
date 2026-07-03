@@ -110,7 +110,6 @@ Seed-Format: JSON-Array mit pro Topic u.a. `seedKey`, `title`, `content`, `kurs`
 ## Docker Setup
 
 Voraussetzung: Docker & Docker Compose.
-docker.com
 
 Start:
 
