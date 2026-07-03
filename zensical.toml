@@ -28,6 +28,7 @@ nav = [
     { "Explanation" = [
         "explanation/index.md",
         "explanation/architecture.md",
+        "explanation/frontend.md",
         "explanation/auth-model.md",
         "explanation/security.md",
     ] },

@@ -7,6 +7,7 @@ Kursforum layers several defenses in front of the application logic. This page e
 ## Transport and headers
 
 - **Helmet** sets a baseline of secure HTTP response headers, plus a few custom headers on top.
+- **Content Security Policy** stays scoped to `'self'` for scripts and styles. Front-end assets, including Bootstrap, are served first-party (see [Frontend](frontend.md)) rather than from a CDN, so no external script or style origins need to be allowed.
 - **HTTPS enforcement** redirects HTTP to HTTPS when `ENFORCE_HTTPS=true`. It stays off for local development, where there's no TLS.
 
 ## CORS

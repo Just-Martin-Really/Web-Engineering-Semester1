@@ -1,6 +1,6 @@
 # Architecture
 
-See also: [Database schema](../reference/database-schema.md) · [Security](security.md) · [Auth model](auth-model.md)
+See also: [Frontend](frontend.md) · [Database schema](../reference/database-schema.md) · [Security](security.md) · [Auth model](auth-model.md)
 
 Kursforum is a single Express application that both renders HTML pages with Pug and serves a JSON API. It stores everything in PostgreSQL and, in the Docker setup, sits behind an Nginx reverse proxy.
 
@@ -26,7 +26,7 @@ A request passes through a fixed middleware chain before reaching a route, set u
 5. **Body parsing** — JSON only, capped at `10kb`.
 6. **Session** — an Express session backed by the PostgreSQL `session` table.
 
-Routes are then mounted in order: `/api` (auth), `/api/topics` (topics and comments), `/` (Pug pages), and finally `express.static` for assets in `public/`. Anything unmatched hits a 404 handler that returns JSON for API clients and a rendered `404.pug` for browsers.
+Routes are then mounted in order: `/api` (auth), `/api/topics` (topics and comments), `/` (Pug pages), `/vendor/bootstrap` (the self-hosted Bootstrap build served from `node_modules`), and finally `express.static` for assets in `public/`. Anything unmatched hits a 404 handler that returns JSON for API clients and a rendered `404.pug` for browsers.
 
 ## Code layout
 
