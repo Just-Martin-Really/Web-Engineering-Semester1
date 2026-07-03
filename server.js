@@ -74,6 +74,7 @@ app.get('/health', (req, res) => {
 app.use('/api', require('./routes/authRoutes'));
 app.use('/api/topics', require('./routes/topicRoutes'));
 app.use('/', require('./routes/pageRoutes'));
+app.use('/vendor/bootstrap', express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use(express.static('public'));
 
 app.use((req, res) => {
